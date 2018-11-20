@@ -1,16 +1,16 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 require_once "Mail.php";
 error_reporting(1);
 
 displayMarkupsCommonToTopOfPages( 'Forgotten Password', DO_NOT_DISPLAY_NAVIGATION_MENU, 'forgotten.php' );
 
-if ( loggin() ) {
+if ( userIsLoggedIn() ) {
 	echo '
       <p id="mediumSizedText">';
-   getfield();
+   getFirstNameOfUser();
    echo ', you are already logged in.
       </p>
    ';

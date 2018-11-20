@@ -1,21 +1,25 @@
 <?php
 /*
-   This is an include file.
-   This file contains functions that display markups that are common to the top and bottom of all pages of RoarConnect.
+   This file contains definitions of functions that are used to display markups
 */
 
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsForMiscellaneousTasks.php';
+require_once 'performBasicInitializations.php';
+require_once 'utilityFunctions.php';
 define( 'DO_NOT_DISPLAY_NAVIGATION_MENU', 1 );
 define( 'DISPLAY_NAVIGATION_MENU', 2 );
 define( 'DISPLAY_FOOTER', 3 );
 define( 'DO_NOT_DISPLAY_FOOTER', 4 );
+define( 'NOT_ADMIN_LOGIN', 5 );
+define( 'ADMIN_LOGIN', 6 );
 
 
-function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuStatus, $urlOfCurrentPage, $customizedStyleForBodyElement = NULL )
+function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuStatus = DO_NOT_DISPLAY_NAVIGATION_MENU, $urlOfCurrentPage = NULL, $customizedStyleForBodyElement = NULL )
 {
    global $db;
+
+   if ($urlOfCurrentPage == NULL) {
+      $urlOfCurrentPage = basename($_SERVER['PHP_SELF']);
+   }
 ?>
 <!DOCTYPE html>
 
@@ -55,7 +59,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
                      <li><a href="lecture_notes.php" <?php echo $urlOfCurrentPage == 'lecture_notes.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-download-alt"></span> Lecture Notes</a></li>
                      <li><a href="view_all_utility_services.php" <?php echo $urlOfCurrentPage == 'view_all_utility_services.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-gift"></span> Utility Services</a></li>
 <?php
-      if ( loggin() ) {
+      if ( userIsLoggedIn() ) {
 	      $query = 'SELECT blog_category_name FROM blog_categories WHERE user_id_of_main_blogger = ' . $_SESSION['user_id'];
 	      $resultContainingBlogPostCategories = mysqli_query( $db, $query) or die( $markupIndicatingDatabaseQueryFailure );
 	      $userIsAMainBlogger = mysqli_num_rows( $resultContainingBlogPostCategories ) > 0;
@@ -73,7 +77,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
          $numberOfUnreadMessages = mysqli_num_rows( $resultContainingAllUnreadMessages );
 ?>
                      <li id="dropdown">
-                        <a id="dropdownLabel"><span class="glyphicon glyphicon-user"></span> <?php echo loggedInAsAdmin() ? 'Hello, Admin!' : 'Hello, ' . getfield() ?> <span class="glyphicon glyphicon-chevron-down"></span></a>
+                        <a id="dropdownLabel"><span class="glyphicon glyphicon-user"></span> <?php echo userIsLoggedInAsAdmin() ? 'Hello, Admin!' : 'Hello, ' . getFirstNameOfUser() ?> <span class="glyphicon glyphicon-chevron-down"></span></a>
                         <ul id="dropdownContent">
                            <li><a href="#"><span class="glyphicon glyphicon-tint"></span> My Profile</a></li>
                            <li><a href="notifications.php"><span class="glyphicon glyphicon-bell"></span><?php echo $numberOfUnreadNotifications > 0 ? '<span class="badge" id="badgeForNotifications">' . $numberOfUnreadNotifications . '</span>' : '' ?> Notifications</a></li>
@@ -92,7 +96,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
 <?php
          }
 
-         if ( loggedInAsAdmin() ) {
+         if ( userIsLoggedInAsAdmin() ) {
 ?>
                            <li><a href="all_roarconnect_uploads.php"><span class="glyphicon glyphicon-tasks"></span> Manage Uploads</a></li>
 <?php
@@ -123,7 +127,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
       </header>
 
 <?php
-   if (!loggin()) {
+   if (!userIsLoggedIn()) {
 ?>
       <div role="dialog" class="modal fade" id="myModal">
          <div class="modal-dialog">
@@ -161,6 +165,7 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
          <aside class="col-sm-3">
             <div class="container-fluid" style="padding-top: 100px;">
                Adverts, related blog posts, featured foods, featured vendors, featured lecture notes shows here.
+               <br/>Criteria for related blog posts include:<br/>Related posts viewed before<br/>Number of views<br/>Latest posts
             </div>
          </aside>
       </div> <!-- closing tag of div.container-fluid -->
@@ -181,9 +186,9 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
             </div>
 
             <div id="multilineTextInFooter">
-               <p>RoarConnect connects you to all the interesting news and gists within UNN.</p>
-               <p>Apart from this, RoarConnect connects you to food vendors within UNN.</p>
-               <p>RoarConnect also maintains a comprehensive lecture note database from where you can download lecture notes of any course offered in UNN.</p>
+               <p>RoarConnect connects you to all the interesting news and gists within and around UNN.</p>
+               <p>RoarConnect also connects you to food vendors within UNN.</p>
+               <p>In addition, RoarConnect maintains a comprehensive lecture note database from where you can download lecture notes for any course offered in UNN.</p>
                <p>Visit our social media pages for more information.</p>
             </div>
 
@@ -230,16 +235,14 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
          }
       </script>
  
-      <script>
-         <!--
+      <!--script>
          document.getElementById( 'postNewBlogUpdateButton' ).addEventListener( 'click', displayMarkupForPostNewBlogUpdateForm );
 
          function displayMarkupForPostNewBlogUpdateForm()
          {
 	         document.getElementById( 'containerHoldingPostNewBlogUpdateForm' ).setAttribute( 'class', 'show' );
          }
-         -->
-      </script>
+      </script-->
 
       <script>
          <!--
@@ -257,8 +260,190 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
          }
          -->
       </script>
+
+      <script>
+         <!--
+            var placeholderForSearchField;
+
+            document.getElementById('search').addEventListener('focus', removePlaceholderFromSearchField);
+            document.getElementById('search').addEventListener('blur', putPlaceholderIntoSearchField);
+
+            function removePlaceholderFromSearchField()
+            {
+               var searchField = document.getElementById('search');
+               placeholderForSearchField = searchField.getAttribute('placeholder');
+               searchField.setAttribute('placeholder', '');
+            }
+
+            function putPlaceholderIntoSearchField()
+            {
+               document.getElementById('search').setAttribute('placeholder', placeholderForSearchField);
+            }
+         -->
+      </script>
    </body>
 </html>
+<?php
+}
+
+function getMarkupForButtonThatWillTellUserToLogInBeforeContinuing( $textToBeContainedInButton, $miscellaneousAttributesOfButton = '' )
+{
+?>
+
+                        <div>
+                           <noscript>
+                              <p class="containerForButtonThatWillTellUserToLogInBeforeContinuingWhenJavascriptIsDisabled"><a href="login.php?additionalMessage=You Must Log In To Continue&urlOfPageToRedirectTo=<?php echo $_SERVER['PHP_SELF'] . buildStringContainingAllDataFromGET() ?>"><?php echo $textToBeContainedInButton ?></a></p>
+                           </noscript>
+                           <div class="containerForButtonThatWillTellUserToLogInBeforeContinuingWhenJavascriptIsEnabled"></div>
+                        </div>
+
+                        <script>
+                           <!--
+                           textToDisplayInButtonThatWillTellUserToLogInBeforeContinuing[textToDisplayInButtonThatWillTellUserToLogInBeforeContinuing.length] = '<?php echo $textToBeContainedInButton ?>';
+                           miscellaneousAttributesOfButtonThatWillTellUserToLogInBeforeContinuing[miscellaneousAttributesOfButtonThatWillTellUserToLogInBeforeContinuing.length] = '<?php echo $miscellaneousAttributesOfButton ?>';
+                           //-->
+                        </script>
+<?php
+}
+
+
+function getMarkupForModalThatTellsUserToLogInBeforeContinuing()
+{
+?>
+
+            <div role="dialog" class="modal fade" id="myModal2">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">You Must Log In To Continue</h3>
+                     </div>
+
+                     <div class="modal-body">
+                        <?php echo displayMarkupForLoginForm() ?>
+                     </div>
+
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+<?php
+}
+
+
+function displayMarkupToIndicateThatAdminLoginIsRequired()
+{
+?>
+
+            <div id="loginPanelBehind"></div>
+
+            <div id="loginPanel">
+               <div id="loginPanelHeader"><h2>Admin Login Required to Access this Page</h2></div>
+
+               <div id="loginPanelBody">
+                  <?php echo displayMarkupForLoginForm( ADMIN_LOGIN ) ?>
+               </div>
+            </div>
+<?php
+}
+
+
+function displayMarkupForLoginForm( $typeOfLogin = NOT_ADMIN_LOGIN, $urlOfCurrentPage = '' )
+{
+?>
+
+                        <form role="form" id="looksLikeACardboardPaper" method="POST" action="login.php<?php echo '?' . buildStringContainingAllDataFromGET() ?>">
+<?php
+   if ( $typeOfLogin == NOT_ADMIN_LOGIN ) {
+      echo '
+                           <h1 id="mediumSizedText">Log in to RoarConnect</h1>';
+   }
+   else {
+      echo '
+                           <h1 id="mediumSizedText">Admin Login Panel</h1>';
+   }
+?>
+
+                           <div class="form-group">
+                              <label for="username">Email:</label>
+                              <input type="text" name="email" class="form-control" id="username" maxlength="35" value="<?php if(isset($_POST['email'])){echo $_POST['email'];}  ?>"/>
+                           </div>
+
+                           <div class="form-group">
+                              <label for="password">Password:</label>
+                              <input type="password" name="password" class="form-control" id="password" maxlength="35"/>
+                           </div>
+<?php
+   if ( $typeOfLogin == NOT_ADMIN_LOGIN ) {
+      echo '
+                           <p class="help-block">Don\'t have a RoarConnect account? <a href="register.php">Click here to sign up with us</a>.</p>
+                           <p class="help-block">Forgotten your password? <a href="forgotten.php">Click here to reset your password</a>.</p>
+      ';
+   }
+
+   if ( $urlOfCurrentPage != 'login.php' ) {
+      echo '
+                           <input type="hidden" name="urlOfPageToRedirectTo" value="' . $_SERVER['PHP_SELF'] . '" />';
+   }
+   else if ( isset( $_POST['urlOfPageToRedirectTo'] ) ) {
+      echo '
+                           <input type="hidden" name="urlOfPageToRedirectTo" value="' . $_POST['urlOfPageToRedirectTo'] . '" />';
+   }
+   else if ( isset( $_GET['urlOfPageToRedirectTo'] ) ) {
+      echo '
+                           <input type="hidden" name="urlOfPageToRedirectTo" value="' . $_GET['urlOfPageToRedirectTo'] . '" />';
+   }
+   else {
+      echo '
+                           <input type="hidden" name="urlOfPageToRedirectTo" value="homepage.php" />';
+   }
+?>
+
+                           <input type="hidden" name="typeOfLogin" value="<?php echo $typeOfLogin ?>" />
+
+                           <div class="form-group">
+                              <button type="submit" name="loginButton" class="btn btn-success">Log In</button>
+                           </div>
+                        </form>
+<?php
+}
+
+
+function displayMarkupForReasonForAdminActionModal( $typeOfAdminAction, $reason, $idOfModal = 'reasonForAdminAction' )
+{
+?>
+
+                  <div style="top: 30%;" id="<?php echo $idOfModal ?>" class="modal fade" role="dialog">
+                     <div class="modal-dialog">
+                        <div class="modal-content">
+                           <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title">Reason For <?php echo $typeOfAdminAction ?></h4>
+                           </div>
+                           <div class="modal-body">
+                              <p><?php echo $reason ?></p>
+                           </div>
+                           <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+            
+<?php
+}
+
+
+function displayMarkupForSearchBar($action, $placeholder)
+{
+?>
+            <form method="GET" action="<?php echo $action ?>" class="form-inline text-center" id="searchBar">
+               <input type="text" name="searchQuery" value="<?php echo isset($_GET['searchQuery']) ? $_GET['searchQuery'] : '' ?>" placeholder="<?php echo $placeholder ?>" class="form-control" id="search" />
+               <button type="submit" name="searchButton" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+            </form>
 <?php
 }
 ?>

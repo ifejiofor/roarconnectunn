@@ -1,5 +1,5 @@
 <?php
-include_once 'markupsCommonToTopAndBottomOfPages.php';
+include_once 'includes/markupFunctions.php';
 
 displayMarkupsCommonToTopOfPages( 'Registration Successful', DO_NOT_DISPLAY_NAVIGATION_MENU, 'registrationSuccessful.php' );
 ?>

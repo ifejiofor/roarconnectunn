@@ -1,7 +1,7 @@
 <?php
-include_once 'in.php';
-include_once 'require.php';
-include_once 'markupsCommonToTopAndBottomOfPages.php';
+include_once 'includes/utilityFunctions.php';
+include_once 'includes/performBasicInitializations.php';
+include_once 'includes/markupFunctions.php';
 
 if ( !isset( $_GET['idOfVendor'] ) || !consistsOfOnlyDigits( $_GET['idOfVendor'] ) ) {
    header( 'Location: index.php' );
@@ -74,7 +74,7 @@ else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
          $nameOfItem = $category;
       }
       
-      if ( loggin() ) {
+      if ( userIsLoggedIn() ) {
 ?>
                <a href="<?php echo $requiredVendorSellsManyTypesOfFood ? 'choose_type_of_food.php' : 'make_order_for_food.php' ?>?category=<?php echo ucwords( $category ) ?>&idOfVendor=<?php echo $_GET['idOfVendor'] ?>" id="looksLikeALargeHoverableIcon">
                   <div style="width: 100%; height: 80%; background-image: url( '<?php echo 'images/uploaded' . ucwords( $category ) . 'Snapshots/VENDOR_' . $_GET['idOfVendor'] . '@' . $urlOfSnapshot ?>' ); background-size: cover;"></div>
@@ -100,7 +100,7 @@ else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
                <p id="boldSmallSizedText"><a href="view_all_food_vendors.php">&lt;&lt;Click here to go back to the Food Delivery Marketplace</a>.</p>
             </div>
 <?php
-   if ( !loggin() ) {
+   if ( !userIsLoggedIn() ) {
       // The markup that the following function gives is the markup for the modal that the buttons got earlier from 'getMarkupButtonThatWillTellUserToLogInBeforeContinuing' brings up 
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }

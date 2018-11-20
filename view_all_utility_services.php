@@ -6,9 +6,9 @@ else if ( $_GET['category'] != 'Painting'&& $_GET['category'] != 'BeautyService'
    header( 'Location: index.php' );
 }
 else {
-	require_once 'in.php';
-	require_once 'require.php';
-   require_once 'markupsCommonToTopAndBottomOfPages.php';
+	require_once 'includes/utilityFunctions.php';
+	require_once 'includes/performBasicInitializations.php';
+   require_once 'includes/markupFunctions.php';
 
    if ( $_GET['category'] == 'Painting' ) {
       $nameOfService = 'Painting';
@@ -55,7 +55,7 @@ else {
                <header id="minorHeaderType2">
                   <h3><?php echo mysqli_num_rows( $result ) == 1 ? 'Storefront' : 'Storefronts' ?> of RoarConnect Special <?php echo $nameOfServiceProvider . ( mysqli_num_rows( $result ) == 1 ? '' : 's' ) ?></h3>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
 ?>
                   <p><a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-warning">Add a New <?php echo $nameOfServiceProvider ?></a></p>
 <?php
@@ -73,7 +73,7 @@ else {
 
                   <div class="text-center">
 <?php
-         if ( loggin() ) {
+         if ( userIsLoggedIn() ) {
 ?>
                      <a href="view_uploads_by_vendor.php?vendor=<?php echo $row['vendor_id'] ?>" class="btn btn-default btn-lg" id="boldSmallSizedText">Click Here</a>
 <?php
@@ -94,7 +94,7 @@ else {
                      to preview some <?php echo strtolower( $nameOfService ) ?> jobs done by <?php echo $row['vendor_name'] ?>.
                   </div>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
 ?>
                   <p class="text-center">Also, you may either</p>
                   <p class="text-center"><a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $row['vendor_id'] ?>" class="btn btn-warning">Click Here</a> to edit details about <?php echo $row['vendor_name'] ?>.</p>
@@ -112,7 +112,7 @@ else {
 <?php
    }
    
-   if ( !loggin() ) {
+   if ( !userIsLoggedIn() ) {
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }
 

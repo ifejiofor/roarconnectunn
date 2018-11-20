@@ -1,15 +1,14 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
-require_once 'markupsForMiscellaneousTasks.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 $requiredAction = isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'editCourse' ? 'editCourse' : 'addNewCourse';
 
 displayMarkupsCommonToTopOfPages( $requiredAction == 'editCourse' ? 'Edit Course' : 'Add New Course', DISPLAY_NAVIGATION_MENU, 'add_or_edit_course.php' );
 
 
-if ( !loggedInAsAdmin() ) {
+if ( !userIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }
@@ -24,7 +23,7 @@ $formShouldBeDisplayed = !$_GET || isset( $_GET['formShouldBeDisplayed'] );
 $formShouldNotBeDisplayed = !$formShouldBeDisplayed;
 $thereIsNoErrorInFormData = true;
 
-if ( $_GET && loggedInAsAdmin() ) {
+if ( $_GET && userIsLoggedInAsAdmin() ) {
    $courseCode = trim( htmlentities( $_GET['courseCode'] ) );
    $courseTitle = trim( htmlentities( $_GET['courseTitle'] ) );
    $department = trim( htmlentities( $_GET['department'] ) );

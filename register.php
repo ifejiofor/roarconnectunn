@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 
 <?php
-require 'in.php';
-require 'markupsCommonToTopAndBottomOfPages.php';
+require 'includes/utilityFunctions.php';
+require 'includes/markupFunctions.php';
 error_reporting(0);
 
 displayMarkupsCommonToTopOfPages( 'Sign Up', DO_NOT_DISPLAY_NAVIGATION_MENU, 'register.php' );
 
-if (!loggin()){
+if (!userIsLoggedIn()){
     if(!isset($_POST['captcha'])){
         $_SESSION['captcha']=rand(10000, 99999);
     }
@@ -38,7 +38,7 @@ if (!loggin()){
 						$email_new= strtolower(substr($email, strpos($email, '@')+1));
 			            if(preg_match('/@/', $email)){
 			                if($email_new=='gmail.com'|| $email_new=='rocketmail.com' || $email_new=='yahoo.com' || $email_new=='yahoo.com.ng' || $email_new=='yahoo.co.uk' || $email_new=='gmail.co.uk' || $email_new=='gmail.com.ng' || $email_new=='unn.edu.ng'){
-				                require 'require.php';
+				                require 'includes/performBasicInitializations.php';
 							   
 								$email_chick="SELECT `email` FROM `users` WHERE `email`='$email'";
 								if($email_query=mysqli_query($db, $email_chick)){
@@ -68,7 +68,7 @@ if (!loggin()){
 												        $enter="INSERT INTO `users`(`firstname`, `email`, `phone_number`, `password`, `attribute`) VALUES ('$first', '$email', '$phone', '$pass', '$att')";
 										                if($enter_run=mysqli_query($db, $enter)){
                                                   $userIdOfJustRegisteredUser = mysqli_insert_id( $db );
-                                                   $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "Welcome Message", "Welcome to RoarConnect, keep logging in to enjoy the best of quality services and information.", NULL, ' . $userIdOfJustRegisteredUser . ', NOW() )';
+                                                   $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "Welcome Message", "Welcome to RoarConnect, keep userIsLoggedIng in to enjoy the best of quality services and information.", NULL, ' . $userIdOfJustRegisteredUser . ', NOW() )';
                                                   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
                                                    include  'sendmail.php'; // The code in this file sends an email to the just registered user
 										                    header('location:registrationSuccessful.php');
@@ -194,7 +194,7 @@ if (!loggin()){
 <?php
 }else{
 	echo '<p>';
-   getfield();
+   getFirstNameOfUser();
    echo ', you are already logged in.</p>';
 }
 

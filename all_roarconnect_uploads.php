@@ -7,10 +7,9 @@ if ( $_GET['type'] != 'Newly Uploaded' && $_GET['type'] != 'Unapproved' && $_GET
    header( 'Location: index.php' );
 }
 
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
-require_once 'markupsForMiscellaneousTasks.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 if ( $_GET['type'] == 'Newly Uploaded' ) {
    $descriptionOfType = 'newly uploaded items on RoarConnect that have not been either approved or unapproved';
@@ -24,7 +23,7 @@ else if ( $_GET['type'] == 'Approved' ) {
 
 displayMarkupsCommonToTopOfPages( $_GET['type'] . ' Items', DISPLAY_NAVIGATION_MENU, 'all_roarconnect_uploads.php' );
 
-if ( !loggedInAsAdmin() ) {
+if ( !userIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }

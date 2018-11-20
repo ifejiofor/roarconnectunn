@@ -1,8 +1,8 @@
 <?php
-   require_once 'in.php';
-   require_once 'require.php';
+   require_once 'includes/utilityFunctions.php';
+   require_once 'includes/performBasicInitializations.php';
 
-   if ( !loggedInAsAdmin() ) {
+   if ( !userIsLoggedInAsAdmin() ) {
       header( 'Location: index.php' );
    }
 

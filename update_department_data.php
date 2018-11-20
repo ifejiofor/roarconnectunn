@@ -1,8 +1,7 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
-require_once 'markupsForMiscellaneousTasks.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 if ( !$_GET ) {
    header( 'Location: lecture_notes.php' );
@@ -45,7 +44,7 @@ else if ( isset( $_GET['nameOfFaculty'] ) && !consistsOfOnlyAlphabetsAndSpaces( 
 
 displayMarkupsCommonToTopOfPages( 'Update Department Data', DISPLAY_NAVIGATION_MENU, 'update_department_data.php' );
 
-if ( !loggedInAsAdmin() ) {
+if ( !userIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }
@@ -53,7 +52,7 @@ if ( !loggedInAsAdmin() ) {
 if ( $formShouldBeDisplayed || $thereIsErrorInFormData ) {
    displayUpdateDepartmentDataForm();
 }
-else if ( loggedInAsAdmin() ) {
+else if ( userIsLoggedInAsAdmin() ) {
    if ( isset( $_GET['durationOfProgramme'] ) ) {
       $query = 'UPDATE departments SET department_duration_of_programme = ' . $durationOfProgramme . ' WHERE department_name = "' . $nameOfDepartment . '"';
       mysqli_query( $db, $query ) or die( 'A' . $markupIndicatingDatabaseQueryFailure );

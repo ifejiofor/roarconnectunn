@@ -1,7 +1,7 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 define( 'MAXIMUM_ALLOWABLE_FILE_SIZE', 512000 ); // 512000 Bytes is equal to 500 Kilobytes
 
 if ( !isset( $_GET['requiredAction'] ) || ( $_GET['requiredAction'] != 'addVendor' && $_GET['requiredAction'] != 'editVendor' ) ) {
@@ -39,7 +39,7 @@ else if ( $_GET['requiredAction'] == 'editVendor' ) {
    $defaultSecondPhoneNumberOfVendor = $row['vendor_phone_number_2'];
 }
 
-if ( $_POST && loggedInAsAdmin() ) {
+if ( $_POST && userIsLoggedInAsAdmin() ) {
    $thereIsErrorInFormData = false;
 
    if ( $_GET['requiredAction'] == 'addVendor' ) {
@@ -140,7 +140,7 @@ if ( $_POST && loggedInAsAdmin() ) {
 
 displayMarkupsCommonToTopOfPages( $_GET['requiredAction'] == 'addVendor' ? 'Add New Vendor' : 'Edit Vendor', DISPLAY_NAVIGATION_MENU, 'add_or_edit_vendor.php' );
 
-if ( !loggedInAsAdmin() ) {
+if ( !userIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }

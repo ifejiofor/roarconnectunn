@@ -1,10 +1,10 @@
 <?php
 error_reporting(0);
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
-if( !loggin() ){
+if( !userIsLoggedIn() ){
    header('Location: index.php');
 }
 

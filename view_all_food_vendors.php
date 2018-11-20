@@ -1,23 +1,23 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 displayMarkupscommonToTopOfPages( 'Food Delivery', DISPLAY_NAVIGATION_MENU, 'view_all_food_vendors.php' );
 ?>
             <header id="minorHeader">
-               <h2>Welcome to RoarConnect Food Delivery Marketplace</h2>
+               <h2>RoarConnect Food Delivery Marketplace</h2>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
 ?>
-               <p>
+            <p>
 			      <a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-warning">Add a New Food Vendor</a>
-                  <a href="view_all_food_orders.php" class="btn btn-warning">View All Food Orders</a>
+               <a href="view_all_food_orders.php" class="btn btn-warning">View All Food Orders</a>
 			   </p>
 <?php
       }
 ?>
-               <p id="minorTextInMinorHeader">Here you can make an order for any food of your choice and get it delivered to your doorstep in no time.</p>
+               <p>Order from a vendor of your choice and get the food delivered to your doorstep.</p>
             </header>
 
             <div class="text-center">
@@ -35,7 +35,7 @@ while ( $rowContainingVendorData != NULL ) {
                      <h4 id="iconContent">Order for food from <?php echo $rowContainingVendorData['vendor_name'] ?></h4>
                   </a>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
 ?>
                   <p>
                      <a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-default btn-sm">Edit Vendor</a>

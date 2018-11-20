@@ -1,10 +1,10 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 define( 'MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY', 10 );
 
-if(!loggin()){
+if(!userIsLoggedIn()){
 	header('location:index.php');
 }
 

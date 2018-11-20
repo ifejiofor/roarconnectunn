@@ -1,7 +1,7 @@
 <?php
-require'in.php';
-require'require.php';
-if(!loggin()){
+require'includes/utilityFunctions.php';
+require'includes/performBasicInitializations.php';
+if(!userIsLoggedIn()){
 	header('location:index.php');
 }else{
 		$name=$_FILES['file']['name'];

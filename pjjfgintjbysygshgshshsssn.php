@@ -1,14 +1,14 @@
 <?php
-require_once 'in.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/markupFunctions.php';
 error_reporting(0);
 
 displayMarkupsCommonToTopOfPages( 'Reset Password', DO_NOT_DISPLAY_NAVIGATION_MENU, 'reset.php' );
 
-if(loggin()){
+if(userIsLoggedIn()){
 	echo '
       <p id="mediumSizedText">';
-   getfield();
+   getFirstNameOfUser();
    echo ', you are already logged in.
       </p>
    ';
@@ -37,7 +37,7 @@ else{
 			   }
 
          if($newPasswordContainsAtLeastOneNumber){
-					require_once 'require.php';
+					require_once 'includes/performBasicInitializations.php';
 	$query="UPDATE `users` SET `password`='$npass' WHERE `email`= '".$email."'";
 	if($query_run=mysqli_query($db, $query)){
 		setcookie('passwardResetSuccessful', 'true', time()+3600);

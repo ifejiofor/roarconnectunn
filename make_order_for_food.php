@@ -1,12 +1,12 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 define( 'MAXIMUM_QUANTITY_OF_DRINK', 20 );
 define( 'DELIVERY_PRICE_WITHIN_CAMPUS', 100 );
 define( 'DELIVERY_PRICE_OUTSIDE_CAMPUS', 200 );
 
-if ( !loggin() ) {
+if ( !userIsLoggedIn() ) {
    header( 'Location: index.php' );
 }
 

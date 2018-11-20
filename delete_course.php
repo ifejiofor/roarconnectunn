@@ -1,16 +1,16 @@
 <?php
-require_once 'in.php';
+require_once 'includes/utilityFunctions.php';
 
 if ( isset( $_GET['courseCode'] ) ) {
    $_POST['courseCode'] = $_GET['courseCode'];
 }
 
-if ( !loggedInAsAdmin() || !isset( $_POST['courseCode'] ) ) {
+if ( !userIsLoggedInAsAdmin() || !isset( $_POST['courseCode'] ) ) {
    header( 'Location: lecture_notes.php' );
 }
 
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 $nameOfDataToExemptWhenBuildingStringFromGET = 'courseCode';
 

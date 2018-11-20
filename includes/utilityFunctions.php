@@ -1,44 +1,51 @@
 <?php
-ob_start();
-session_start();
-$current_file= $_SERVER['SCRIPT_NAME'];
-global $user_id;
-	require_once 'require.php';
+/*
+   This file contains definitions of the various utility functions used by the pages of RoarConnect
+*/
 
-function loggin(){
-	if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])){
-	return true;
-	}else{
-	return false;
-	}
+require_once 'performBasicInitializations.php';
+
+
+function userIsLoggedIn()
+{
+   return isset($_SESSION['loginStatus']) && $_SESSION['loginStatus'] == 'loggedin';
 }
 
-function loggedInAsAdmin() {
-   return loggin() && isset( $_SESSION['loginPrivileges'] ) && $_SESSION['loginPrivileges'] == 'admin';
+
+function userIsLoggedInAsAdmin()
+{
+   return userIsLoggedIn() && isset($_SESSION['loginPrivileges']) && $_SESSION['loginPrivileges'] == 'admin';
 }
 
-function getfield (){
+
+function getFirstNameOfUser()
+{
    global $db;
-	$query="SELECT `firstname` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
-	if($query_run=mysqli_query($db, $query)){
-		$query_result=mysqli_fetch_array($query_run);
-		$query_result['firstname'];
-		return ucwords($query_result['firstname']);
-	
-	}else{
-		return 'error';
+
+	$query = "SELECT `firstname` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
+   $query_run = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   $query_result = mysqli_fetch_array($query_run);
+
+	if($query_result != FALSE) {
+		return $query_result['firstname'];
 	}
+   else {
+      return '';
+   }
 }
 
-function getatt(){
+
+function getatt()
+{
    global $db;
+
 	$query="SELECT `attribute` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
-	if($query_run=mysqli_query($db, $query)){
+
+	if($query_run = mysqli_query($db, $query)) {
 		$query_result=mysqli_fetch_array($query_run);
-		$query_result['attribute'];
 		return ucwords($query_result['attribute']);
-	
-	}else{
+	}
+   else {
 		return 'error';
 	}
 }
@@ -173,23 +180,53 @@ function addLeadingZeroIfNecessary( $minute )
 function separateAllLinesOfTextWithParagraphTags( $text )
 {
    $textContainingParagraphTags = "";
-   $lineOfTextReadSoFar = "";
+   $buffer = "";
    
    for ( $i = 0; $i < strlen( $text ); $i++ ) {
       if ( $text[$i] != "\n" ) {
-         $lineOfTextReadSoFar .= $text[$i];
+         $buffer .= $text[$i];
       }
-      else {
-         $textContainingParagraphTags .= "\n<p>\n   " .  $lineOfTextReadSoFar . "\n</p>\n";
-         $lineOfTextReadSoFar = "";
+      else if ( $buffer != "" ) {
+         $textContainingParagraphTags .= "<p>" .  $buffer . "</p>";
+         $buffer = "";
       }
    }
    
-   if ( $lineOfTextReadSoFar != "" ) {
-      $textContainingParagraphTags .= "\n<p>\n   " .  $lineOfTextReadSoFar . "\n</p>\n";
+   if ( $buffer != "" ) {
+      $textContainingParagraphTags .= "<p>" .  $buffer . "</p>";
    }
    
    return $textContainingParagraphTags;
+}
+
+
+function getTextFromFirstParagraph($htmlText, $maximumNumberOfCharactersToGet = 200)
+{
+   $start = strpos($htmlText, '<p>');
+
+   if ($start === FALSE) {
+      return '';
+   }
+
+   $stop = strpos($htmlText, '</p>', $start);
+
+   if ($stop === FALSE) {
+      $stop = strlen($htmlText);
+   }
+
+   $word = '';
+   $textFromFirstParagraph = '';
+   for ($i = $start + 3, $count = 0; $i < $stop && $count < $maximumNumberOfCharactersToGet; $i++, $count++ ) {
+      if (isAlpha($htmlText[$i]) || isDigit($htmlText[$i]) ) {
+         $word .= $htmlText[$i];
+      }
+      else {
+         $textFromFirstParagraph .= $word . $htmlText[$i];
+         $word = '';
+      }
+   }
+
+   return $textFromFirstParagraph;
 }
 
 
@@ -200,7 +237,7 @@ function displayLatestStuffs()
    /*
       Retrieve and display a few latest blog post updates
    */
-   if ( loggin() ) {
+   if ( userIsLoggedIn() ) {
       $attributeOfUser = getatt();
       
       if ( $attributeOfUser == 'ASPIRANT' ) {

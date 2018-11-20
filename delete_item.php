@@ -1,8 +1,8 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
 
-if ( !loggin() ) {
+if ( !userIsLoggedIn() ) {
    header('Location: index.php');
 }
 
@@ -17,7 +17,7 @@ if ( $_GET['category'] != 'Books' && $_GET['category'] != 'Gadgets' && $_GET['ca
 }
 
 if ( isset( $_GET['requiredAction'] ) && isset( $_GET['idOfItem'] ) && $_GET['requiredAction'] == 'performAdminDeletion' ) {
-   if ( !loggedInAsAdmin() ) {
+   if ( !userIsLoggedInAsAdmin() ) {
       header( 'Location: index.php' );
    }
 

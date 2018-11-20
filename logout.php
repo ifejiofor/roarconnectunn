@@ -1,6 +1,5 @@
 <?php   
-require'in.php';
-session_destroy();
-
-header("location: homepage.php");
+session_start();
+$_SESSION['loginStatus'] = 'loggedout';
+header("location: index.php");
 ?> 

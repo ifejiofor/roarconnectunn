@@ -1,7 +1,7 @@
  <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 if ( !isset( $_GET['vendor'] ) || !consistsOfOnlyDigits( $_GET['vendor'] ) ) {
    header( 'Location: index.php' );

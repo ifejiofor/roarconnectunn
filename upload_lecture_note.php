@@ -1,8 +1,7 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
-require_once 'markupsForMiscellaneousTasks.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 define( 'MAXIMUM_ALLOWABLE_FILE_SIZE', 5242880000); // 5242880000 Bytes is equal to 5000 Megabytes
 define( 'HIGHER_TAG_RELEVANCE', 20 );
@@ -15,7 +14,7 @@ $errorMessageForTags = '';
 
 $lectureNoteHasNotYetBeenUploaded = true;
 
-if ( $_POST && loggedInAsAdmin() ) {
+if ( $_POST && userIsLoggedInAsAdmin() ) {
    $targetFileBaseName = basename( $_FILES['fileToUpload']['name'] );
    $targetFilePath = 'lectureNotes/' . $targetFileBaseName;
    $sourceFilePath = $_FILES['fileToUpload']['tmp_name'];
@@ -148,7 +147,7 @@ if ( $_POST && loggedInAsAdmin() ) {
 
 displayMarkupsCommonToTopOfPages( 'Upload Lecture Note', DISPLAY_NAVIGATION_MENU, 'upload_lecture_note.php' );
 
-if ( !loggedInAsAdmin() ) {
+if ( !userIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }

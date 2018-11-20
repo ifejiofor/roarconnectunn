@@ -1,10 +1,9 @@
 <?php
-require 'in.php';
-require 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
-require_once 'markupsForMiscellaneousTasks.php';
+require 'includes/utilityFunctions.php';
+require 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
-if (!loggin()) {
+if (!userIsLoggedIn()) {
 	header('Location: index.php');
 }
 else if ( !isset( $_GET['category'] ) ) {
@@ -34,7 +33,7 @@ else {
 <?php
 	$directory = 'images/uploaded'. ucwords( $_GET['category'] ) . 'Snapshots';
 if($handle=opendir($directory. '/')){
-	require'require.php';
+	require'includes/performBasicInitializations.php';
 
 	$query="SELECT `id_new`, `people_id`, `Name_of_item`, `Brief_Descripition`, `Price`, `Negotiable`, `Image_size`, `checks` FROM `photo_upload` WHERE `people_id`= '".$_SESSION['user_id']."' AND `Category`='" . $_GET['category'] . "'";
 	$query_run=mysqli_query($db, $query);

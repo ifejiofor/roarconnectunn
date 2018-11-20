@@ -6,9 +6,9 @@ else if ( $_GET['category'] != 'Gadgets' && $_GET['category'] != 'Books' && $_GE
    header( 'Location: view_all_utility_services.php?category=' . $_GET['category'] );
 }
 else {
-	require_once 'in.php';
-	require_once 'require.php';
-   require_once 'markupsCommonToTopAndBottomOfPages.php';
+	require_once 'includes/utilityFunctions.php';
+	require_once 'includes/performBasicInitializations.php';
+   require_once 'includes/markupFunctions.php';
 
    if ( $_GET['category'] == 'Gadgets' ) {
       $categoryInSingularForm = 'Gadget';
@@ -70,7 +70,7 @@ else {
                         <p>Do you like this <?php echo strtolower( $categoryInSingularForm ) ?>?</p>
                         <p>Then contact its seller, <?php echo $rowContainingDataAboutUser['firstname'] . ' on ' . $rowContainingDataAboutUser['phone_number'] ?>.</p>
 <?php
-         if ( loggin() ) {
+         if ( userIsLoggedIn() ) {
 ?>
                         <p>Or <a href="send_roarconnect_message.php?urlOfSourcePage=view_all_items.php&defaultMessageTitle=<?php echo 'Request to Buy ' . ucwords( $rowContainingDataAboutItemForSale['Name_of_item'] ) ?>&defaultIdOfMessageRecipient=<?php echo $rowContainingDataAboutItemForSale['people_id'] ?>" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-send"></span> Send a Message</a>.</p>
 <?php
@@ -97,7 +97,7 @@ else {
                <header id="minorHeaderType2">
                   <h3><?php echo mysqli_num_rows( $result ) == 1 ? 'Storefront' : 'Storefronts' ?> of RoarConnect Special <?php echo mysqli_num_rows( $result ) == 1 ? ' Vendor' : ' Vendors' ?></h3>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
 ?>
                   <p><a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-primary" id="boldSmallSizedText">Add a New Vendor</a></p>
 <?php
@@ -115,7 +115,7 @@ else {
 
                   <div class="text-center">
 <?php
-         if ( loggin() ) {
+         if ( userIsLoggedIn() ) {
 ?>
                      <a href="view_uploads_by_vendor.php?vendor=<?php echo $row['vendor_id'] ?>" class="btn btn-default btn-lg" id="boldSmallSizedText">Click Here</a>
 <?php
@@ -136,7 +136,7 @@ else {
                      to view all <?php echo strtolower( $categoryInPluralForm ) ?> sold by <?php echo $row['vendor_name'] ?>.
                   </div>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
 ?>
                   <p class="text-center">Also, you may either</p>
                   <p class="text-center"><a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $row['vendor_id'] ?>" class="btn btn-primary">Click Here</a> to edit details about <?php echo $row['vendor_name'] ?>.</p>
@@ -155,7 +155,7 @@ else {
    }
 
       
-   if ( !loggin() ) {
+   if ( !userIsLoggedIn() ) {
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }
    

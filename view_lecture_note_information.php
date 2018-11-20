@@ -3,9 +3,9 @@ if ( !$_GET ) {
    header( 'Location: lecture_notes.php' );
 }
 else {
-   require_once 'in.php';
-   require_once 'require.php';
-   require_once 'markupsCommonToTopAndBottomOfPages.php';
+   require_once 'includes/utilityFunctions.php';
+   require_once 'includes/performBasicInitializations.php';
+   require_once 'includes/markupFunctions.php';
    displayMarkupsCommonToTopOfPages( $_GET['departmentName'] . ' Lecture Notes', DISPLAY_NAVIGATION_MENU, 'view_lecture_note_information.php' );
 ?>
             <header id="minorHeader">
@@ -27,7 +27,7 @@ else {
                   <h3 id="boldMediumSizedText"><?php echo $rowContainingCourseData['course_code'] ?></h3>
                   <h4 id="tinySizedText"><?php echo $rowContainingCourseData['course_title'] ?></h4>
 <?php
-      if ( loggedInAsAdmin() ) {
+      if ( userIsLoggedInAsAdmin() ) {
          $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_id = ' . $_GET['departmentId'];
          $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
          $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
@@ -64,7 +64,7 @@ else {
                         <p><?php echo getBriefDescriptionOfFileType( $rowContainingLectureNoteData['lecture_note_file_extension'] ) ?></p>
                         <p><?php echo $rowContainingLectureNoteData['lecture_note_number_of_pages'] . ( $rowContainingLectureNoteData['lecture_note_file_extension'] == 'ppt' || $rowContainingLectureNoteData['lecture_note_file_extension'] == 'pptx' ? ' Slides' : ' Pages' ) ?></p>
 <?php
-         if ( loggin() ) {
+         if ( userIsLoggedIn() ) {
 ?>
                         <p><a href="lectureNotes/<?php echo $rowContainingLectureNoteData['lecture_note_file_name'] . '.' . $rowContainingLectureNoteData['lecture_note_file_extension'] ?>" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> Download</a></p>
 <?php
@@ -73,7 +73,7 @@ else {
             getMarkupForButtonThatWillTellUserToLogInBeforeContinuing( '<span class="glyphicon glyphicon-download-alt"></span> Download' );
          }
 
-         if ( loggedInAsAdmin() ) {
+         if ( userIsLoggedInAsAdmin() ) {
 ?>
                         <p><a href="delete_lecture_note.php?idOfLectureNote=<?php echo $rowContainingLectureNoteData['lecture_note_id'] . buildStringContainingAllDataFromGET() ?>" class="btn btn-sm btn-default">Delete Lecture Note</a></p>
 <?php
@@ -92,7 +92,7 @@ else {
       $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
    }
 
-   if ( !loggin() ) {
+   if ( !userIsLoggedIn() ) {
       // The markup that the following function gives is the markup for the modal that the buttons got earlier from 'getMarkupButtonThatWillTellUserToLogInBeforeContinuing' brings up 
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }

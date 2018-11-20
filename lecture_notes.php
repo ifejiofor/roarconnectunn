@@ -1,28 +1,27 @@
 <?php
-require_once 'in.php';
-require_once 'require.php';
-require_once 'markupsCommonToTopAndBottomOfPages.php';
+require_once 'includes/utilityFunctions.php';
+require_once 'includes/performBasicInitializations.php';
+require_once 'includes/markupFunctions.php';
 
 displayMarkupsCommonToTopOfPages( 'Lecture Note Portal', DISPLAY_NAVIGATION_MENU, 'lecture_notes.php' );
 ?>
             <header id="minorHeader">
-               <h2>Welcome to RoarConnect Lecture Note Portal</h2>
+               <h2>RoarConnect Lecture Note Portal</h2>
 <?php
-if ( loggedInAsAdmin() ) {
+if ( userIsLoggedInAsAdmin() ) {
 ?>
                <p><a href="upload_lecture_note.php" class="btn btn-warning">Upload a New Lecture Note</a></p>
 <?php
 }
 ?>
-               <p id="minorTextInMinorHeader">Your much needed lecture note is just one click away. Simply select the appropriate department or use the search bar below.</p>
+               <p id="minorTextInMinorHeader">Your much needed lecture note is just one click away.</p>
             </header>
 
-            <form method="GET" action="search_for_lecture_notes.php" class="form-inline text-center" id="searchBar">
-               <input type="text" name="searchQuery" placeholder="Search Keyword to get Lecture Note..." class="form-control" id="search" />
-               <button type="submit" name="searchButton" class="btn btn-primary">Search</button>
-            </form>
+<?php
+displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
+?>
 
-            <div id="minorNavigationBar">
+            <!--div id="minorNavigationBar">
                <h2 id="boldSmallSizedTextWithNoMargin">Jump to:</h2>
                <ul class="pagination" id="noMargin">
 <?php
@@ -42,7 +41,7 @@ while ( $rowContainingFacultyData != NULL ) {
 ?>
 
                </ul>
-            </div>
+            </div-->
 
 <?php
 foreach ( $arrayOfFacultyIds as $facultyName => $facultyId ) { // loop through the array created previously (where the faculty name was used as index and faculty id as value)

@@ -4,8 +4,8 @@ if ( !isset( $_GET['searchQuery'] ) ) {
    header( 'Location: lecture_notes.php' );
 }
 else {
-   require_once 'require.php';
-   require_once 'markupsCommonToTopAndBottomOfPages.php';
+   require_once 'includes/performBasicInitializations.php';
+   require_once 'includes/markupFunctions.php';
 
    $searchQuery = $_GET['searchQuery'];
    $delimiters = ' ~!@#$%^&*()_+{}|:"<>?`-=[]\;\',./';
@@ -47,15 +47,12 @@ else {
 ?>
             <header id="minorHeader">
                <h2>Search Results</h2>
-               <p>Below are the lecture notes matching your search query. Download anyone you wish.</p>
-               <p><a href="lecture_notes.php">&lt;&lt; Go Back to Lecture Note Portal</a></p>
             </header>
 
-               <form method="GET" action="search_for_lecture_notes.php" class="form-inline text-center" id="searchBar">
-                  <label for="search">Search for Lecture Note:</label>
-                  <input type="text" name="searchQuery" value="<?php echo $_GET['searchQuery'] ?>" placeholder="Search for Lecture Note..." class="form-control" id="search" />
-                  <button type="submit" name="searchButton" class="btn btn-primary">Search</button>
-               </form>
+<?php
+   displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
+?>
+            <p><a href="lecture_notes.php">&lt;&lt; Go Back to Lecture Note Portal</a></p>
 <?php
    if ( sizeof( $lectureNoteRelevances ) == 0 ) {
 ?>
@@ -82,7 +79,7 @@ else {
 
             <div id="containerWithBorderAndWithoutRoundedCorners">
 <?php
-         if ( loggin() ) {
+         if ( userIsLoggedIn() ) {
 ?>
                <h3 id="noMargin"><a href="lectureNotes/<?php echo $rowContainingLectureNoteData['lecture_note_file_name'] . '.' . $rowContainingLectureNoteData['lecture_note_file_extension'] ?>" target="_blank"><?php echo ucwords( $rowContainingLectureNoteData['lecture_note_file_name'] ) ?></a></h3>
 <?php
@@ -98,7 +95,7 @@ else {
                   <p id="noMargin">Contains notes on <?php echo  $rowContainingCourseData['course_code'] . ' (' . $rowContainingCourseData['course_title'] . ')' ?></p>
                   <p id="noMargin">Offered in <?php echo $rowContainingDepartmentData['department_name'] ?> department</p>
 <?php
-         if ( loggin() ) {
+         if ( userIsLoggedIn() ) {
 ?>
                   <p id="noMargin"><a href="lectureNotes/<?php echo $rowContainingLectureNoteData['lecture_note_file_name'] . '.' . $rowContainingLectureNoteData['lecture_note_file_extension'] ?>" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> Download</a></p>
 <?php
@@ -108,7 +105,7 @@ else {
          }
 ?>
 <?php
-         if ( loggedInAsAdmin() ) {
+         if ( userIsLoggedInAsAdmin() ) {
 ?>
                   <p id="noMargin"><a href="delete_lecture_note.php?idOfLectureNote=<?php echo $rowContainingLectureNoteData['lecture_note_id'] . buildStringContainingAllDataFromGET() ?>" class="btn btn-sm btn-default">Delete Lecture Note</a></p>
 <?php
@@ -120,7 +117,7 @@ else {
       }
    }
 
-   if ( !loggin() ) {
+   if ( !userIsLoggedIn() ) {
       // The markup that the following function gives is the markup for the modal that the buttons got earlier from 'getMarkupButtonThatWillTellUserToLogInBeforeContinuing' brings up 
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }
