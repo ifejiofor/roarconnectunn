@@ -3,9 +3,7 @@ if ( !$_GET ) {
    header( 'Location: lecture_notes.php' );
 }
 else {
-   require_once 'includes/utilityFunctions.php';
-   require_once 'includes/performBasicInitializations.php';
-   require_once 'includes/markupFunctions.php';
+   require_once 'includes/generalHeaderFile.php';
 
    displayMarkupsCommonToTopOfPages( $_GET['departmentName'] . ' Lecture Notes', DISPLAY_NAVIGATION_MENU, 'choose_year_of_study_of_lecture_note.php' );
 ?>

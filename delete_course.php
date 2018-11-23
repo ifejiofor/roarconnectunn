@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 if ( isset( $_GET['courseCode'] ) ) {
    $_POST['courseCode'] = $_GET['courseCode'];
@@ -8,9 +8,6 @@ if ( isset( $_GET['courseCode'] ) ) {
 if ( !userIsLoggedInAsAdmin() || !isset( $_POST['courseCode'] ) ) {
    header( 'Location: lecture_notes.php' );
 }
-
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
 
 $nameOfDataToExemptWhenBuildingStringFromGET = 'courseCode';
 

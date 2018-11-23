@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Send Message', DISPLAY_NAVIGATION_MENU, 'send_roarconnect_message.php' );
 

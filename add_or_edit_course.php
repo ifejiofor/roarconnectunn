@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 $requiredAction = isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'editCourse' ? 'editCourse' : 'addNewCourse';
 

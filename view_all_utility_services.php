@@ -6,9 +6,7 @@ else if ( $_GET['category'] != 'Painting'&& $_GET['category'] != 'BeautyService'
    header( 'Location: index.php' );
 }
 else {
-	require_once 'includes/utilityFunctions.php';
-	require_once 'includes/performBasicInitializations.php';
-   require_once 'includes/markupFunctions.php';
+	require_once 'includes/generalHeaderFile.php';
 
    if ( $_GET['category'] == 'Painting' ) {
       $nameOfService = 'Painting';

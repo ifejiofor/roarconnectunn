@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/markupFunctions.php';
-error_reporting(0);
+require_once 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Reset Password', DO_NOT_DISPLAY_NAVIGATION_MENU, 'reset.php' );
 

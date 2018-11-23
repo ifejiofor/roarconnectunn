@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 define( 'MAXIMUM_ALLOWABLE_FILE_SIZE', 512000 ); // 512000 Bytes is equal to 500 Kilobytes
 
 if ( !isset( $_GET['requiredAction'] ) || ( $_GET['requiredAction'] != 'addVendor' && $_GET['requiredAction'] != 'editVendor' ) ) {

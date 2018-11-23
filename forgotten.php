@@ -1,8 +1,6 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
-require_once "Mail.php";
+require_once 'includes/generalHeaderFile.php';
+require_once "includes/Mail.php";
 error_reporting(1);
 
 displayMarkupsCommonToTopOfPages( 'Forgotten Password', DO_NOT_DISPLAY_NAVIGATION_MENU, 'forgotten.php' );

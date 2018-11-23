@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 define( 'MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY', 5 );
 
 if(!userIsLoggedIn()){

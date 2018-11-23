@@ -4,8 +4,7 @@ if ( !isset( $_GET['searchQuery'] ) ) {
    header( 'Location: lecture_notes.php' );
 }
 else {
-   require_once 'includes/performBasicInitializations.php';
-   require_once 'includes/markupFunctions.php';
+   require_once 'includes/generalHeaderFile.php';
 
    $searchQuery = $_GET['searchQuery'];
    $delimiters = ' ~!@#$%^&*()_+{}|:"<>?`-=[]\;\',./';

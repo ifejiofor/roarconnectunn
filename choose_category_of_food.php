@@ -1,7 +1,5 @@
 <?php
-include_once 'includes/utilityFunctions.php';
-include_once 'includes/performBasicInitializations.php';
-include_once 'includes/markupFunctions.php';
+include_once 'includes/generalHeaderFile.php';
 
 if ( !isset( $_GET['idOfVendor'] ) || !consistsOfOnlyDigits( $_GET['idOfVendor'] ) ) {
    header( 'Location: index.php' );

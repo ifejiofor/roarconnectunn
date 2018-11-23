@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 define( 'MAXIMUM_ALLOWABLE_FILE_SIZE', 5242880000); // 5242880000 Bytes is equal to 5000 Megabytes
 define( 'HIGHER_TAG_RELEVANCE', 20 );

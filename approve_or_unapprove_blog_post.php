@@ -1,6 +1,5 @@
 <?php
-   require_once 'includes/utilityFunctions.php';
-   require_once 'includes/performBasicInitializations.php';
+   require_once 'includes/generalHeaderFile.php';
 
    if ( !isset( $_GET['requiredAction'] ) || ( $_GET['requiredAction'] != 'performAdminApproval' && $_GET['requiredAction'] != 'performAdminUnapproval' ) ) {
       header( 'Location: index.php' );

@@ -50,6 +50,7 @@ function getatt()
 	}
 }
 
+
 function buildStringContainingAllDataFromGET( $nameOfDataToExempt1 = '', $nameOfDataToExempt2 = '', $nameOfDataToExempt3 =  '' )
 {
    $stringContainingAllDataFromGET = '';
@@ -63,6 +64,7 @@ function buildStringContainingAllDataFromGET( $nameOfDataToExempt1 = '', $nameOf
    return $stringContainingAllDataFromGET;
 }
 
+
 function isAlpha( $char )
 {
    $char = strtolower( $char );
@@ -74,11 +76,13 @@ function isAlpha( $char )
       || $char == 'y' || $char == 'z';
 }
 
+
 function isDigit( $char )
 {
    return $char == '0' || $char == '1' || $char == '2' || $char == '3' || $char == '4' || $char == '5'
       || $char == '6' || $char == '7' || $char == '8' || $char == '9';
 }
+
 
 function consistsOfOnlyAlphabets( $string )
 {
@@ -91,6 +95,7 @@ function consistsOfOnlyAlphabets( $string )
    return $index == strlen( $string );
 }
 
+
 function consistsOfOnlyDigits( $string )
 {
    for ( $index = 0; $index < strlen( $string ); $index++ ) {
@@ -100,7 +105,9 @@ function consistsOfOnlyDigits( $string )
    }
 
    return $index == strlen( $string );
+
 }
+
 
 function consistsOfOnlyAlphabetsAndSpaces( $string )
 {
@@ -113,6 +120,7 @@ function consistsOfOnlyAlphabetsAndSpaces( $string )
    return $index == strlen( $string );
 }
 
+
 function consistsOfOnlyAlphabetsAndDigits( $string )
 {
    for ( $index = 0; $index < strlen( $string ); $index++ ) {
@@ -123,6 +131,7 @@ function consistsOfOnlyAlphabetsAndDigits( $string )
 
    return $index == strlen( $string );
 }
+
 
 function consistsOfOnlyAlphabetsAndDigitsAndSpaces( $string )
 {

@@ -7,9 +7,7 @@ if ( $_GET['type'] != 'Newly Uploaded' && $_GET['type'] != 'Unapproved' && $_GET
    header( 'Location: index.php' );
 }
 
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 if ( $_GET['type'] == 'Newly Uploaded' ) {
    $descriptionOfType = 'newly uploaded items on RoarConnect that have not been either approved or unapproved';

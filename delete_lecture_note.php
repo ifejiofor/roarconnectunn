@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 if ( isset( $_GET['idOfLectureNote'] ) ) {
    $_POST['idOfLectureNote'] = $_GET['idOfLectureNote'];

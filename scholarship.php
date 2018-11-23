@@ -1,6 +1,6 @@
 <?php
-require'includes/utilityFunctions.php';
-require'includes/performBasicInitializations.php';
+require'includes/generalHeaderFile.php';
+
 if(!userIsLoggedIn()){
 	header('location:index.php');
 }else{

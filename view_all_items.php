@@ -6,9 +6,7 @@ else if ( $_GET['category'] != 'Gadgets' && $_GET['category'] != 'Books' && $_GE
    header( 'Location: view_all_utility_services.php?category=' . $_GET['category'] );
 }
 else {
-	require_once 'includes/utilityFunctions.php';
-	require_once 'includes/performBasicInitializations.php';
-   require_once 'includes/markupFunctions.php';
+	require_once 'includes/generalHeaderFile.php';
 
    if ( $_GET['category'] == 'Gadgets' ) {
       $categoryInSingularForm = 'Gadget';

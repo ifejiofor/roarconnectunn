@@ -1,7 +1,5 @@
 <?php
-require 'includes/utilityFunctions.php';
-require 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require 'includes/generalHeaderFile.php';
 
 if (!userIsLoggedIn()) {
 	header('Location: index.php');

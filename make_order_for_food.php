@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 define( 'MAXIMUM_QUANTITY_OF_DRINK', 20 );
 define( 'DELIVERY_PRICE_WITHIN_CAMPUS', 100 );
 define( 'DELIVERY_PRICE_OUTSIDE_CAMPUS', 200 );

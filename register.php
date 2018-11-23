@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 
 <?php
-require 'includes/utilityFunctions.php';
-require 'includes/markupFunctions.php';
-error_reporting(0);
+require 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Sign Up', DO_NOT_DISPLAY_NAVIGATION_MENU, 'register.php' );
 

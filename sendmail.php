@@ -1,6 +1,6 @@
 <?php
 error_reporting(1);
-require_once "Mail.php";
+require_once "includes/Mail.php";
 $from= "roarconnect@roarconnectunn.com";
 $to=$email;
 $subject="Successful Registration";

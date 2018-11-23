@@ -1,7 +1,5 @@
 <?php
-require_once 'includes/utilityFunctions.php';
-require_once 'includes/performBasicInitializations.php';
-require_once 'includes/markupFunctions.php';
+require_once 'includes/generalHeaderFile.php';
 
 displayMarkupscommonToTopOfPages( 'Food Delivery', DISPLAY_NAVIGATION_MENU, 'view_all_food_vendors.php' );
 ?>
