@@ -1,37 +1,40 @@
 <?php
 /*
-   This file contains definitions of the various utility functions used by the pages of RoarConnect
+   This file contains definitions of the various utility functions used by the scripts of RoarConnect
 */
 
 require_once 'performBasicInitializations.php';
 
 
-function userIsLoggedIn()
+function currentUserIsLoggedIn()
 {
    return isset($_SESSION['loginStatus']) && $_SESSION['loginStatus'] == 'loggedin';
 }
 
 
-function userIsLoggedInAsAdmin()
+function currentUserIsLoggedInAsAdmin()
 {
-   return userIsLoggedIn() && isset($_SESSION['loginPrivileges']) && $_SESSION['loginPrivileges'] == 'admin';
+   return currentUserIsLoggedIn() && isset($_SESSION['loginPrivileges']) && $_SESSION['loginPrivileges'] == 'admin';
 }
 
 
-function getFirstNameOfUser()
+function getFirstNameOfCurrentUser()
 {
-   global $db;
-
+   global $db, $markupIndicatingDatabaseQueryFailure;
 	$query = "SELECT `firstname` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
    $query_run = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
    $query_result = mysqli_fetch_array($query_run);
+   return $query_result == NULL ? '' : $query_result['firstname'];
+}
 
-	if($query_result != FALSE) {
-		return $query_result['firstname'];
-	}
-   else {
-      return '';
-   }
+
+function getFirstNameOfUser($userId)
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+   $query = 'SELECT firstname FROM users WHERE id = "' . $userId . '"';
+   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $row = mysqli_fetch_assoc( $result );
+   return $row == NULL ? '' : $row['firstname'];
 }
 
 
@@ -239,6 +242,149 @@ function getTextFromFirstParagraph($htmlText, $maximumNumberOfCharactersToGet = 
 }
 
 
+function getDataAboutApprovedBlogPost($blogPostId)
+{
+   global $db;
+   $query = 'SELECT *, MONTHNAME( blog_post_time_of_posting ) AS month_of_posting, DAYOFMONTH( blog_post_time_of_posting ) AS day_of_posting, YEAR( blog_post_time_of_posting ) AS year_of_posting FROM blog_posts WHERE blog_post_id = "' . $blogPostId . '" AND blog_post_approval_status = "APPROVED"';
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   return mysqli_fetch_assoc($result);
+}
+
+
+function blogPostHasNeverBeenViewedByCurrentUser($blogPostId)
+{
+   global $db;
+   $query = 'SELECT * FROM views_to_blog_posts WHERE user_id_of_viewer = "' . $_SESSION['user_id'] . '" AND blog_post_id = "' . $blogPostId . '"';
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   return mysqli_num_rows($result) == 0;
+}
+
+
+function blogPostHasPreviouslyBeenViewedByCurrentUser($blogPostId)
+{
+   return !blogPostHasNeverBeenViewedByCurrentUser($blogPostId);
+}
+
+
+function blogPostIsNotInArray($blogPost, $arrayOfBlogPosts)
+{
+   foreach ($arrayOfBlogPosts as $currentBlogPost) {
+      if ($blogPost['blog_post_id'] == $currentBlogPost['blog_post_id']) {
+         return false;
+      }
+   }
+
+   return true;
+}
+
+
+function getArrayOfDataAboutBlogPostsThatCurrentUserCouldBeInterestedIn($minimumNumberOfRows = 10)
+{
+   $idOfLastBlogPost = 0;
+   $dataAboutBlogPosts = array();
+   $result = getResultContainingBlogPostsThatCurrentUserCouldBeInterestedIn($minimumNumberOfRows);
+
+   for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
+      if ($idOfLastBlogPost != $row['blog_post_id']) {
+         $row['blog_post_relevance'] += 120 * getNumberOfBlogCategoryViewsByCurrentUser($row['blog_category_id']);
+         $dataAboutBlogPosts[] = $row;
+         $idOfLastBlogPost = $row['blog_post_id'];
+      }
+   }
+
+   $dataAboutBlogPosts = sortBlogPostsAccordingToDecreasingRelevance($dataAboutBlogPosts);
+   return $dataAboutBlogPosts;
+}
+
+
+function getResultContainingBlogPostsThatCurrentUserCouldBeInterestedIn($minimumNumberOfRows)
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+
+   $idsOfRecentlyViewedBlogPosts = getArrayOfIdsOfBlogPostsThatWereRecentlyViewedByCurrentUser();
+   $tagIdsOfRecentlyViewedBlogPosts = getArrayOfTagIdsOfBlogPosts($idsOfRecentlyViewedBlogPosts);
+
+   $query = 'SELECT blog_posts.blog_post_id, blog_posts.blog_post_caption, blog_posts.blog_post_image_filename, blog_posts.blog_category_id, blog_posts.blog_post_relevance 
+      FROM blog_posts INNER JOIN relationship_between_tags_and_blog_posts ON blog_posts.blog_post_id = relationship_between_tags_and_blog_posts.blog_post_id
+      WHERE FALSE';
+
+   for ($i = 0; $i < count($tagIdsOfRecentlyViewedBlogPosts); $i++) {
+      $query .= ' OR relationship_between_tags_and_blog_posts.blog_tag_id = ' . $tagIdsOfRecentlyViewedBlogPosts[$i];
+   }
+
+   $query .= ' ORDER BY blog_posts.blog_post_relevance DESC, blog_post_id LIMIT ' . ($minimumNumberOfRows * count($tagIdsOfRecentlyViewedBlogPosts));
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   return $result;
+}
+
+
+function getArrayOfIdsOfBlogPostsThatWereRecentlyViewedByCurrentUser()
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+
+   $idsOfBlogPosts = array();
+   $query = 'SELECT blog_post_id FROM views_to_blog_posts WHERE user_id_of_viewer = ' . $_SESSION['user_id'] . ' ORDER BY time_of_viewing DESC LIMIT 10';
+
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+
+   for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
+      $idsOfBlogPosts[] = $row['blog_post_id'];
+   }
+
+   return $idsOfBlogPosts;
+}
+
+
+function getArrayOfTagIdsOfBlogPosts($arrayOfBlogPostIds)
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+   $tagIds = array();
+   $query = 'SELECT blog_tag_id FROM relationship_between_tags_and_blog_posts WHERE FALSE';
+
+   for ($index = 0; $index < count($arrayOfBlogPostIds); $index++) {
+      $query .= ' OR blog_post_id = ' . $arrayOfBlogPostIds[$index];
+   }
+
+   $query .= ' ORDER BY blog_tag_id';
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+
+   for ($index = 0, $row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
+      if ($index == 0 || $tagIds[$index - 1] != $row['blog_tag_id']) {
+         $tagIds[] = $row['blog_tag_id'];
+         $index++;
+      }
+   }
+
+   return $tagIds;
+}
+
+
+function getNumberOfBlogCategoryViewsByCurrentUser($blogCategoryId)
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+   $query = 'SELECT number_of_blog_posts_viewed FROM views_to_blog_categories WHERE blog_category_id = ' . $blogCategoryId . ' AND user_id_of_viewer = ' . $_SESSION['user_id'];
+   $result = mysqli_query($db, $query);
+   $row = mysqli_fetch_assoc($result);
+   return $row == NULL ? 0 : $row['number_of_blog_posts_viewed'];
+}
+
+
+function sortBlogPostsAccordingToDecreasingRelevance($arrayOfDataAboutBlogPosts)
+{
+   for ($pass = 1; $pass < count($arrayOfDataAboutBlogPosts); $pass++) {
+      for ($i = 0; $i < count($arrayOfDataAboutBlogPosts) - $pass; $i++) {
+         if ($arrayOfDataAboutBlogPosts[$i]['blog_post_relevance'] < $arrayOfDataAboutBlogPosts[$i + 1]['blog_post_relevance']) {
+            $temp = $arrayOfDataAboutBlogPosts[$i];
+            $arrayOfDataAboutBlogPosts[$i] = $arrayOfDataAboutBlogPosts[$i + 1];
+            $arrayOfDataAboutBlogPosts[$i + 1] = $temp;
+         }
+      }
+   }
+
+   return $arrayOfDataAboutBlogPosts;
+}
+
+
 function displayLatestStuffs()
 {
    global $db;
@@ -246,7 +392,7 @@ function displayLatestStuffs()
    /*
       Retrieve and display a few latest blog post updates
    */
-   if ( userIsLoggedIn() ) {
+   if ( currentUserIsLoggedIn() ) {
       $attributeOfUser = getatt();
       
       if ( $attributeOfUser == 'ASPIRANT' ) {
@@ -294,7 +440,7 @@ function displayLatestStuffs()
          $resultContainingDataAboutBlogCategory = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
          $rowContainingDataAboutBlogCategory = mysqli_fetch_assoc( $resultContainingDataAboutBlogCategory );
 ?>
-                  <a href="blog.php?category=<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>&idOfRequiredPost=<?php echo $rowContainingLatestBlogPost['blog_post_id'] ?>" id="blogHeadlineContainer">
+                  <a href="blog.php?category=<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>&i=<?php echo $rowContainingLatestBlogPost['blog_post_id'] ?>" id="blogHeadlineContainer">
 <?php
 	if ( $rowContainingLatestBlogPost['blog_post_image_filename'] != NULL ) {
 ?>

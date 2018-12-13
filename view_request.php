@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/generalHeaderFile.php';
 
-if(!userIsLoggedIn()){
+if(!currentUserIsLoggedIn()){
 	header('location:index.php');
 }else{
    displayMarkupsCommonToTopOfPages( 'View Request', DISPLAY_NAVIGATION_MENU, 'view_request.php' );

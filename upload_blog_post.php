@@ -1,4 +1,6 @@
 <?php
+define( 'MAXIMUM_ALLOWABLE_IMAGE_SIZE', 512000 ); // 512000 Bytes is equal to 500 MB
+
 $query = 'SELECT blog_category_id FROM blog_categories WHERE blog_category_name = "' . mysqli_real_escape_string( $db, $_GET['category'] ) . '"';
 $resultContainingBlogCategory = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
 $rowContainingBlogCategory = mysqli_fetch_assoc( $resultContainingBlogCategory );
@@ -61,7 +63,7 @@ if ( isset( $_POST['postButton'] ) ) {
 ?>
 
 <?php
-if ( userIsLoggedIn() ) {
+if ( currentUserIsLoggedIn() ) {
 ?>
                <button id="postNewBlogUpdateButton" class="btn btn-primary">Post a New Update</button>
 <?php

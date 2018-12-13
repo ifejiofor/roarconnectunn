@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/generalHeaderFile.php';
 
-if ( userIsLoggedIn() ) {
+if ( currentUserIsLoggedIn() ) {
    header( 'Location: homepage.php' );
 }
 else {

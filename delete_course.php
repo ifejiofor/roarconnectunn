@@ -5,7 +5,7 @@ if ( isset( $_GET['courseCode'] ) ) {
    $_POST['courseCode'] = $_GET['courseCode'];
 }
 
-if ( !userIsLoggedInAsAdmin() || !isset( $_POST['courseCode'] ) ) {
+if ( !currentUserIsLoggedInAsAdmin() || !isset( $_POST['courseCode'] ) ) {
    header( 'Location: lecture_notes.php' );
 }
 

@@ -3,10 +3,10 @@ require_once 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Reset Password', DO_NOT_DISPLAY_NAVIGATION_MENU, 'reset.php' );
 
-if(userIsLoggedIn()){
+if(currentUserIsLoggedIn()){
 	echo '
       <p id="mediumSizedText">';
-   getFirstNameOfUser();
+   getFirstNameOfCurrentUser();
    echo ', you are already logged in.
       </p>
    ';

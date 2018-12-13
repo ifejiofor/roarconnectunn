@@ -2,22 +2,19 @@
 require_once 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Lecture Note Portal', DISPLAY_NAVIGATION_MENU, 'lecture_notes.php' );
+displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
 ?>
             <header id="minorHeader">
-               <h2>RoarConnect Lecture Note Portal</h2>
+               <h2>RoarConnect's Lecture Note Portal</h2>
+               <p id="minorTextInMinorHeader">Your much needed lecture note is just one click away.</p>
 <?php
-if ( userIsLoggedInAsAdmin() ) {
+if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
-               <p><a href="upload_lecture_note.php" class="btn btn-warning">Upload a New Lecture Note</a></p>
+               <div><a href="upload_lecture_note.php" class="btn btn-primary">Upload a New Lecture Note</a></div>
 <?php
 }
 ?>
-               <p id="minorTextInMinorHeader">Your much needed lecture note is just one click away.</p>
             </header>
-
-<?php
-displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
-?>
 
             <!--div id="minorNavigationBar">
                <h2 id="boldSmallSizedTextWithNoMargin">Jump to:</h2>

@@ -59,7 +59,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
                      <li><a href="lecture_notes.php" <?php echo $urlOfCurrentPage == 'lecture_notes.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-download-alt"></span> Lecture Notes</a></li>
                      <li><a href="view_all_utility_services.php" <?php echo $urlOfCurrentPage == 'view_all_utility_services.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-gift"></span> Utility Services</a></li>
 <?php
-      if ( userIsLoggedIn() ) {
+      if ( currentUserIsLoggedIn() ) {
 	      $query = 'SELECT blog_category_name FROM blog_categories WHERE user_id_of_main_blogger = ' . $_SESSION['user_id'];
 	      $resultContainingBlogPostCategories = mysqli_query( $db, $query) or die( $markupIndicatingDatabaseQueryFailure );
 	      $userIsAMainBlogger = mysqli_num_rows( $resultContainingBlogPostCategories ) > 0;
@@ -77,7 +77,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
          $numberOfUnreadMessages = mysqli_num_rows( $resultContainingAllUnreadMessages );
 ?>
                      <li id="dropdown">
-                        <a id="dropdownLabel"><span class="glyphicon glyphicon-user"></span> <?php echo userIsLoggedInAsAdmin() ? 'Hello, Admin!' : 'Hello, ' . getFirstNameOfUser() ?> <span class="glyphicon glyphicon-chevron-down"></span></a>
+                        <a id="dropdownLabel"><span class="glyphicon glyphicon-user"></span> <?php echo currentUserIsLoggedInAsAdmin() ? 'Hello, Admin!' : 'Hello, ' . getFirstNameOfCurrentUser() ?> <span class="glyphicon glyphicon-chevron-down"></span></a>
                         <ul id="dropdownContent">
                            <li><a href="#"><span class="glyphicon glyphicon-tint"></span> My Profile</a></li>
                            <li><a href="notifications.php"><span class="glyphicon glyphicon-bell"></span><?php echo $numberOfUnreadNotifications > 0 ? '<span class="badge" id="badgeForNotifications">' . $numberOfUnreadNotifications . '</span>' : '' ?> Notifications</a></li>
@@ -96,7 +96,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
 <?php
          }
 
-         if ( userIsLoggedInAsAdmin() ) {
+         if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
                            <li><a href="all_roarconnect_uploads.php"><span class="glyphicon glyphicon-tasks"></span> Manage Uploads</a></li>
 <?php
@@ -127,7 +127,7 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
       </header>
 
 <?php
-   if (!userIsLoggedIn()) {
+   if (!currentUserIsLoggedIn()) {
 ?>
       <div role="dialog" class="modal fade" id="myModal">
          <div class="modal-dialog">

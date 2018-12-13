@@ -50,12 +50,12 @@ else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
       $requiredVendorSellsManyTypesOfFood = false;
    }
 
-   $customizedStyleForBodyElement = 'background-image: url( \'images/vendorFliers/' . $rowContainingVendorData['vendor_name'] . '.jpg\' ); background-size: cover;';
+   $customizedStyleForBodyElement = 'background-image: url( \'images/vendorFliers/' . $rowContainingVendorData['vendor_name'] . '.jpg\' ); background-size: contain;';
    displayMarkupsCommonToTopOfPages( 'Choose Type of Food', DISPLAY_NAVIGATION_MENU, 'choose_category_of_food.php', $customizedStyleForBodyElement );
 ?>
             <div id="minorHeader">
-               <h2><?php echo $rowContainingVendorData['vendor_name'] ?> Delivery Outlet on RoarConnect</h2>
-               <p>Which type of food will you like to order for?</p>
+               <h2><?php echo $rowContainingVendorData['vendor_name'] ?> Menu</h2>
+               <p>What will you like to eat?</p>
             </div>
 
             <div class="text-center">
@@ -72,7 +72,7 @@ else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
          $nameOfItem = $category;
       }
       
-      if ( userIsLoggedIn() ) {
+      if ( currentUserIsLoggedIn() ) {
 ?>
                <a href="<?php echo $requiredVendorSellsManyTypesOfFood ? 'choose_type_of_food.php' : 'make_order_for_food.php' ?>?category=<?php echo ucwords( $category ) ?>&idOfVendor=<?php echo $_GET['idOfVendor'] ?>" id="looksLikeALargeHoverableIcon">
                   <div style="width: 100%; height: 80%; background-image: url( '<?php echo 'images/uploaded' . ucwords( $category ) . 'Snapshots/VENDOR_' . $_GET['idOfVendor'] . '@' . $urlOfSnapshot ?>' ); background-size: cover;"></div>
@@ -98,7 +98,7 @@ else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
                <p id="boldSmallSizedText"><a href="view_all_food_vendors.php">&lt;&lt;Click here to go back to the Food Delivery Marketplace</a>.</p>
             </div>
 <?php
-   if ( !userIsLoggedIn() ) {
+   if ( !currentUserIsLoggedIn() ) {
       // The markup that the following function gives is the markup for the modal that the buttons got earlier from 'getMarkupButtonThatWillTellUserToLogInBeforeContinuing' brings up 
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }

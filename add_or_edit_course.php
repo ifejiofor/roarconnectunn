@@ -6,7 +6,7 @@ $requiredAction = isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] ==
 displayMarkupsCommonToTopOfPages( $requiredAction == 'editCourse' ? 'Edit Course' : 'Add New Course', DISPLAY_NAVIGATION_MENU, 'add_or_edit_course.php' );
 
 
-if ( !userIsLoggedInAsAdmin() ) {
+if ( !currentUserIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }
@@ -21,7 +21,7 @@ $formShouldBeDisplayed = !$_GET || isset( $_GET['formShouldBeDisplayed'] );
 $formShouldNotBeDisplayed = !$formShouldBeDisplayed;
 $thereIsNoErrorInFormData = true;
 
-if ( $_GET && userIsLoggedInAsAdmin() ) {
+if ( $_GET && currentUserIsLoggedInAsAdmin() ) {
    $courseCode = trim( htmlentities( $_GET['courseCode'] ) );
    $courseTitle = trim( htmlentities( $_GET['courseTitle'] ) );
    $department = trim( htmlentities( $_GET['department'] ) );

@@ -21,7 +21,7 @@ else if ( $_GET['type'] == 'Approved' ) {
 
 displayMarkupsCommonToTopOfPages( $_GET['type'] . ' Items', DISPLAY_NAVIGATION_MENU, 'all_roarconnect_uploads.php' );
 
-if ( !userIsLoggedInAsAdmin() ) {
+if ( !currentUserIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }

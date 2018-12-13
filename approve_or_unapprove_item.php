@@ -1,7 +1,7 @@
 <?php
    require_once 'includes/generalHeaderFile.php';
 
-   if ( !userIsLoggedInAsAdmin() ) {
+   if ( !currentUserIsLoggedInAsAdmin() ) {
       header( 'Location: index.php' );
    }
 

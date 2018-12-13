@@ -5,10 +5,10 @@ error_reporting(1);
 
 displayMarkupsCommonToTopOfPages( 'Forgotten Password', DO_NOT_DISPLAY_NAVIGATION_MENU, 'forgotten.php' );
 
-if ( userIsLoggedIn() ) {
+if ( currentUserIsLoggedIn() ) {
 	echo '
       <p id="mediumSizedText">';
-   getFirstNameOfUser();
+   getFirstNameOfCurrentUser();
    echo ', you are already logged in.
       </p>
    ';

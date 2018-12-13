@@ -23,8 +23,8 @@ else {
       $resultContainingTagData = mysqli_query( $db, $query );
       $rowContainingTagData = mysqli_fetch_assoc( $resultContainingTagData );
 
-      $query = 'SELECT lecture_note_id FROM relationship_between_tags_and_lecture_notes WHERE tag_id = ' . $rowContainingTagData['tag_id'];
-      $resultContainingRelationshipData = mysqli_query( $db, $query );
+      $query = 'SELECT lecture_note_id FROM relationship_between_tags_and_lecture_notes WHERE tag_id = "' . $rowContainingTagData['tag_id'] . '"';
+      $resultContainingRelationshipData = mysqli_query( $db, $query ) or die($markupIndicatingDatabaseQueryFailure);
       $rowContainingRelationshipData = mysqli_fetch_assoc( $resultContainingRelationshipData );
 
       while ( $rowContainingRelationshipData != NULL ) {
@@ -43,14 +43,12 @@ else {
    }
 
    displayMarkupsCommonToTopOfPages( 'Lecture Note Search Results', DISPLAY_NAVIGATION_MENU, 'search_for_lecture_notes.php' );
+   displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
 ?>
             <header id="minorHeader">
                <h2>Search Results</h2>
             </header>
 
-<?php
-   displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
-?>
             <p><a href="lecture_notes.php">&lt;&lt; Go Back to Lecture Note Portal</a></p>
 <?php
    if ( sizeof( $lectureNoteRelevances ) == 0 ) {
@@ -78,7 +76,7 @@ else {
 
             <div id="containerWithBorderAndWithoutRoundedCorners">
 <?php
-         if ( userIsLoggedIn() ) {
+         if ( currentUserIsLoggedIn() ) {
 ?>
                <h3 id="noMargin"><a href="lectureNotes/<?php echo $rowContainingLectureNoteData['lecture_note_file_name'] . '.' . $rowContainingLectureNoteData['lecture_note_file_extension'] ?>" target="_blank"><?php echo ucwords( $rowContainingLectureNoteData['lecture_note_file_name'] ) ?></a></h3>
 <?php
@@ -94,7 +92,7 @@ else {
                   <p id="noMargin">Contains notes on <?php echo  $rowContainingCourseData['course_code'] . ' (' . $rowContainingCourseData['course_title'] . ')' ?></p>
                   <p id="noMargin">Offered in <?php echo $rowContainingDepartmentData['department_name'] ?> department</p>
 <?php
-         if ( userIsLoggedIn() ) {
+         if ( currentUserIsLoggedIn() ) {
 ?>
                   <p id="noMargin"><a href="lectureNotes/<?php echo $rowContainingLectureNoteData['lecture_note_file_name'] . '.' . $rowContainingLectureNoteData['lecture_note_file_extension'] ?>" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> Download</a></p>
 <?php
@@ -104,7 +102,7 @@ else {
          }
 ?>
 <?php
-         if ( userIsLoggedInAsAdmin() ) {
+         if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
                   <p id="noMargin"><a href="delete_lecture_note.php?idOfLectureNote=<?php echo $rowContainingLectureNoteData['lecture_note_id'] . buildStringContainingAllDataFromGET() ?>" class="btn btn-sm btn-default">Delete Lecture Note</a></p>
 <?php
@@ -116,7 +114,7 @@ else {
       }
    }
 
-   if ( !userIsLoggedIn() ) {
+   if ( !currentUserIsLoggedIn() ) {
       // The markup that the following function gives is the markup for the modal that the buttons got earlier from 'getMarkupButtonThatWillTellUserToLogInBeforeContinuing' brings up 
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }

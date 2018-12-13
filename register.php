@@ -5,7 +5,7 @@ require 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Sign Up', DO_NOT_DISPLAY_NAVIGATION_MENU, 'register.php' );
 
-if (!userIsLoggedIn()){
+if (!currentUserIsLoggedIn()){
     if(!isset($_POST['captcha'])){
         $_SESSION['captcha']=rand(10000, 99999);
     }
@@ -66,7 +66,7 @@ if (!userIsLoggedIn()){
 												        $enter="INSERT INTO `users`(`firstname`, `email`, `phone_number`, `password`, `attribute`) VALUES ('$first', '$email', '$phone', '$pass', '$att')";
 										                if($enter_run=mysqli_query($db, $enter)){
                                                   $userIdOfJustRegisteredUser = mysqli_insert_id( $db );
-                                                   $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "Welcome Message", "Welcome to RoarConnect, keep userIsLoggedIng in to enjoy the best of quality services and information.", NULL, ' . $userIdOfJustRegisteredUser . ', NOW() )';
+                                                   $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "Welcome Message", "Welcome to RoarConnect, keep currentUserIsLoggedIng in to enjoy the best of quality services and information.", NULL, ' . $userIdOfJustRegisteredUser . ', NOW() )';
                                                   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
                                                    include  'sendmail.php'; // The code in this file sends an email to the just registered user
 										                    header('location:registrationSuccessful.php');
@@ -192,7 +192,7 @@ if (!userIsLoggedIn()){
 <?php
 }else{
 	echo '<p>';
-   getFirstNameOfUser();
+   getFirstNameOfCurrentUser();
    echo ', you are already logged in.</p>';
 }
 

@@ -37,7 +37,7 @@ else if ( $_GET['requiredAction'] == 'editVendor' ) {
    $defaultSecondPhoneNumberOfVendor = $row['vendor_phone_number_2'];
 }
 
-if ( $_POST && userIsLoggedInAsAdmin() ) {
+if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
    $thereIsErrorInFormData = false;
 
    if ( $_GET['requiredAction'] == 'addVendor' ) {
@@ -138,7 +138,7 @@ if ( $_POST && userIsLoggedInAsAdmin() ) {
 
 displayMarkupsCommonToTopOfPages( $_GET['requiredAction'] == 'addVendor' ? 'Add New Vendor' : 'Edit Vendor', DISPLAY_NAVIGATION_MENU, 'add_or_edit_vendor.php' );
 
-if ( !userIsLoggedInAsAdmin() ) {
+if ( !currentUserIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }

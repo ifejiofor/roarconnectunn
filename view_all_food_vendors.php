@@ -4,21 +4,21 @@ require_once 'includes/generalHeaderFile.php';
 displayMarkupscommonToTopOfPages( 'Food Delivery', DISPLAY_NAVIGATION_MENU, 'view_all_food_vendors.php' );
 ?>
             <header id="minorHeader">
-               <h2>RoarConnect Food Delivery Marketplace</h2>
+               <h2>RoarConnect's Food Delivery Marketplace</h2>
+               <p>Order food from a vendor of your choice and get it delivered to your doorstep.</p>
 <?php
-      if ( userIsLoggedInAsAdmin() ) {
+      if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
-            <p>
-			      <a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-warning">Add a New Food Vendor</a>
-               <a href="view_all_food_orders.php" class="btn btn-warning">View All Food Orders</a>
-			   </p>
+            <div>
+			      <a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-primary">Add New Food Vendor</a>
+               <a href="view_all_food_orders.php" class="btn btn-primary">View All Food Orders</a>
+			   </div>
 <?php
       }
 ?>
-               <p>Order from a vendor of your choice and get the food delivered to your doorstep.</p>
             </header>
 
-            <div class="text-center">
+            <section class="text-center">
 <?php
 $query = 'SELECT vendor_id, vendor_name FROM vendors WHERE vendor_category = "foods" ORDER BY vendor_name';
 $resultContainingVendorData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
@@ -27,18 +27,18 @@ $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 while ( $rowContainingVendorData != NULL ) {
 ?>
 
-               <div id="displayAsInlineBlock">
+               <div <?php echo currentUserIsLoggedInAsAdmin() ? 'class="panel panel-primary" ' : '' ?>id="displayAsInlineBlock">
                   <a href="choose_category_of_food.php?idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" id="looksLikeALargeHoverableIcon">
-                     <div style="width: 100%; height: 80%; background-image: url( '<?php echo 'images/vendorFliers/' . $rowContainingVendorData['vendor_name'] . '.jpg' ?>' ); background-size: cover;"></div>
-                     <h4 id="iconContent">Order for food from <?php echo $rowContainingVendorData['vendor_name'] ?></h4>
+                     <div id="iconImage" style="background-image: url( '<?php echo 'images/vendorFliers/' . $rowContainingVendorData['vendor_name'] . '.jpg' ?>' ); background-size: cover;"></div>
+                     <h4 id="iconContent"><?php echo $rowContainingVendorData['vendor_name'] ?></h4>
                   </a>
 <?php
-      if ( userIsLoggedInAsAdmin() ) {
+      if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
-                  <p>
-                     <a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-default btn-sm">Edit Vendor</a>
-                     <a href="delete_vendor.php?idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-default btn-sm">Delete Vendor</a>
-                  </p>
+                  <div>
+                     <a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-primary btn-sm">Edit Vendor</a>
+                     <a href="delete_vendor.php?idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-primary btn-sm">Delete Vendor</a>
+                  </div>
 <?php
       }
 ?>
@@ -47,7 +47,12 @@ while ( $rowContainingVendorData != NULL ) {
    $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 }
 ?>
-            </div>
+            </section>
+
+            <section>
+               <h3>Featured Foods</h3>
+               <p>About three foods (such as, jollof rice and salad, etc) that we think that users may like to buy in one click.</p>
+            </section>
 <?php
 displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );
 ?>

@@ -1,33 +1,28 @@
 <?php
-require_once 'includes/generalHeaderFile.php';
-
 /*
-    In this file, $_GET['i'] holds the id of the current blog post
+   In this file, $_GET['i'] holds the id of the current blog post
 */
+require_once 'includes/generalHeaderFile.php';
+define('MAXIMUM_NUMBER_OF_RELATED_BLOG_POSTS_TO_DISPLAY', 6);
 
-if ( !isset( $_GET['i'] ) ) {
-   header('Location: index.php');
-}
-
-if ( isset( $_GET['i'] ) && !consistsOfOnlyDigits( $_GET['i'] ) ) {
-	header( 'Location: index.php' );
+if ( !isset( $_GET['i'] ) || !consistsOfOnlyDigits( $_GET['i'] ) ) {
+   header('Location: blog_home.php');
 }
 
-
-if ( userHasPressedLikeButton() ) {
-   indicateThatUserLikesCurrentBlogPost();
+if ( currentUserPressedLikeButton() ) {
+   indicateThatCurrentUserLikesCurrentBlogPost();
 }
-else if ( userHasPressedUnlikeButton() ) {
-   indicateThatUserDoesNotLikeCurrentBlogPost();
+else if ( currentUserPressedUnlikeButton() ) {
+   indicateThatCurrentUserDoesNotLikeCurrentBlogPost();
 }
-else if ( userHasPressedLoveButton() ) {
-   indicateThatUserLovesCurrentBlogPost();
+else if ( currentUserPressedLoveButton() ) {
+   indicateThatCurrentUserLovesCurrentBlogPost();
 }
-else if ( userHasPressedUnloveButton() ) {
-   indicateThatUserDoesNotLoveCurrentBlogPost();
+else if ( currentUserPressedUnloveButton() ) {
+   indicateThatCurrentUserDoesNotLoveCurrentBlogPost();
 }
-else if (userHasBlogPostedComment()) {
-   insertCommentIntoDatabase();
+else if (currentUserPostedComment()) {
+   insertCommentOfCurrentUserIntoDatabase();
 }
 
 $rowContainingCurrentBlogPost = getDataAboutApprovedBlogPost($_GET['i']);
@@ -38,34 +33,15 @@ if ( $rowContainingCurrentBlogPost == NULL ) {
 
 displayMarkupsCommonToTopOfPages( $rowContainingCurrentBlogPost['blog_post_caption'], DISPLAY_NAVIGATION_MENU );
 displayMarkupForSearchBar('search_for_blog_post.php', 'Search news and gists');
-
-$rowContainingPreviousBlogPost = getDataAboutApprovedPreviousBlogPost($rowContainingCurrentBlogPost['blog_post_time_of_posting']);
-$rowContainingNextBlogPost = getDataAboutApprovedNextBlogPost($rowContainingCurrentBlogPost['blog_post_time_of_posting']);
 ?>
             <div id="blogBodyContainer">
                <section>
-<?php
-if ( $rowContainingPreviousBlogPost != NULL ) {
-?>
-                  <a href="blog.php?previousButton&i=<?php echo $rowContainingPreviousBlogPost['blog_post_id'] ?>" id="specialButtonFloatingToTheLeft"><span class="fa fa-angle-double-left"></span> Previous Gist: <?php echo $rowContainingPreviousBlogPost['blog_post_caption'] ?></a>
-<?php
-}
-
-if ( $rowContainingNextBlogPost != NULL ) {
-?>
-                  <a href="blog.php?nextButton&i=<?php echo $rowContainingNextBlogPost['blog_post_id'] ?>" id="specialButtonFloatingToTheRight">Next Gist: <?php echo $rowContainingNextBlogPost['blog_post_caption'] ?> <span class="fa fa-angle-double-right"></span></a>
-<?php
-}
-?>
-               </section>
-
-               <section id="notFloating">
                   <h1 id="blogBodyCaption"><?php echo $rowContainingCurrentBlogPost['blog_post_caption'] ?></h1>
-                  <p id="blogBodySubdetails">Posted by <?php echo getFirstNameAssociatedWithUserId($rowContainingCurrentBlogPost['user_id_of_poster']) . ( isMainBloggerForThisCategory( $rowContainingCurrentBlogPost['user_id_of_poster'], $rowContainingCurrentBlogPost['blog_category_id'] ) ? ' (RoarConnect Special Blogger)' : '' ) ?> on <?php echo $rowContainingCurrentBlogPost['month_of_posting'] . ' ' . $rowContainingCurrentBlogPost['day_of_posting'] . ', ' . $rowContainingCurrentBlogPost['year_of_posting'] ?></p>
+                  <p id="blogBodySubdetails">Posted by <?php echo getFirstNameOfUser($rowContainingCurrentBlogPost['user_id_of_poster']) . ( isMainBloggerForThisCategory( $rowContainingCurrentBlogPost['user_id_of_poster'], $rowContainingCurrentBlogPost['blog_category_id'] ) ? ' (RoarConnect Special Blogger)' : '' ) ?> on <?php echo $rowContainingCurrentBlogPost['month_of_posting'] . ' ' . $rowContainingCurrentBlogPost['day_of_posting'] . ', ' . $rowContainingCurrentBlogPost['year_of_posting'] ?></p>
 <?php
 if ($rowContainingCurrentBlogPost['blog_post_image_filename'] != NULL) {
 ?>
-                  <img src="images/blogImages/<?php echo $rowContainingCurrentBlogPost['blog_post_image_filename'] ?>" class="blogBodyImage" style="max-height: 300px; max-width: 80%;" />
+                  <img src="images/blogImages/<?php echo $rowContainingCurrentBlogPost['blog_post_image_filename'] ?>" id="blogBodyImage" />
 <?php
 }
 ?>
@@ -75,15 +51,15 @@ if ($rowContainingCurrentBlogPost['blog_post_image_filename'] != NULL) {
                   <?php echo $rowContainingCurrentBlogPost['blog_post_text'] ?>
                </section>
 <?php
-if (userHasNeverViewedCurrentBlogPost()) {
-   indicateThatUserJustViewedCurrentBlogPost($rowContainingCurrentBlogPost['blog_category_id']);
+if (currentBlogPostHasNeverBeenViewedByCurrentUser()) {
+   indicateThatCurrentUserJustViewedCurrentBlogPost($rowContainingCurrentBlogPost['blog_category_id']);
 }
 ?>
 
                <section>
                   <form method="POST" action="blog.php?<?php echo buildStringContainingAllDataFromGET() ?>" id="containerHoldingLikeOrUnlikeButton">
 <?php
-if (userAlreadyLikesCurrentBlogPost()) {
+if (currentUserIsAlreadyPassionateAboutCurrentBlogPost('like')) {
 ?>
                      <button type="submit" name="unlikeButton" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-thumbs-down"></span> Unlike</button>
 <?php
@@ -94,204 +70,134 @@ else {
 <?php
 }
 ?>
-                     <span id="tinySizedText"><?php echo getInformationAboutLikersOfCurrentPost() ?></span>
+                     <span id="tinySizedText"><?php echo getSummaryOfUsersWhoArePassionateAboutCurrentBlogPost('like') ?></span>
                   </form>
-<?php
-$query = 'SELECT love_id FROM loves_to_blog_posts WHERE blog_post_id = ' . $rowContainingCurrentBlogPost['blog_post_id'] . ' AND user_id_of_lover = ' . $_SESSION['user_id'];
-$resultContainingLoveByUser = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-$userAlreadyLovesThisBlogPost = mysqli_num_rows( $resultContainingLoveByUser ) != 0;
-$userDoesNotYetLoveThisBlogPost = !$userAlreadyLovesThisBlogPost;
-?>
+
                   <form method="POST" action="blog.php?<?php echo buildStringContainingAllDataFromGET() ?>" id="containerHoldingLoveOrUnloveButton">
-                     <button type="submit" name="<?php echo $userAlreadyLovesThisBlogPost ? 'unloveButton' : 'loveButton' ?>" class="btn btn-sm <?php echo $userAlreadyLovesThisBlogPost ? 'btn-danger' : 'btn-default' ?>"><?php echo $userAlreadyLovesThisBlogPost ? '<span class="glyphicon glyphicon-heart"></span> Unlove' : '<span class="glyphicon glyphicon-heart-empty"></span> Love' ?></button>
-
-                     <span id="tinySizedText">
 <?php
-$query = 'SELECT love_id FROM loves_to_blog_posts WHERE blog_post_id = ' . $rowContainingCurrentBlogPost['blog_post_id'];
-$resultContainingAllLovesToBlogPost = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-$numberOfUsersWhoLoveThisBlogPost = mysqli_num_rows( $resultContainingAllLovesToBlogPost );
-
-if ( $numberOfUsersWhoLoveThisBlogPost == 1 && $userAlreadyLovesThisBlogPost ) {
-   echo 'You love this post.';
-}
-else if ( $numberOfUsersWhoLoveThisBlogPost == 1 && $userDoesNotYetLoveThisBlogPost ) {
-   echo '1 person loves this post.';
-}
-else if ( $numberOfUsersWhoLoveThisBlogPost > 1 && $userAlreadyLovesThisBlogPost ) {
-   echo 'You and ' . ( ( $numberOfUsersWhoLoveThisBlogPost - 1 ) == 1 ? '1 other person' : ( $numberOfUsersWhoLoveThisBlogPost - 1 ) . ' other people' ) . ' love this post.';
-}
-else if ( $numberOfUsersWhoLoveThisBlogPost > 1 && $userDoesNotYetLoveThisBlogPost ) {
-   echo $numberOfUsersWhoLoveThisBlogPost . ' people love this post.';
-}
+if (currentUserIsAlreadyPassionateAboutCurrentBlogPost('love')) {
 ?>
-                     </span>
-                  </form>
-               </section>
-<?php
-$query = 'SELECT comment_id, comment_text, user_id_of_commenter, firstname_of_commenter, MONTHNAME( time_of_commenting ) AS month_of_commenting, DAYOFMONTH( time_of_commenting ) AS day_of_commenting, YEAR( time_of_commenting ) AS year_of_commenting, HOUR( time_of_commenting ) AS hour_of_commenting, MINUTE( time_of_commenting ) AS minute_of_commenting FROM comments_to_blog_posts WHERE blog_post_id = ' . $rowContainingCurrentBlogPost['blog_post_id'] . ' ORDER BY time_of_commenting';
-$resultContainingComments = mysqli_query( $db, $query );
-$numberOfComments = mysqli_num_rows( $resultContainingComments );
-?>
-
-               <section id="commentArea">
-                  <h3>
-                     <?php echo $numberOfComments == 1 ? '1 Comment' : ($numberOfComments . ' Comments') ?>
-<?php
-if (isset($_GET['viewComments'])) {
-   echo ' <a href="blog.php?i=' . $_GET['i'] . '#commentArea" class="btn btn-link"><span class="glyphicon glyphicon-eye-close"></span> Hide</a>';
-}
-else if ($numberOfComments > 0) {
-   echo ' <a href="blog.php?i=' . $_GET['i'] . '&viewComments=1#commentArea" class="btn btn-link"><span class="glyphicon glyphicon-eye-open"></span> View</a>';
-}
-?>
-
-                  </h3>
-
-<?php
-if (isset($_GET['viewComments'])) {
-	$rowContainingComments = mysqli_fetch_assoc( $resultContainingComments );
-	while ( $rowContainingComments != NULL ) {
-?>
-                  <div id ="<?php echo $rowContainingComments['user_id_of_commenter'] == $_SESSION['user_id'] ? 'containerHoldingCommentBoxFloatedToTheRight' : 'containerHoldingCommentBoxFloatedToTheLeft' ?>">
-                     <div id ="<?php echo $rowContainingComments['user_id_of_commenter'] == $_SESSION['user_id'] ? 'commentBoxFloatedToTheRight' : 'commentBoxFloatedToTheLeft' ?>">
-                        <p id="<?php echo $rowContainingComments['comment_id'] ?>"><?php echo ucwords( $rowContainingComments['firstname_of_commenter'] ) . ',' ?> <span id="tinySizedText"><?php echo 'at ' . formatTimeAsAmOrPm( $rowContainingComments['hour_of_commenting'] + 5, $rowContainingComments['minute_of_commenting'] ) . ' on ' . $rowContainingComments['month_of_commenting'] . ' ' . $rowContainingComments['day_of_commenting'] ?></span></p>
-                        <p><?php echo $rowContainingComments['comment_text'] ?></p>
-                     </div>
-                  </div>
-
-<?php
-		$rowContainingComments = mysqli_fetch_assoc( $resultContainingComments );
-	}
-}
-?>
-                  <form method="POST" action="blog.php?<?php echo buildStringContainingAllDataFromGET() ?>" class="<?php echo userIsLoggedIn() ? 'form-inline' : '' ?>" id="commentBox">
-<?php
-if (userIsLoggedIn()) {
-?>
-                     <input type="hidden" name="nameOfCommenter" value="<?php echo getFirstNameOfUser() ?>" />
+                     <button type="submit" name="unloveButton" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-heart"></span> Unlove</button>
 <?php
 }
 else {
 ?>
-                     <h4>BlogPost Your Comment</h4>
+                     <button type="submit" name="loveButton" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-heart-empty"></span> Love</button>
+<?php
+}
+?>
+
+                     <span id="tinySizedText"><?php echo getSummaryOfUsersWhoArePassionateAboutCurrentBlogPost('love') ?></span>
+                  </form>
+               </section>
+
+               <section id="commentArea">
+                  <h3 id="blogBodySectionHeading"><?php echo getCommentHeading() ?></h3>
+
+<?php
+if (isset($_GET['viewComments'])) {
+   displayCommentsOfCurrentBlogPost();
+}
+?>
+                  <form method="POST" action="blog.php?<?php echo buildStringContainingAllDataFromGET() ?>" class="<?php echo currentUserIsLoggedIn() ? 'form-inline text-center' : '' ?>" id="commentBox">
+<?php
+if (currentUserIsLoggedIn()) {
+?>
+                     <input type="hidden" name="nameOfCommenter" value="<?php echo getFirstNameOfCurrentUser() ?>" />
+<?php
+}
+else {
+?>
+                     <h4>Post Your Comment</h4>
                      <div class="form-group"><input type="text" name="nameOfCommenter" placeholder="Enter your first name" maxlength="20" class="form-control"/></div>
 <?php
 }
 ?>
                      <div class="form-group"><input type="text" name="commentText" placeholder="Enter your comment" maxlength="1000" class="form-control" /></div>
-                     <button type="submit" name="commentButton" class="btn btn-default">BlogPost</button>
+                     <button type="submit" name="commentButton" class="btn btn-default">Post</button>
                   </form>
                </section>
             </div>
 
             <div>
-               <h2>Related Gists</h2>
+               <h2 class="col-sm-12" id="blogBodySectionHeading">Related Gists</h2>
 <?php
-$query = 'SELECT blog_tag_id FROM relationship_between_tags_and_blog_posts WHERE blog_post_id = ' . $rowContainingCurrentBlogPost['blog_post_id'];
-$resultContainingTagIdOfBlogPost = mysqli_query($db, $query);
-$numberOfTagsOfBlogPost = mysqli_num_rows($resultContainingTagIdOfBlogPost);
-
-$query = 'SELECT blog_posts.blog_post_id, blog_posts.blog_post_image_filename, blog_posts.blog_post_caption
-   FROM relationship_between_tags_and_blog_posts INNER JOIN blog_posts ON relationship_between_tags_and_blog_posts.blog_post_id = blog_posts.blog_post_id
-   WHERE blog_posts.blog_post_approval_status = "APPROVED" AND (0';
-for ($rowContainingTagIdOfBlogPost = mysqli_fetch_assoc($resultContainingTagIdOfBlogPost); $rowContainingTagIdOfBlogPost != NULL; $rowContainingTagIdOfBlogPost = mysqli_fetch_assoc($resultContainingTagIdOfBlogPost)) {
-   $query .= ' OR relationship_between_tags_and_blog_posts.blog_tag_id = ' . $rowContainingTagIdOfBlogPost['blog_tag_id'];
-}
-
-$query .= ') ORDER BY blog_posts.blog_post_inherent_relevance DESC LIMIT 0, ' . ($numberOfTagsOfBlogPost * 4);
-$idOfLastDisplayedBlogPost = 0;
-$numberOfBlogPostsDisplayedSoFar = 0;
-$resultContainingRelatedBlogPosts = mysqli_query($db, $query);
-$rowContainingRelatedBlogPost = mysqli_fetch_assoc($resultContainingRelatedBlogPosts);
-while ($numberOfBlogPostsDisplayedSoFar < 4 && $rowContainingRelatedBlogPost != NULL) {
-   if ($rowContainingRelatedBlogPost['blog_post_id'] != $rowContainingCurrentBlogPost['blog_post_id'] && $rowContainingRelatedBlogPost['blog_post_id'] != $idOfLastDisplayedBlogPost) {
-?>
-            <a href="blog.php?i=<?php echo $rowContainingRelatedBlogPost['blog_post_id'] ?>">
-               <img src="images/blogImages/<?php echo $rowContainingRelatedBlogPost['blog_post_image_filename'] ?>" />
-               <h3><?php echo $rowContainingRelatedBlogPost['blog_post_caption'] ?></h3>
-            </a>
-<?php
-      $idOfLastDisplayedBlogPost = $rowContainingRelatedBlogPost['blog_post_id'];
-      ++$numberOfBlogPostsDisplayedSoFar;
-   }
-
-   $rowContainingRelatedBlogPost = mysqli_fetch_assoc($resultContainingRelatedBlogPosts);
-}
+displayBlogPostsThatAreRelatedToCurrentBlogPost();
 ?>
             </div>
 <?php
 displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );
 
 
-function userHasPressedLikeButton()
+function currentUserPressedLikeButton()
 {
    return isset( $_POST['likeButton'] );
 }
 
 
-function indicateThatUserLikesCurrentBlogPost()
+function indicateThatCurrentUserLikesCurrentBlogPost()
 {
-   global $db;
+   global $db, $markupIndicatingDatabaseQueryFailure;
 	$query = 'INSERT INTO likes_to_blog_posts ( blog_post_id, user_id_of_liker ) VALUES ( ' . $_GET['i'] . ', ' . $_SESSION['user_id']. ' )';
 	mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
 	header( 'Location: blog.php?' . buildStringContainingAllDataFromGET() . '#containerHoldingLikeOrUnlikeButton' );
 }
 
 
-function userHasPressedUnlikeButton()
+function currentUserPressedUnlikeButton()
 {
    return isset( $_POST['unlikeButton'] );
 }
 
 
-function indicateThatUserDoesNotLikeCurrentBlogPost()
+function indicateThatCurrentUserDoesNotLikeCurrentBlogPost()
 {
-   global $db;
+   global $db, $markupIndicatingDatabaseQueryFailure;
    $query = 'DELETE FROM likes_to_blog_posts WHERE blog_post_id = ' . $_GET['i'] . ' AND user_id_of_liker = ' . $_SESSION['user_id'];
 	mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
 	header( 'Location: blog.php?' . buildStringContainingAllDataFromGET() . '#containerHoldingLikeOrUnlikeButton' );
 }
 
 
-function userHasPressedLoveButton()
+function currentUserPressedLoveButton()
 {
    return isset( $_POST['loveButton'] );
 }
 
 
-function indicateThatUserLovesCurrentBlogPost()
+function indicateThatCurrentUserLovesCurrentBlogPost()
 {
-   global $db;
+   global $db, $markupIndicatingDatabaseQueryFailure;
 	$query = 'INSERT INTO loves_to_blog_posts ( blog_post_id, user_id_of_lover ) VALUES ( ' . $_GET['i'] . ', ' . $_SESSION['user_id']. ' )';
 	mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
 	header( 'Location: blog.php?' . buildStringContainingAllDataFromGET() . '#containerHoldingLoveOrUnloveButton' );
 }
 
 
-function userHasPressedUnloveButton()
+function currentUserPressedUnloveButton()
 {
    return isset( $_POST['unloveButton'] );
 }
 
 
-function indicateThatUserDoesNotLoveCurrentBlogPost()
+function indicateThatCurrentUserDoesNotLoveCurrentBlogPost()
 {
-   global $db;
+   global $db, $markupIndicatingDatabaseQueryFailure;
    $query = 'DELETE FROM loves_to_blog_posts WHERE blog_post_id = ' . $_GET['i'] . ' AND user_id_of_lover = ' . $_SESSION['user_id'];
 	mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
 	header( 'Location: blog.php?' . buildStringContainingAllDataFromGET() . '#containerHoldingLoveOrUnloveButton' );
 }
 
 
-function userHasBlogPostedComment()
+function currentUserPostedComment()
 {
    return isset($_POST['commentButton']) && trim($_POST['commentText']) != '';
 }
 
 
-function insertCommentIntoDatabase()
+function insertCommentOfCurrentUserIntoDatabase()
 {
-   global $db;
+   global $db, $markupIndicatingDatabaseQueryFailure;
    $firstnameOfCommenter = trim($_POST['nameOfCommenter']);
 
    if ($firstnameOfCommenter == '') {
@@ -302,46 +208,28 @@ function insertCommentIntoDatabase()
    }
 
    mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-   header( 'Location: ' . $_SERVER['PHP_SELF'] . '?' . buildStringContainingAllDataFromGET() . '#' . mysqli_insert_id( $db ) );
+   header( 'Location: ' . $_SERVER['PHP_SELF'] . '?viewComments=1' . buildStringContainingAllDataFromGET() . '#' . mysqli_insert_id( $db ) );
 }
 
 
-function getDataAboutApprovedPreviousBlogPost($timeOfPostingOfCurrentBlogPost)
+function currentBlogPostHasNeverBeenViewedByCurrentUser()
 {
-   global $db;
-   $query = 'SELECT blog_post_id, blog_post_caption FROM blog_posts WHERE blog_post_time_of_posting > "' . $timeOfPostingOfCurrentBlogPost . '" AND blog_post_approval_status = "APPROVED" ORDER BY blog_post_time_of_posting ASC LIMIT 1';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-   return mysqli_fetch_assoc( $result );
+   return blogPostHasNeverBeenViewedByCurrentUser($_GET['i']);
 }
 
 
-function getDataAboutApprovedNextBlogPost($timeOfPostingOfCurrentBlogPost)
+function indicateThatCurrentUserJustViewedCurrentBlogPost($idOfCurrentBlogCategory)
 {
-   global $db;
-   $query = 'SELECT blog_post_id, blog_post_caption FROM blog_posts WHERE blog_post_time_of_posting < "' . $timeOfPostingOfCurrentBlogPost . '" AND blog_post_approval_status = "APPROVED" ORDER BY blog_post_time_of_posting DESC LIMIT 1';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-   return mysqli_fetch_assoc( $result );
-}
-
-
-function userHasNeverViewedCurrentBlogPost()
-{
-   return userHasNeverViewedThisBlogPost($_GET['i']);
-}
-
-
-function indicateThatUserJustViewedCurrentBlogPost($idOfCurrentBlogCategory)
-{
-   insertDatabaseEntryAboutViewToCurrentBlogPost();
+   insertDatabaseEntryAboutCurrentBlogPostView();
    updateNumberOfViewsAndInherentRelevanceOfCurrentBlogPost();
-   insertDatabaseEntryAboutViewToThisBlogCategory($idOfCurrentBlogCategory);
+   insertDatabaseEntryAboutBlogCategoryView($idOfCurrentBlogCategory);
 }
 
 
-function insertDatabaseEntryAboutViewToCurrentBlogPost()
+function insertDatabaseEntryAboutCurrentBlogPostView()
 {
    global $db, $markupIndicatingDatabaseQueryFailure;
-   $query = 'INSERT INTO views_to_blog_posts (user_id_of_viewer, blog_post_id) VALUES ("' . $_SESSION['user_id'] . '", "' . $_GET['i'] . '")';
+   $query = 'INSERT INTO views_to_blog_posts (user_id_of_viewer, blog_post_id, time_of_viewing) VALUES ("' . $_SESSION['user_id'] . '", "' . $_GET['i'] . '", NOW())';
    mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
 }
 
@@ -349,16 +237,16 @@ function insertDatabaseEntryAboutViewToCurrentBlogPost()
 function updateNumberOfViewsAndInherentRelevanceOfCurrentBlogPost()
 {
    global $db, $markupIndicatingDatabaseQueryFailure;
-   $query = 'UPDATE blog_posts SET blog_post_number_of_views = (blog_post_number_of_views + 1), blog_post_inherent_relevance = (TIMESTAMPDIFF(minute, "2018-01-01 00:00:00", blog_post_time_of_posting) + (60 * blog_post_number_of_views)) WHERE blog_post_id = "' . $_GET['i'] . '"';
+   $query = 'UPDATE blog_posts SET blog_post_number_of_views = (blog_post_number_of_views + 1), blog_post_relevance = (TIMESTAMPDIFF(minute, "2018-01-01 00:00:00", blog_post_time_of_posting) + (60 * blog_post_number_of_views)) WHERE blog_post_id = "' . $_GET['i'] . '"';
    mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
 }
 
 
-function insertDatabaseEntryAboutViewToThisBlogCategory($blogCategoryId)
+function insertDatabaseEntryAboutBlogCategoryView($blogCategoryId)
 {
    global $db, $markupIndicatingDatabaseQueryFailure;
 
-   if (userHasNeverViewedThisCategoryOfBlogPosts($blogCategoryId)) {
+   if (blogPostCategoryHasNeverBeenViewedByCurrentUser($blogCategoryId)) {
       $query = 'INSERT INTO views_to_blog_categories (blog_category_id, user_id_of_viewer) VALUES ("' . $blogCategoryId . '", "' . $_SESSION['user_id'] . '")';
    }
    else {
@@ -369,7 +257,7 @@ function insertDatabaseEntryAboutViewToThisBlogCategory($blogCategoryId)
 }
 
 
-function userHasNeverViewedThisCategoryOfBlogPosts($blogCategoryId)
+function blogPostCategoryHasNeverBeenViewedByCurrentUser($blogCategoryId)
 {
    global $db, $markupIndicatingDatabaseQueryFailure;
    $query = 'SELECT blog_category_id FROM views_to_blog_categories WHERE blog_category_id = "' . $blogCategoryId . '" AND user_id_of_viewer = "' . $_SESSION['user_id'] . '"';
@@ -378,37 +266,177 @@ function userHasNeverViewedThisCategoryOfBlogPosts($blogCategoryId)
 }
 
 
-function userAlreadyLikesCurrentBlogPost()
+function currentUserIsAlreadyPassionateAboutCurrentBlogPost($passionType)
 {
     global $db, $markupIndicatingDatabaseQueryFailure;
-    $query = 'SELECT like_id FROM likes_to_blog_posts WHERE blog_post_id = "' . $_GET['i'] . '" AND user_id_of_liker = "' . $_SESSION['user_id'] . '"';
+    $query = 'SELECT ' . $passionType . '_id FROM ' . $passionType . 's_to_blog_posts WHERE blog_post_id = "' . $_GET['i'] . '" AND user_id_of_' . $passionType . 'r = "' . $_SESSION['user_id'] . '"';
     $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
     return mysqli_num_rows( $result ) != 0;
 }
 
 
-function getInformationAboutLikersOfCurrentPost()
+function getSummaryOfUsersWhoArePassionateAboutCurrentBlogPost($passionType)
 {
    global $db, $markupIndicatingDatabaseQueryFailure;
-   $query = 'SELECT like_id FROM likes_to_blog_posts WHERE blog_post_id = "' . $_GET['i'] . '"';
+   $query = 'SELECT ' . $passionType . '_id FROM ' . $passionType . 's_to_blog_posts WHERE blog_post_id = "' . $_GET['i'] . '"';
    $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-   $numberOfLikersToCurrentPost = mysqli_num_rows( $result );
+   $numberOfPeopleWhoArePassionate = mysqli_num_rows( $result );
 
-   if (userAlreadyLikesCurrentBlogPost()) {
-      if ($numberOfLikersToCurrentPost == 1) {
-         return 'You like this post.';
+   if (currentUserIsAlreadyPassionateAboutCurrentBlogPost($passionType)) {
+      if ($numberOfPeopleWhoArePassionate == 1) {
+         return 'You ' . $passionType . ' this post.';
       }
-      else if ($numberOfLikersToCurrentPost > 1) {
-         return 'You and ' . (($numberOfLikersToCurrentPost - 1 == 1) ? ('1 other person') : (($numberOfLikersToCurrentPost - 1) . ' other people')) . ' like this post.';
+      else if ($numberOfPeopleWhoArePassionate > 1) {
+         return 'You and ' . (($numberOfPeopleWhoArePassionate - 1 == 1) ? ('1 other person') : (($numberOfPeopleWhoArePassionate - 1) . ' other people')) . ' ' . $passionType . ' this post.';
       }
    }
    else {
-      if ($numberOfLikersToCurrentPost == 1) {
-         return '1 person likes this post.';
+      if ($numberOfPeopleWhoArePassionate == 1) {
+         return '1 person ' . $passionType . 's this post.';
       }
-      else if ($numberOfLikersToCurrentPost > 1) {
-         return $numberOfLikersToCurrentPost . ' people like this post.';
+      else if ($numberOfPeopleWhoArePassionate > 1) {
+         return $numberOfPeopleWhoArePassionate . ' people ' . $passionType . ' this post.';
       }
    }
+}
+
+
+function getCommentHeading()
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+   $query = 'SELECT comment_id FROM comments_to_blog_posts WHERE blog_post_id = ' . $_GET['i'] . ' ORDER BY time_of_commenting';
+   $result = mysqli_query( $db, $query ) or die($markupIndicatingDatabaseQueryFailure);
+   $numberOfComments = mysqli_num_rows( $result );
+
+   if ($numberOfComments == 1) {
+      $commentHeading = '1 Comment';
+   }
+   else {
+      $commentHeading = $numberOfComments . ' Comments';
+   }
+
+   if (isset($_GET['viewComments'])) {
+      $commentHeading .= ' <a href="blog.php?i=' . $_GET['i'] . '#commentArea" class="btn btn-link"><span class="glyphicon glyphicon-eye-close"></span> Hide</a>';
+   }
+   else if ($numberOfComments > 0) {
+      $commentHeading .= ' <a href="blog.php?i=' . $_GET['i'] . '&viewComments=1#commentArea" class="btn btn-link"><span class="glyphicon glyphicon-eye-open"></span> View</a>';
+   }
+
+   return $commentHeading;
+}
+
+
+function displayCommentsOfCurrentBlogPost()
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+   $query = 'SELECT comment_id, comment_text, user_id_of_commenter, firstname_of_commenter, MONTHNAME( time_of_commenting ) AS month_of_commenting, DAYOFMONTH( time_of_commenting ) AS day_of_commenting, YEAR( time_of_commenting ) AS year_of_commenting, HOUR( time_of_commenting ) AS hour_of_commenting, MINUTE( time_of_commenting ) AS minute_of_commenting FROM comments_to_blog_posts WHERE blog_post_id = ' . $_GET['i'] . ' ORDER BY time_of_commenting';
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+	
+	for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
+?>
+                  <div id ="<?php echo $row['user_id_of_commenter'] == $_SESSION['user_id'] ? 'containerHoldingCommentBoxFloatedToTheRight' : 'containerHoldingCommentBoxFloatedToTheLeft' ?>">
+                     <div id ="<?php echo $row['user_id_of_commenter'] == $_SESSION['user_id'] ? 'commentBoxFloatedToTheRight' : 'commentBoxFloatedToTheLeft' ?>">
+                        <p id="<?php echo $row['comment_id'] ?>"><?php echo ucwords( $row['firstname_of_commenter'] ) . ',' ?> <span id="tinySizedText"><?php echo 'at ' . formatTimeAsAmOrPm( $row['hour_of_commenting'] + 5, $row['minute_of_commenting'] ) . ' on ' . substr($row['month_of_commenting'], 0, 3) . ' ' . $row['day_of_commenting'] . ', ' . $row['year_of_commenting'] ?></span></p>
+                        <p><?php echo $row['comment_text'] ?></p>
+                     </div>
+                  </div>
+
+<?php
+	}
+}
+
+
+function displayBlogPostsThatAreRelatedToCurrentBlogPost()
+{
+   $numberOfBlogPostsDisplayedSoFar = 0;
+   $dataAboutRelatedBlogPosts = getArrayOfDataAboutBlogPostsThatAreRelatedToCurrentBlogPost();
+
+   foreach ($dataAboutRelatedBlogPosts as $blogPost) {
+      if ($blogPost['blog_post_id'] != $_GET['i']) {
+         displaySummaryOfBlogPost($blogPost);
+         $numberOfBlogPostsDisplayedSoFar++;
+      }
+
+      if ($numberOfBlogPostsDisplayedSoFar == MAXIMUM_NUMBER_OF_RELATED_BLOG_POSTS_TO_DISPLAY) {
+         return;
+      }
+   }
+
+   $dataAboutInterestingBlogPosts = getArrayOfDataAboutBlogPostsThatCurrentUserCouldBeInterestedIn(MAXIMUM_NUMBER_OF_RELATED_BLOG_POSTS_TO_DISPLAY - $numberOfBlogPostsDisplayedSoFar);
+
+   foreach ($dataAboutInterestingBlogPosts as $blogPost) {
+      if (blogPostIsNotInArray($blogPost, $dataAboutRelatedBlogPosts) && $blogPost['blog_post_id'] != $_GET['i']) {
+         displaySummaryOfBlogPost($blogPost);
+         $numberOfBlogPostsDisplayedSoFar++;
+      }
+
+      if ($numberOfBlogPostsDisplayedSoFar == MAXIMUM_NUMBER_OF_RELATED_BLOG_POSTS_TO_DISPLAY) {
+         return;
+      }
+   }
+}
+
+
+function getArrayOfDataAboutBlogPostsThatAreRelatedToCurrentBlogPost()
+{
+   $idOfLastBlogPost = 0;
+   $dataAboutBlogPosts = array();
+   $result = getResultContainingDataAboutBlogPostsThatAreRelatedToCurrentBlogPost();
+
+   for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
+      if ($idOfLastBlogPost != $row['blog_post_id']) {
+         $row['blog_post_relevance'] += 120 * getNumberOfBlogCategoryViewsByCurrentUser($row['blog_category_id']);
+         $dataAboutBlogPosts[] = $row;
+         $idOfLastBlogPost = $row['blog_post_id'];
+      }
+   }
+
+   $dataAboutBlogPosts = sortBlogPostsAccordingToDecreasingRelevance($dataAboutBlogPosts);
+   return $dataAboutBlogPosts;
+}
+
+
+function getResultContainingDataAboutBlogPostsThatAreRelatedToCurrentBlogPost()
+{
+   global $db, $markupIndicatingDatabaseQueryFailure;
+   $tagIdsOfCurrentBlogPost = getArrayOfTagIdsOfCurrentBlogPost();
+
+   $query = 'SELECT blog_posts.blog_post_id, blog_posts.blog_post_image_filename, blog_posts.blog_post_caption, blog_posts.blog_post_relevance, blog_posts.blog_category_id
+      FROM relationship_between_tags_and_blog_posts INNER JOIN blog_posts ON relationship_between_tags_and_blog_posts.blog_post_id = blog_posts.blog_post_id
+      WHERE blog_posts.blog_post_approval_status = "APPROVED" AND (FALSE';
+
+   foreach ($tagIdsOfCurrentBlogPost as $tagId) {
+      $query .= ' OR relationship_between_tags_and_blog_posts.blog_tag_id = ' . $tagId;
+   }
+
+   $query .= ') ORDER BY blog_posts.blog_post_relevance DESC LIMIT 0, ' . (count($tagIdsOfCurrentBlogPost) * MAXIMUM_NUMBER_OF_RELATED_BLOG_POSTS_TO_DISPLAY);
+   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   return $result;
+}
+
+
+function getArrayOfTagIdsOfCurrentBlogPost()
+{
+   return getArrayOfTagIdsOfBlogPosts(array($_GET['i']));
+}
+
+
+function displaySummaryOfBlogPost($rowContainingRelatedBlogPost)
+{
+?>
+
+               <div class="col-sm-6">
+                  <a href="blog.php?i=<?php echo $rowContainingRelatedBlogPost['blog_post_id'] ?>" class="container-fluid" id="relatedBlogPost">
+<?php
+   if ($rowContainingRelatedBlogPost['blog_post_image_filename'] != NULL) {
+?>
+                     <img src="images/blogImages/<?php echo $rowContainingRelatedBlogPost['blog_post_image_filename'] ?>" width="auto" height="50px" id="relatedBlogImage" />
+<?php
+   }
+?>
+                     <h3 id="relatedBlogCaption"><?php echo $rowContainingRelatedBlogPost['blog_post_caption'] ?></h3>
+                  </a>
+               </div>
+<?php
 }
 ?>

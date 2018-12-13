@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/generalHeaderFile.php';
 
-if ( !userIsLoggedIn() ) {
+if ( !currentUserIsLoggedIn() ) {
    header( 'Location: index.php' );
 }
 
@@ -18,7 +18,7 @@ displayMarkupsCommonToTopOfPages( 'Inbox', DISPLAY_NAVIGATION_MENU, 'inbox.php' 
 
 if ( !$_GET ) {
 ?>
-            <header id="minorHeaderType2">
+            <header id="minorHeader">
                <h2>Your RoarConnect Inbox</h2>
             </header>
             

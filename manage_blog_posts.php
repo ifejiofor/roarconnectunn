@@ -2,7 +2,7 @@
 require_once 'includes/generalHeaderFile.php';
 define( 'MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY', 10 );
 
-if(!userIsLoggedIn()){
+if(!currentUserIsLoggedIn()){
 	header('location:index.php');
 }
 

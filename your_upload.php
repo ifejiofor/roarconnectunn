@@ -1,7 +1,7 @@
 <?php
 require 'includes/generalHeaderFile.php';
 
-if (!userIsLoggedIn()) {
+if (!currentUserIsLoggedIn()) {
 	header('Location: index.php');
 }
 else if ( !isset( $_GET['category'] ) ) {

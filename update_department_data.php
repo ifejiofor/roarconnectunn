@@ -42,7 +42,7 @@ else if ( isset( $_GET['nameOfFaculty'] ) && !consistsOfOnlyAlphabetsAndSpaces( 
 
 displayMarkupsCommonToTopOfPages( 'Update Department Data', DISPLAY_NAVIGATION_MENU, 'update_department_data.php' );
 
-if ( !userIsLoggedInAsAdmin() ) {
+if ( !currentUserIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }
@@ -50,7 +50,7 @@ if ( !userIsLoggedInAsAdmin() ) {
 if ( $formShouldBeDisplayed || $thereIsErrorInFormData ) {
    displayUpdateDepartmentDataForm();
 }
-else if ( userIsLoggedInAsAdmin() ) {
+else if ( currentUserIsLoggedInAsAdmin() ) {
    if ( isset( $_GET['durationOfProgramme'] ) ) {
       $query = 'UPDATE departments SET department_duration_of_programme = ' . $durationOfProgramme . ' WHERE department_name = "' . $nameOfDepartment . '"';
       mysqli_query( $db, $query ) or die( 'A' . $markupIndicatingDatabaseQueryFailure );

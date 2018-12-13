@@ -1,13 +1,7 @@
 <?php
-if ( !isset( $_GET['category'] ) ) {
-   header( 'Location: index.php' );
-}
-else if ( $_GET['category'] != 'Painting'&& $_GET['category'] != 'BeautyService' && $_GET['category'] != 'HaircutService' && $_GET['category'] != 'DataServices' && $_GET['category'] != 'Catering' && $_GET['category'] != 'Arts' && $_GET['category'] != 'ElectricalWorks'  && $_GET['category'] != 'GraphicsDesigning' ) {
-   header( 'Location: index.php' );
-}
-else {
 	require_once 'includes/generalHeaderFile.php';
 
+if (isset($_GET['category'])) {
    if ( $_GET['category'] == 'Painting' ) {
       $nameOfService = 'Painting';
       $nameOfServiceProvider = 'Painter';
@@ -35,8 +29,13 @@ else {
       $nameOfService = 'Data';
       $nameOfServiceProvider = 'Data Provider';
    }
+}
+else {
+   $nameOfService = '';
+   $nameOfServiceProvider = '';
+}
 
-   displayMarkupsCommonToTopOfPages( 'Contact a ' . $nameOfServiceProvider, DISPLAY_NAVIGATION_MENU, 'view_all_utility_services.php?category=' . $_GET['category'] );
+   displayMarkupsCommonToTopOfPages( 'Contact a ' . $nameOfServiceProvider, DISPLAY_NAVIGATION_MENU, 'view_all_utility_services.php' );
 ?>
             <header id="minorHeader">
                <h2>Welcome to RoarConnect <?php echo $nameOfService ?> Services Marketplace</h2>
@@ -44,7 +43,7 @@ else {
             </header>
 
 <?php
-   $query = 'SELECT vendor_id, vendor_name FROM vendors WHERE vendor_category = "' . $_GET['category'] . '"';
+   $query = 'SELECT vendor_id, vendor_name FROM vendors';
    $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
 
    if ( mysqli_num_rows( $result ) > 0 ) {
@@ -53,7 +52,7 @@ else {
                <header id="minorHeaderType2">
                   <h3><?php echo mysqli_num_rows( $result ) == 1 ? 'Storefront' : 'Storefronts' ?> of RoarConnect Special <?php echo $nameOfServiceProvider . ( mysqli_num_rows( $result ) == 1 ? '' : 's' ) ?></h3>
 <?php
-      if ( userIsLoggedInAsAdmin() ) {
+      if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
                   <p><a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-warning">Add a New <?php echo $nameOfServiceProvider ?></a></p>
 <?php
@@ -71,7 +70,7 @@ else {
 
                   <div class="text-center">
 <?php
-         if ( userIsLoggedIn() ) {
+         if ( currentUserIsLoggedIn() ) {
 ?>
                      <a href="view_uploads_by_vendor.php?vendor=<?php echo $row['vendor_id'] ?>" class="btn btn-default btn-lg" id="boldSmallSizedText">Click Here</a>
 <?php
@@ -92,7 +91,7 @@ else {
                      to preview some <?php echo strtolower( $nameOfService ) ?> jobs done by <?php echo $row['vendor_name'] ?>.
                   </div>
 <?php
-      if ( userIsLoggedInAsAdmin() ) {
+      if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
                   <p class="text-center">Also, you may either</p>
                   <p class="text-center"><a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $row['vendor_id'] ?>" class="btn btn-warning">Click Here</a> to edit details about <?php echo $row['vendor_name'] ?>.</p>
@@ -110,10 +109,9 @@ else {
 <?php
    }
    
-   if ( !userIsLoggedIn() ) {
+   if ( !currentUserIsLoggedIn() ) {
       getMarkupForModalThatTellsUserToLogInBeforeContinuing();
    }
 
-	displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );	
-}
+	displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );
 ?>

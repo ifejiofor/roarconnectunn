@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/generalHeaderFile.php';
 
-if ( !userIsLoggedIn() ) {
+if ( !currentUserIsLoggedIn() ) {
    header( 'Location: index.php' );
 }
 
@@ -21,12 +21,8 @@ if ( isset( $_POST['clearAllNotifications'] ) ) {
 displayMarkupsCommonToTopOfPages( 'Notifications', DISPLAY_NAVIGATION_MENU, 'notifications.php' );
 
 ?>
-            <header id="minorHeaderType2">
+            <header id="minorHeader">
                <h2>RoarConnect Notifications</h2>
-               
-               <form method="POST" action="notifications.php">
-                  <button type="submit" name="clearAllNotifications" class="btn btn-primary">Clear Notifications</button>
-               </form>
             </header>
             
             <section>
@@ -41,6 +37,11 @@ if ( mysqli_num_rows( $resultContainingNotifications ) == 0 ) {
 <?php
 }
 else {
+?>
+               <form method="POST" action="notifications.php">
+                  <button type="submit" name="clearAllNotifications" class="btn btn-primary">Clear Notifications</button>
+               </form>
+<?php
    $rowContainingNotification = mysqli_fetch_assoc( $resultContainingNotifications );
 
    while ( $rowContainingNotification != NULL ) {

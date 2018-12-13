@@ -1,26 +1,22 @@
 <?php
 require_once 'includes/generalHeaderFile.php';
-define( 'MAXIMUM_ALLOWABLE_IMAGE_SIZE', 512000 ); // 512000 Bytes is equal to 500 MB
 define( 'MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY', 12 );
 
-displayMarkupsCommonToTopOfPages('Latest News and Gists', DISPLAY_NAVIGATION_MENU);
+displayMarkupsCommonToTopOfPages('News and Gists', DISPLAY_NAVIGATION_MENU);
+displayMarkupForSearchBar('search_for_blog_post.php', 'Search news and gists');
 ?>
             <header id="minorHeader">
-               <h2>Latest news and gists within and around UNN</h2>
+               <h2>RoarConnect brings you the most exciting news and gists within and outside UNN</h2>
             </header>
-<?php
-displayMarkupForSearchBar('search_for_blog_post.php', 'Search news and gists');
-
-$currentOffset = isset( $_GET['offset'] ) && consistsOfOnlyDigits( $_GET['offset'] ) ? $_GET['offset'] : 0;
-
-$query = 'SELECT *, MONTHNAME(blog_post_time_of_posting) AS blog_post_month_of_posting, DAYOFMONTH(blog_post_time_of_posting) AS blog_post_day_of_posting, YEAR(blog_post_time_of_posting) AS blog_post_year_of_posting FROM blog_posts WHERE blog_post_approval_status = "APPROVED" ORDER BY blog_post_inherent_relevance DESC LIMIT ' . $currentOffset . ', ' .  ( MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY + 1);
-$resultContainingBlogPosts = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-$rowContainingBlogPosts = mysqli_fetch_assoc( $resultContainingBlogPosts );
-?>
 
             <section>
 <?php
+$currentOffset = isset( $_GET['offset'] ) && consistsOfOnlyDigits( $_GET['offset'] ) ? $_GET['offset'] : 0;
+$query = 'SELECT *, MONTHNAME(blog_post_time_of_posting) AS blog_post_month_of_posting, DAYOFMONTH(blog_post_time_of_posting) AS blog_post_day_of_posting, YEAR(blog_post_time_of_posting) AS blog_post_year_of_posting FROM blog_posts WHERE blog_post_approval_status = "APPROVED" ORDER BY blog_post_relevance DESC LIMIT ' . $currentOffset . ', ' .  ( MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY + 1);
+$resultContainingBlogPosts = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$rowContainingBlogPosts = mysqli_fetch_assoc( $resultContainingBlogPosts );
 $counter = 0;
+
 while ( $counter < MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY && $rowContainingBlogPosts != NULL ) {
 ?>
                <div class="col-md-6 col-lg-4">
@@ -38,27 +34,26 @@ while ( $counter < MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY && $rowContainingBlogP
                   </a>
                </div>
 <?php
-   $counter++;
 	$rowContainingBlogPosts = mysqli_fetch_assoc( $resultContainingBlogPosts );
+   $counter++;
 }
 ?>
             </section>
 
-            <section class="container-fluid">
+            <section class="container-fluid" id="notFloating">
 <?php
 if ( $rowContainingBlogPosts != NULL ) {
 ?>
-               <a href="blog_home.php?offset=<?php echo $currentOffset + MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY ?>" id="specialButtonFloatingToTheRight">Next &gt;&gt;</a>
+               <a href="blog_home.php?offset=<?php echo $currentOffset + MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY ?>" id="specialButtonFloatingToTheRight">More Gists <span class="fa fa-angle-double-right"></span></a>
 <?php
 }
 
 if ($currentOffset > 0) {
 ?>
-               <a href="blog_home.php?offset=<?php echo $currentOffset - MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY ?>" id="specialButtonFloatingToTheRight">&lt;&lt; Previous</a>
+               <a href="blog_home.php?offset=<?php echo $currentOffset - MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY ?>" id="specialButtonFloatingToTheRight"><span class="fa fa-angle-double-left"></span> Previous Gists</a>
 <?php
 }
 ?>
-
             </section>
 <?php
 displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );

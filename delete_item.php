@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/generalHeaderFile.php';
 
-if ( !userIsLoggedIn() ) {
+if ( !currentUserIsLoggedIn() ) {
    header('Location: index.php');
 }
 
@@ -16,7 +16,7 @@ if ( $_GET['category'] != 'Books' && $_GET['category'] != 'Gadgets' && $_GET['ca
 }
 
 if ( isset( $_GET['requiredAction'] ) && isset( $_GET['idOfItem'] ) && $_GET['requiredAction'] == 'performAdminDeletion' ) {
-   if ( !userIsLoggedInAsAdmin() ) {
+   if ( !currentUserIsLoggedInAsAdmin() ) {
       header( 'Location: index.php' );
    }
 

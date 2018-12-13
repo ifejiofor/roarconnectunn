@@ -12,7 +12,7 @@ $errorMessageForTags = '';
 
 $lectureNoteHasNotYetBeenUploaded = true;
 
-if ( $_POST && userIsLoggedInAsAdmin() ) {
+if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
    $targetFileBaseName = basename( $_FILES['fileToUpload']['name'] );
    $targetFilePath = 'lectureNotes/' . $targetFileBaseName;
    $sourceFilePath = $_FILES['fileToUpload']['tmp_name'];
@@ -145,7 +145,7 @@ if ( $_POST && userIsLoggedInAsAdmin() ) {
 
 displayMarkupsCommonToTopOfPages( 'Upload Lecture Note', DISPLAY_NAVIGATION_MENU, 'upload_lecture_note.php' );
 
-if ( !userIsLoggedInAsAdmin() ) {
+if ( !currentUserIsLoggedInAsAdmin() ) {
    session_destroy();
    displayMarkupToIndicateThatAdminLoginIsRequired();
 }

@@ -1,7 +1,7 @@
 <?php
 require'includes/generalHeaderFile.php';
 
-if(!userIsLoggedIn()){
+if(!currentUserIsLoggedIn()){
 	header('location:index.php');
 }else{
 		$name=$_FILES['file']['name'];
