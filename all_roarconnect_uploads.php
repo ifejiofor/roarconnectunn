@@ -38,7 +38,7 @@ if ( !currentUserIsLoggedInAsAdmin() ) {
                </header>
 <?php
 $query = 'SELECT * FROM photo_upload WHERE checks = "' . strtoupper( $_GET['type'] ) . '" AND people_id NOT LIKE "VENDOR_%" ORDER BY name_of_item, people_id';
-$resultContainingItemData = mysqli_query( $db, $query );
+$resultContainingItemData = mysqli_query( $globalHandleToDatabase, $query );
 
 if ( mysqli_num_rows( $resultContainingItemData ) == 0 ) {
 ?>
@@ -50,7 +50,7 @@ else {
    while ( $rowContainingItemData != NULL ) {
       $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
       $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingItemData['people_id'];
-      $resultContainingUserData = mysqli_query( $db, $query );
+      $resultContainingUserData = mysqli_query( $globalHandleToDatabase, $query );
       $rowContainingUserData = mysqli_fetch_assoc( $resultContainingUserData );
 ?>
                <div id="looksLikeABigPaperCard">
@@ -102,7 +102,7 @@ else {
 <?php
 
 $query = 'SELECT vendor_id, vendor_name FROM vendors ORDER BY vendor_name';
-$resultContainingVendorData = mysqli_query( $db, $query );
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query );
 $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 while ( $rowContainingVendorData != NULL ) {
 ?>
@@ -113,7 +113,7 @@ while ( $rowContainingVendorData != NULL ) {
                </header>
 <?php
    $query = 'SELECT * FROM photo_upload WHERE checks = "' . strtoupper( $_GET['type'] ) . '" AND people_id = "VENDOR_' . $rowContainingVendorData['vendor_id'] . '" ORDER BY name_of_item';
-   $resultContainingItemData = mysqli_query( $db, $query );
+   $resultContainingItemData = mysqli_query( $globalHandleToDatabase, $query );
    if ( mysqli_num_rows( $resultContainingItemData ) == 0 ) {
 ?>
                <p id="mediumSizedText">No items.</p>
@@ -124,7 +124,7 @@ while ( $rowContainingVendorData != NULL ) {
       while ( $rowContainingItemData != NULL ) {
          $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
          $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingItemData['people_id'];
-         $resultContainingUserData = mysqli_query( $db, $query );
+         $resultContainingUserData = mysqli_query( $globalHandleToDatabase, $query );
          $rowContainingUserData = mysqli_fetch_assoc( $resultContainingUserData );
 ?>
                <div id="looksLikeASmallPaperCard">

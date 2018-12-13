@@ -18,7 +18,7 @@ if ( isset( $_POST['idOfLectureNote'] ) && !isset( $_POST['confirmation'] ) ) {
    displayMarkupsCommonToTopOfPages( 'Delete Lecture Note', DISPLAY_NAVIGATION_MENU, 'delete_lecture_note.php' );
 
    $query = 'SELECT lecture_note_file_name, lecture_note_file_extension, lecture_note_number_of_pages FROM lecture_notes WHERE lecture_note_id = ' . $_POST['idOfLectureNote'];
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
 ?>
 
@@ -46,28 +46,28 @@ else if ( isset( $_POST['idOfLectureNote'] ) && isset( $_POST['confirmation'] ) 
    $idOfRequiredLectureNote = $_POST['idOfLectureNote'];
 
    $query = 'SELECT lecture_note_file_name, lecture_note_file_extension FROM lecture_notes WHERE lecture_note_id = ' . $idOfRequiredLectureNote;
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    $filePathOfRequiredLectureNote = 'lectureNotes/' . $row['lecture_note_file_name'] . '.' . $row['lecture_note_file_extension'];
 
    $query = 'SELECT tag_id FROM relationship_between_tags_and_lecture_notes WHERE lecture_note_id = ' . $idOfRequiredLectureNote;
-   $resultContainingIdOfRequiredTags = mysqli_query( $db, $query ) or die( 'A'.  $markupIndicatingDatabaseQueryFailure );
+   $resultContainingIdOfRequiredTags = mysqli_query( $globalHandleToDatabase, $query ) or die( 'A'.  $globalDatabaseErrorMarkup );
 
    $query = 'DELETE FROM lecture_notes WHERE lecture_note_id = ' . $idOfRequiredLectureNote;
-   mysqli_query( $db, $query ) or die( 'B' . $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( 'B' . $globalDatabaseErrorMarkup );
 
    $query = 'DELETE FROM relationship_between_tags_and_lecture_notes WHERE lecture_note_id = ' . $idOfRequiredLectureNote;
-   mysqli_query( $db, $query ) or die( 'B' . $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( 'B' . $globalDatabaseErrorMarkup );
 
    $rowContainingIdOfRequiredTag = mysqli_fetch_assoc( $resultContainingIdOfRequiredTags );
    while ( $rowContainingIdOfRequiredTag != NULL ) {
       $query = 'SELECT lecture_note_id FROM relationship_between_tags_and_lecture_notes WHERE tag_id = ' . $rowContainingIdOfRequiredTag['tag_id'];
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $numberOfLectureNotesStillAssociatedWithRequiredTag = mysqli_num_rows( $result );
 
       if ( $numberOfLectureNotesStillAssociatedWithRequiredTag == 0 ) {
          $query = 'DELETE FROM tags WHERE tag_id = ' . $rowContainingIdOfRequiredTag['tag_id'];
-         mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       }
 
       $rowContainingIdOfRequiredTag = mysqli_fetch_assoc( $resultContainingIdOfRequiredTags );

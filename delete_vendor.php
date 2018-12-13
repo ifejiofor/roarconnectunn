@@ -11,11 +11,11 @@
 
    if ( !isset($_GET['confirmation']) ) {
       $query = 'SELECT * FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-      $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
       $rowContainingVendorData = mysqli_fetch_assoc( $result );
 
       $query = 'SELECT username FROM users WHERE id = ' . $rowContainingVendorData['user_id_of_vendor_manager'];
-      $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
       $rowContainingUserData = mysqli_fetch_assoc($result);
 
       displayMarkupsCommonToTopOfPages('Delete Vendor', DISPLAY_NAVIGATION_MENU, 'delete_vendor.php');
@@ -62,20 +62,20 @@
    }
    else if ( $_GET['confirmation'] == 'No' ) {
       $query = 'SELECT vendor_category FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-      $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
       $row = mysqli_fetch_assoc( $result );
 
       header('Location: view_all_items.php?category='. ucwords($row['vendor_category']));
    }
    else if ( $_GET['confirmation'] == 'Yes' ) {
       $query = 'SELECT vendor_name, vendor_category FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-      $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
       $row = mysqli_fetch_assoc( $result );
       $nameOfVendor = $row['vendor_name'];
       $categoryOfVendor = $row['vendor_category'];
 
       $query = 'SELECT image_size, category FROM photo_upload WHERE people_id = "VENDOR_' . $_GET['idOfVendor'] . '"';
-      $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
       $row = mysqli_fetch_assoc($result);
 
       while ( $row != NULL ) {
@@ -88,10 +88,10 @@
       unlink ( 'images/vendorFliers/' . $nameOfVendor . '.jpg' );
 
       $query = 'DELETE FROM photo_upload WHERE people_id = "VENDOR_' . $_GET['idOfVendor'] . '"';
-      mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
 
       $query = 'DELETE FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-      mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+      mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
 
       displayMarkupsCommonToTopOfPages('Delete Vendor', DISPLAY_NAVIGATION_MENU, 'delete_vendor.php');
 ?>

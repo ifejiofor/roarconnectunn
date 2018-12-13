@@ -21,7 +21,7 @@ if ( currentUserIsLoggedInAsAdmin() ) {
                <ul class="pagination" id="noMargin">
 <?php
 $query = 'SELECT faculty_id, faculty_name FROM faculties ORDER BY faculty_name';
-$resultContainingFacultyData = mysqli_query( $db, $query );
+$resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query );
 $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
 
 while ( $rowContainingFacultyData != NULL ) {
@@ -48,7 +48,7 @@ foreach ( $arrayOfFacultyIds as $facultyName => $facultyId ) { // loop through t
                   <ul id="listArrangedInTwoColumnsOnLargeScreens">
 <?php
    $query = 'SELECT * FROM departments WHERE faculty_id = ' . $facultyId . ' ORDER BY department_name';
-   $resultContainingDepartmentData = mysqli_query( $db, $query );
+   $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query );
    $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 
    while ( $rowContainingDepartmentData != NULL ) {

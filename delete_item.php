@@ -25,7 +25,7 @@ if ( isset( $_GET['requiredAction'] ) && isset( $_GET['idOfItem'] ) && $_GET['re
    }
 
    $query = 'SELECT category, checks FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];
-   $result = mysqli_query( $db, $query );
+   $result = mysqli_query( $globalHandleToDatabase, $query );
    $row = mysqli_fetch_assoc( $result );
    if ( $row['category'] != strtolower( $_GET['category'] ) ) {
       header( 'Location: index.php' );
@@ -40,14 +40,14 @@ if ( isset( $_GET['deleteItemForVendor'] ) && isset( $_GET['idOfItem'] ) && isse
    }
 
    $query = 'SELECT user_id_of_vendor_manager FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-   $result = mysqli_query( $db, $query );
+   $result = mysqli_query( $globalHandleToDatabase, $query );
    $row = mysqli_fetch_assoc( $result );
    if ( $row['user_id_of_vendor_manager'] != $_SESSION['user_id'] ) {
       header( 'Location: index.php' );
    }
 
    $query = 'SELECT people_id, category FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];
-   $result = mysqli_query( $db, $query );
+   $result = mysqli_query( $globalHandleToDatabase, $query );
    $row = mysqli_fetch_assoc( $result );
    if ( $row['people_id'] != 'VENDOR_' . $_GET['idOfVendor'] || $row['category'] != strtolower( $_GET['category'] ) ) {
       header( 'Location: index.php' );
@@ -56,7 +56,7 @@ if ( isset( $_GET['deleteItemForVendor'] ) && isset( $_GET['idOfItem'] ) && isse
 
 if ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'performAdminDeletion' ) {
    $query = 'SELECT people_id FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    $idOfItemUploader = $row['people_id'];
    $query = 'SELECT image_size FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];
@@ -70,7 +70,7 @@ else {
    $query = 'SELECT image_size FROM photo_upload WHERE people_id = ' . $_SESSION['user_id'] . ' AND category = "' . $_GET['category'] . '"';
 }
 
-$result = mysqli_query( $db, $query );
+$result = mysqli_query( $globalHandleToDatabase, $query );
 $row = mysqli_fetch_assoc( $result );
 $filePathOfItemSnapshot = 'images/uploaded' . ucwords( $_GET['category'] ) . 'Snapshots/' . $idOfItemUploader . '@' . $row['image_size'];
 
@@ -81,15 +81,15 @@ else {
    $query="DELETE FROM `photo_upload` WHERE `people_id`= '".$_SESSION['user_id']."' AND `Category`= '" . $_GET['category'] . "'";
 }
 
-mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 unlink( $filePathOfItemSnapshot );
 
 if ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'performAdminDeletion' ) {
    $query = 'DELETE FROM reasons_for_admin_actions_on_items WHERE type_of_item = "PHOTO UPLOAD" AND id_of_item = ' . $_GET['idOfItem'];
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       
    $query = 'INSERT INTO reasons_for_admin_actions_on_items( type_of_item, id_of_item, reason ) VALUES( "PHOTO UPLOAD", ' . $_GET['idOfItem'] . ', "' . trim( htmlentities( $_GET['reason'] ) ) . '")';
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    
    header( 'Location: perform_administrative_action_on_item.php?actionPerformed=adminDeletionPerformedSuccessfully&idOfItem=' . $_GET['idOfItem'] . '&type=' . $typeOfItem . '&category=' . $_GET['category'] . '&idOfItemUploader=' . $idOfItemUploader );
 }

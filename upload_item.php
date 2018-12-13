@@ -11,7 +11,7 @@ else {
       }
 
       $query = 'SELECT user_id_of_vendor_manager FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-      $result = mysqli_query( $db, $query );
+      $result = mysqli_query( $globalHandleToDatabase, $query );
       $row = mysqli_fetch_assoc( $result );
       if ( $row['user_id_of_vendor_manager'] != $_SESSION['user_id'] ) { // the current user is not the manager of the required vendor
          header( 'Location: index.php' );
@@ -81,11 +81,11 @@ else {
 	            if( isset( $_POST['uploadItemForVendor'] ) ){
                   $user_id = 'VENDOR_' . $_POST['idOfVendor'];
 		            $upload = "INSERT INTO `photo_upload`(`People_id`, `Name_of_item`, `Category`, `Brief_Descripition`, `Price`, `Negotiable`, `Image_size`) VALUES ('$user_id','$item','$category','$describe','$money','$negotiate','$item.$extend')";
-         		   $uploadQueryExecutedSuccessfully = mysqli_query( $db, $upload ) or die( $markupIndicatingDatabaseQueryFailure );
+         		   $uploadQueryExecutedSuccessfully = mysqli_query( $globalHandleToDatabase, $upload ) or die( $globalDatabaseErrorMarkup );
 	            }
                else{
 		            $check1 = "SELECT `people_id` FROM `photo_upload` WHERE `people_id`= '".$_SESSION['user_id']."' AND `Category`= '" . $category . "'";
-		            $query_check = mysqli_query( $db, $check1 );
+		            $query_check = mysqli_query( $globalHandleToDatabase, $check1 );
 		            if( mysqli_num_rows( $query_check ) >= 1 ) {
                      $userNeedsToViewForm = false;
                      $userNeedsToBeRemindedThatHeCanOnlyUploadOneItemPerCategory = true;
@@ -94,7 +94,7 @@ else {
                   else {
                      $user_id = $_SESSION['user_id'];
 		               $upload = "INSERT INTO `photo_upload`(`People_id`, `Name_of_item`, `Category`, `Brief_Descripition`, `Price`, `Negotiable`, `Image_size`) VALUES ('$user_id','$item','$category','$describe','$money','$negotiate','$item.$extend')";
-         		      $uploadQueryExecutedSuccessfully = mysqli_query( $db, $upload ) or die( $markupIndicatingDatabaseQueryFailure );
+         		      $uploadQueryExecutedSuccessfully = mysqli_query( $globalHandleToDatabase, $upload ) or die( $globalDatabaseErrorMarkup );
 	               }
 	            }
 
@@ -128,7 +128,7 @@ else {
 
       if ( isset( $_POST['uploadItemForVendor'] ) ) {
          $query = 'SELECT vendor_name, vendor_category FROM vendors WHERE vendor_id = ' . $_POST['idOfVendor'];
-         $resultContainingVendorData = mysqli_query( $db, $query );
+         $resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query );
          $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 ?>
 
@@ -290,7 +290,7 @@ else {
 <?php
       if ( isset( $_POST['uploadItemForVendor'] ) ) {
          $query = 'SELECT vendor_name, vendor_category FROM vendors WHERE vendor_id = ' . $_POST['idOfVendor'];
-         $resultContainingVendorData = mysqli_query( $db, $query );
+         $resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query );
          $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 ?>
                <p>You have successfully uploaded your <?php echo $categoryInSingularForm ?>. You can be sure that potential customers will see this <?php echo $categoryInSingularForm . ' at ' . $rowContainingVendorData['vendor_name'] ?>'s Outlet on RoarConnect.</p>

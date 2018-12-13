@@ -37,7 +37,7 @@ else if ( $_GET['type'] == 'Unapproved' ) {
 }
 
 $query = 'SELECT * FROM blog_categories WHERE user_id_of_main_blogger = ' . $_SESSION['user_id'];
-$resultContainingCategoriesWhichLoggedInUserIsMainBloggerOf = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingCategoriesWhichLoggedInUserIsMainBloggerOf = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 if ( mysqli_num_rows( $resultContainingCategoriesWhichLoggedInUserIsMainBloggerOf ) == 0 ) {
 	header( 'Location: index.php' );
@@ -60,7 +60,7 @@ displayMarkupsCommonToTopOfPages( 'Manage Blog Posts', DISPLAY_NAVIGATION_MENU, 
 <?php
 foreach ( $idOfCategoriesWhichLoggedInUserIsMainBloggerOf as $key => $categoryId ) {
 	$query = 'SELECT blog_category_name FROM blog_categories WHERE blog_category_id = ' . $categoryId;
-	$resultContainingDataAboutBlogCategory = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+	$resultContainingDataAboutBlogCategory = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 	$rowContainingDataAboutBlogCategory = mysqli_fetch_assoc( $resultContainingDataAboutBlogCategory );
 ?>
             <p id="notFloating"></p>
@@ -72,7 +72,7 @@ foreach ( $idOfCategoriesWhichLoggedInUserIsMainBloggerOf as $key => $categoryId
    $currentOffset = isset( $_GET['requiredCategory'] ) && $_GET['requiredCategory'] == $categoryId ? $_GET['offset'] : 0;
 
    $query = 'SELECT blog_post_id, blog_category_id, blog_post_image_filename, blog_post_caption, user_id_of_poster, MONTHNAME( blog_post_time_of_posting ) AS month_of_posting, DAYOFMONTH( blog_post_time_of_posting ) AS day_of_posting, YEAR( blog_post_time_of_posting ) AS year_of_posting FROM blog_posts WHERE blog_post_approval_status = "' . $_GET['type'] . '" AND blog_category_id = ' . $categoryId . ' AND user_id_of_poster != ' . $_SESSION['user_id'] . ' ORDER BY blog_post_time_of_posting DESC LIMIT ' . $currentOffset . ', ' . MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY;
-   $resultContainingBlogPosts = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingBlogPosts = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $resultContainingBlogPosts ) == 0 ) {
 ?>
@@ -85,7 +85,7 @@ foreach ( $idOfCategoriesWhichLoggedInUserIsMainBloggerOf as $key => $categoryId
 
       while ( $rowContainingBlogPosts != NULL ) {
          $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingBlogPosts['user_id_of_poster'];
-         $resultContainingDataAboutPoster = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDataAboutPoster = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingDataAboutPoster = mysqli_fetch_assoc( $resultContainingDataAboutPoster );
 ?>
 
@@ -133,7 +133,7 @@ foreach ( $idOfCategoriesWhichLoggedInUserIsMainBloggerOf as $key => $categoryId
    }
    
    $query = 'SELECT blog_post_id FROM blog_posts WHERE blog_post_approval_status = "' . $_GET['type'] . '" AND blog_category_id = ' . $categoryId . ' AND user_id_of_poster != ' . $_SESSION['user_id'] . '  LIMIT ' . ( $currentOffset + MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY ) . ', 1';
-   $resultContainingNextPost = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingNextPost = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingNextPost = mysqli_fetch_assoc( $resultContainingNextPost );
 
    if ( $rowContainingNextPost != NULL ) {

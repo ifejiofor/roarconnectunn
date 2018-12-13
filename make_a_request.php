@@ -15,12 +15,12 @@ if(!currentUserIsLoggedIn()){
 					if((strlen($phone)==11)){
 							 $phone;
 		$request="SELECT `firstname`, `email` FROM `users` WHERE `id`='".$_SESSION['user_id']."'";
-		if($request_new=mysqli_query($db, $request)){
+		if($request_new=mysqli_query($globalHandleToDatabase, $request)){
 			$request_query=mysqli_fetch_array($request_new);
 		     $first=$request_query['firstname'];
            $email = $request_query['email'];
 			 $update="INSERT INTO `user_requests`(`firstname`, `request`, `description`, `phone`, `email`) VALUES ('$first','$text','$describe','$phone','$email')";
-			if($update_query=mysqli_query($db, $update)){
+			if($update_query=mysqli_query($globalHandleToDatabase, $update)){
 				echo'<p id="successMessage">Request successfully uploaded.</p>';
 			}else{
 				echo '<p id="errorMessage">Request upload unsuccessful.</p>';

@@ -32,7 +32,7 @@ else if ( $_GET['requiredAction'] == 'performAdminDeletion' || $_GET['actionPerf
 
 if ( $_GET['actionPerformed'] != 'adminDeletionPerformedSuccessfully' ) {
    $query = 'SELECT blog_post_id, blog_category_id, blog_post_image_filename, blog_post_caption, blog_post_approval_status, user_id_of_poster, MONTHNAME( blog_post_time_of_posting ) AS month_of_posting, DAYOFMONTH( blog_post_time_of_posting ) AS day_of_posting, YEAR( blog_post_time_of_posting ) AS year_of_posting FROM blog_posts WHERE blog_post_id = ' . $_GET['idOfBlogPost'];
-   $resultContainingBlogPostData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingBlogPostData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingBlogPostData = mysqli_fetch_assoc( $resultContainingBlogPostData );
 
    if ( $_GET['requiredAction'] != 'performAdminDeletion' && !isMainBloggerForThisCategory( $_SESSION['user_id'], $rowContainingBlogPostData['blog_category_id'] ) ) {
@@ -40,11 +40,11 @@ if ( $_GET['actionPerformed'] != 'adminDeletionPerformedSuccessfully' ) {
    }
 
    $query = 'SELECT blog_category_name FROM blog_categories WHERE blog_category_id = ' . $rowContainingBlogPostData['blog_category_id'];
-   $resultContainingBlogCategoryData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingBlogCategoryData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingBlogCategoryData = mysqli_fetch_assoc( $resultContainingBlogCategoryData );
 
    $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingBlogPostData['user_id_of_poster'];
-   $resultContainingUserData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingUserData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingUserData = mysqli_fetch_assoc( $resultContainingUserData );
 
    $directory = 'images/ImagesFor' . ucwords( $rowContainingBlogCategoryData['blog_category_name'] ) . 'Updates';
@@ -156,7 +156,7 @@ else if ( isset( $_GET['actionPerformed'] ) ) {
    if ( $_GET['actionPerformed'] == 'adminDeletionPerformedSuccessfully' ) {
       if ( $_GET['idOfPoster'] != $_SESSION['user_id'] ) {
          $query = 'INSERT INTO notifications( notification_text, user_id_of_recipient, notification_time_of_notifying, notification_url, reason_for_notification, id_of_item ) VALUES( "Your ' . ucwords( $_GET['category'] ) . ' Blog Post have been ' . $requiredActionInConciseForm . 'd", ' . $_GET['idOfPoster'] . ', NOW(), "your_blog_posts.php", "DELETION OF BLOG POST", ' . $_GET['idOfBlogPost'] . ' )';
-         mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       }
 ?>
                <p><a href="<?php echo isset( $_GET['urlOfSourcePage'] ) ? $_GET['urlOfSourcePage'] : 'manage_blog_posts.php?type=' . $_GET['type'] ?>" class="btn btn-default btn-sm">&lt;&lt; Click Here</a> to go back to <?php echo isset( $_GET['urlOfSourcePage'] ) ?  'Your' : 'the ' . $_GET['type'] ?> Blog Posts Page.</p>
@@ -165,7 +165,7 @@ else if ( isset( $_GET['actionPerformed'] ) ) {
    else {
       $reasonForNotification = $_GET['actionPerformed'] == 'adminApprovalPerformedSuccessfully' ? 'APPROVAL OF BLOG POST' : 'UNAPPROVAL OF BLOG POST';
       $query = 'INSERT INTO notifications( notification_text, user_id_of_recipient, notification_time_of_notifying, notification_url, reason_for_notification, id_of_item ) VALUES( "Your ' . ucwords( $rowContainingBlogCategoryData['blog_category_name'] ) . ' Blog Post have been ' . $requiredActionInConciseForm . 'd", ' . $rowContainingBlogPostData['user_id_of_poster'] . ', NOW(), "your_blog_posts.php#' . $rowContainingBlogPostData['blog_post_id'] . '", "' . $reasonForNotification . '", ' . $rowContainingBlogPostData['blog_post_id'] . ' )';
-      mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 	   if ( $rowContainingBlogPostData['blog_post_image_filename'] != NULL ) {
 ?>

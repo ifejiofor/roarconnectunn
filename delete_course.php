@@ -15,7 +15,7 @@ if ( isset( $_POST['courseCode'] ) && !isset( $_POST['confirmation'] ) ) {
    displayMarkupsCommonToTopOfPages( 'Delete Course', DISPLAY_NAVIGATION_MENU, 'delete_course.php' );
 
    $query = 'SELECT lecture_note_id FROM lecture_notes WHERE course_code = "' . $_POST['courseCode'] . '"';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $result ) > 0 ) {
 ?>
@@ -41,7 +41,7 @@ if ( isset( $_POST['courseCode'] ) && !isset( $_POST['confirmation'] ) ) {
    }
    else {
       $query = 'SELECT course_title FROM courses WHERE course_code = "' . $_POST['courseCode'] . '"';
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
 ?>
 
@@ -70,34 +70,34 @@ else if ( isset( $_POST['courseCode'] ) && isset( $_POST['confirmation'] ) && $_
    $idOfRequiredDepartment = $idOfRequiredFaculty = 0;
 
    $query = 'SELECT department_id FROM courses WHERE course_code = "' . $requiredCourse . '"';
-   $result = mysqli_query( $db, $query ) or die( 'A'.  $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'A'.  $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    $idOfRequiredDepartment = $row['department_id'];
 
    $query = 'DELETE FROM courses WHERE course_code = "' . $requiredCourse . '"';
-   mysqli_query( $db, $query ) or die( 'B' . $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( 'B' . $globalDatabaseErrorMarkup );
 
    $query = 'SELECT course_code FROM courses WHERE department_id = ' . $idOfRequiredDepartment;
-   $result = mysqli_query( $db, $query ) or die( 'C'. $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'C'. $globalDatabaseErrorMarkup );
    $numberOfCoursesOfferedByRequiredDepartment = mysqli_num_rows( $result );
 
    if ( $numberOfCoursesOfferedByRequiredDepartment == 0 ) {
       $query = 'SELECT faculty_id FROM departments WHERE department_id = ' . $idOfRequiredDepartment;
-      $result = mysqli_query( $db, $query ) or die( 'D'. $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'D'. $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
       $idOfRequiredFaculty = $row['faculty_id'];
 
       $query = 'DELETE FROM departments WHERE department_id = ' . $idOfRequiredDepartment;
-      mysqli_query( $db, $query ) or die( 'E'.$markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'E'.$globalDatabaseErrorMarkup );
    }
 
    $query = 'SELECT department_id FROM departments WHERE faculty_id = ' . $idOfRequiredFaculty;
-   $result = mysqli_query( $db, $query ) or die( 'F'. $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'F'. $globalDatabaseErrorMarkup );
    $numberOfDepartmentsInRequiredFaculty = mysqli_num_rows( $result );
 
    if ( $numberOfDepartmentsInRequiredFaculty == 0 ) {
       $query = 'DELETE FROM faculties WHERE faculty_id = ' . $idOfRequiredFaculty;
-      $result = mysqli_query( $db, $query ) or die( 'G'. $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'G'. $globalDatabaseErrorMarkup );
    }
 
    header( 'Location: view_lecture_note_information.php?' . buildStringContainingAllDataFromGET( $nameOfDataToExemptWhenBuildingStringFromGET ) );

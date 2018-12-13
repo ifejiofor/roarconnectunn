@@ -35,7 +35,7 @@ else if ( $_GET['requiredAction'] == 'performAdminDeletion' || $_GET['actionPerf
 }
 
 $query = 'SELECT * FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];
-$resultContainingItemData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingItemData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 $rowContainingItemData = mysqli_fetch_assoc( $resultContainingItemData );
 
 if ( isset( $_GET['requiredAction'] ) ) {
@@ -137,7 +137,7 @@ else if ( isset( $_GET['actionPerformed'] ) ) {
       $notificationURL = uploaderOfItemIsAVendor( $_GET['idOfItemUploader'] ) ? 'your_uploads_as_manager_of_vendor.php' : 'your_upload.php?category=' . ucwords( $_GET['category'] );
       
       $query = 'INSERT INTO notifications( notification_text, user_id_of_recipient, notification_time_of_notifying, notification_url, reason_for_notification, id_of_item ) VALUES( "Your ' . ucwords( $_GET['category'] ) . ' Upload have been ' . $requiredActionInConciseForm . 'd", ' . $userIdOfRecipient . ', NOW(), "' . $notificationURL . '", "DELETION OF PHOTO UPLOAD", ' . $_GET['idOfItem'] . ' )';
-      mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 ?>
                <p><a href="all_roarconnect_uploads.php?type=<?php echo $_GET['type'] ?>" class="btn btn-default btn-sm">&lt;&lt; Click Here</a> to go back to the <?php echo $_GET['type'] ?> Items Page.</p>
@@ -149,7 +149,7 @@ else if ( isset( $_GET['actionPerformed'] ) ) {
       $reasonForNotification = $_GET['actionPerformed'] == 'adminApprovalPerformedSuccessfully' ? 'APPROVAL OF PHOTO UPLOAD' : 'UNAPPROVAL OF PHOTO UPLOAD';
       
       $query = 'INSERT INTO notifications( notification_text, user_id_of_recipient, notification_time_of_notifying, notification_url, reason_for_notification, id_of_item ) VALUES( "Your ' . ucwords( $rowContainingItemData['category'] ) . ' Upload have been ' . $requiredActionInConciseForm . 'd", ' . $userIdOfRecipient . ', NOW(), "' . $notificationURL . '", "' . $reasonForNotification . '", ' . $_GET['idOfItem'] . ' )';
-      mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 ?>
                <img src="<?php echo $directory . '/' . $rowContainingItemData['people_id'] . '@' . $rowContainingItemData['image_size'] ?>" alt="Snapshot of <?php echo ucwords( $rowContainingItemData['name_of_item'] ) ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
 
@@ -181,12 +181,12 @@ function uploaderOfItemIsAVendor( $idOfItemUploader )
 
 function getUserIdOfManagerOfVendor( $idOfItemUploader )
 {
-   global $db;
+   global $globalHandleToDatabase;
    
    if ( uploaderOfItemIsAVendor( $idOfItemUploader ) ) {
       $idOfVendor = substr( $idOfItemUploader, 7 );
       $query = 'SELECT user_id_of_vendor_manager FROM vendors WHERE vendor_id = ' . $idOfVendor;
-      $resultContainingDataAboutVendorManager = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $resultContainingDataAboutVendorManager = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $rowContainingDataAboutVendorManager = mysqli_fetch_assoc( $resultContainingDataAboutVendorManager );
       return $rowContainingDataAboutVendorManager['user_id_of_vendor_manager'];
    }

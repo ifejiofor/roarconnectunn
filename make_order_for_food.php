@@ -30,14 +30,14 @@ if ( isset( $_GET['idOfRequiredFood'] ) ) {
    }
    else {
       $query = 'SELECT name_of_item FROM photo_upload WHERE id_new = ' . $_GET['idOfRequiredFood'];
-	  $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+	  $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 	  $row = mysqli_fetch_assoc( $result );
 	  $nameOfRequiredFood = $row['name_of_item'];
    }
 }
 
 $query = 'SELECT vendor_name, vendor_email, user_id_of_vendor_manager FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-$resultContainingVendorData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 $customizedStyleForBodyElement = 'background-image: url( \'images/vendorFliers/' . $rowContainingVendorData['vendor_name'] . '.jpg\' ); background-size: cover;';
 
@@ -171,7 +171,7 @@ if ( strtoupper( $rowContainingVendorData['vendor_name'] ) == 'CHEF D FOODS' &&
 }
 
 $request="SELECT `firstname`, `email`, `phone_number` FROM `users` WHERE `id`='".$_SESSION['user_id']."'";
-if($request_new=mysqli_query($db, $request)){
+if($request_new=mysqli_query($globalHandleToDatabase, $request)){
 	$request_query=mysqli_fetch_array($request_new);
 	$firstname=$request_query['firstname'];
 	$email=$request_query['email'];
@@ -227,7 +227,7 @@ if( $_POST ) {
 
 					    $insert = "INSERT INTO `orders` ( `order_name_of_item`, `order_quantity_of_item`, `order_miscellaneous_additions`, `order_total_price`, `order_delivery_location`, `order_delivery_address`, `order_phone_number_of_orderer`, `user_id_of_orderer`, `vendor_id` ) VALUES ( '$nameOfFoodInputtedByUser', '$piecesInputtedByUser', '$extraThingsAddedToOrder', '" . $_POST['totalPriceOfOrder'] . "', '$deliveryLocationInputtedByUser', '$deliveryAddressInputtedByUser', '$phoneNumberInputtedByUser','" . $_SESSION['user_id'] . "', " . $_GET['idOfVendor'] . ")";
 
-					    if($check=mysqli_query($db, $insert)){
+					    if($check=mysqli_query($globalHandleToDatabase, $insert)){
 							$totalprice=$_POST['totalPriceOfOrder'];
                      $deliveryPrice = $_POST['totalDeliveryPriceOfOrder'];
                      
@@ -250,8 +250,8 @@ if( $_POST ) {
                            <tr style="font-family: sans-serif; font-size: 1em; color: #000; background-color: #f2f2f2;"><th style="text-align: left; padding: 8px;">PHONE NUMBER</th> <td style="text-align: left; padding: 8px;">' . $phoneNumberInputtedByUser .'</td></tr>
                            </table>';
 
-                     $query = 'INSERT INTO messages( message_title, message_body, user_id_of_recipient, message_time_of_sending ) VALUES( "Food Order", "' . mysqli_real_escape_string( $db, $messageBody ) . '", ' . $rowContainingVendorData['user_id_of_vendor_manager'] . ', NOW() )';
-                     mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+                     $query = 'INSERT INTO messages( message_title, message_body, user_id_of_recipient, message_time_of_sending ) VALUES( "Food Order", "' . mysqli_real_escape_string( $globalHandleToDatabase, $messageBody ) . '", ' . $rowContainingVendorData['user_id_of_vendor_manager'] . ', NOW() )';
+                     mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
                      
                      include 'sendmailorder.php';
                       include 'foodconfimationmail.php';
@@ -279,7 +279,7 @@ if( $_POST ) {
 }
 
 $query = 'SELECT vendor_name FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-$resultContainingVendorData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 
 if ( $userShouldViewForm ) {
@@ -325,7 +325,7 @@ if ( $userShouldViewForm ) {
    }
    else {
       $query = 'SELECT name_of_item, price FROM photo_upload WHERE category = "' . $_GET['category'] . '" AND people_id ="VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 	  if ( mysqli_num_rows( $result ) == 1 ) {
          $row = mysqli_fetch_assoc( $result );
@@ -377,7 +377,7 @@ if ( $userShouldViewForm ) {
 
    if ( $typeOfFood == 'MAJOR FOOD' ) {
       $query = 'SELECT name_of_item, price FROM photo_upload WHERE category = "dessert" AND people_id ="VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
       if ( mysqli_num_rows( $result ) > 0 ) { // The required vendor also delivers desserts
 ?>
@@ -423,7 +423,7 @@ if ( $userShouldViewForm ) {
 
 
       $query = 'SELECT name_of_item, price FROM photo_upload WHERE category = "drink" AND people_id ="VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
       if ( mysqli_num_rows( $result ) > 0 ) {
 ?>
@@ -528,7 +528,7 @@ else if ( $userShouldConfirmOrder ) {
    ';
 
    $query = 'SELECT price FROM photo_upload WHERE name_of_item = "' . $nameOfFoodInputtedByUser . '" AND category = "' . $_GET['category'] . '" AND people_id ="VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    $pricePerQuantityOfFood = $row['price'];
    
@@ -589,7 +589,7 @@ else if ( $userShouldConfirmOrder ) {
 
       if ( $nameOfDessert != NULL ) {
          $query = 'SELECT price FROM photo_upload WHERE name_of_item = "' . $nameOfDessert . '" AND category = "dessert" AND people_id ="VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-         $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $row = mysqli_fetch_assoc( $result );
          $pricePerQuantityOfDessert = $row['price'];
          $totalPriceOfOrder += $pricePerQuantityOfDessert * $quantityOfDessert;
@@ -633,7 +633,7 @@ else if ( $userShouldConfirmOrder ) {
 
    if ( $nameOfDrinkInputtedByUser != NULL ) {
       $query = 'SELECT price FROM photo_upload WHERE name_of_item = "' . $nameOfDrinkInputtedByUser . '" AND category = "drink" AND people_id ="VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
       $pricePerQuantityOfDrink = $row['price'];
       $totalPriceOfOrder += $pricePerQuantityOfDrink * $quantityOfDrinkInputtedByUser;

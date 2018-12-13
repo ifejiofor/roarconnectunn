@@ -44,7 +44,7 @@ else {
 
 <?php
    $query = 'SELECT vendor_id, vendor_name FROM vendors';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $result ) > 0 ) {
 ?>

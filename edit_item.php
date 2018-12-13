@@ -24,14 +24,14 @@ if ( isset( $_GET['editItemForVendor'] ) && isset( $_GET['idOfItem'] ) && isset(
    }
 
    $query = 'SELECT user_id_of_vendor_manager FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-   $result = mysqli_query( $db, $query );
+   $result = mysqli_query( $globalHandleToDatabase, $query );
    $row = mysqli_fetch_assoc( $result );
    if ( $row['user_id_of_vendor_manager'] != $_SESSION['user_id'] ) {
       header( 'Location: index.php' );
    }
 
    $query = 'SELECT people_id, category FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];
-   $result = mysqli_query( $db, $query );
+   $result = mysqli_query( $globalHandleToDatabase, $query );
    $row = mysqli_fetch_assoc( $result );
    if ( $row['people_id'] != 'VENDOR_' . $_GET['idOfVendor'] || $row['category'] != strtolower( $_GET['category'] ) ) {
       header( 'Location: index.php' );
@@ -75,7 +75,7 @@ else if ( $_GET['category'] == 'Cake' || $_GET['category'] == 'Indomie' || $_GET
 
 if ( isset( $_POST['editItemForVendor'] ) ) {
    $query = 'SELECT vendor_name FROM vendors WHERE vendor_id = ' . $_POST['idOfVendor'];
-   $resultContainingVendorData = mysqli_query( $db, $query );
+   $resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query );
    $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
    displayMarkupsCommonToTopOfPages( 'Edit ' . $categoryInSingularForm . ' for ' . $rowContainingVendorData['vendor_name'], DISPLAY_NAVIGATION_MENU, 'edit_item.php' );
 
@@ -87,7 +87,7 @@ else {
    $query = "SELECT `Name_of_item`,`Brief_Descripition`, `Price`, `negotiable` FROM `photo_upload` WHERE `people_id`= '".$_SESSION['user_id']."' AND `category` = '" . $_GET['category'] . "'";
 }
 
-$picks=mysqli_query($db, $query) or die( $markupIndicatingDatabaseQueryFailure );
+$picks=mysqli_query($globalHandleToDatabase, $query) or die( $globalDatabaseErrorMarkup );
 $picker=mysqli_fetch_array($picks);
 $olditem= $picker['Name_of_item'];
 $olddescribe= $picker['Brief_Descripition'];
@@ -110,7 +110,7 @@ if (isset($_POST['describe']) && isset($_POST['money']) && isset($_POST['item'])
 	      $update="UPDATE `photo_upload` SET `Name_of_item`='$item',`Brief_Descripition`='$describe',`Price`='$money',`Negotiable`='$negotiate', `checks` = 'NEWLY UPLOADED' WHERE `people_id`= '".$_SESSION['user_id']."' AND `Category`= '". $_GET['category']."'";
       }
 
-	   if ($update_run=mysqli_query($db, $update)){
+	   if ($update_run=mysqli_query($globalHandleToDatabase, $update)){
 		   $itemHasNotYetBeenEdited = false;
 	   }
       else{

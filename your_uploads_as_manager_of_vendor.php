@@ -6,7 +6,7 @@ if ( !currentUserIsLoggedIn() ) {
 }
 
 $query = 'SELECT vendor_id, vendor_name, vendor_category FROM vendors WHERE user_id_of_vendor_manager = ' . $_SESSION['user_id'];
-$resultContainingDataAboutVendor = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingDataAboutVendor = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 if ( mysqli_num_rows( $resultContainingDataAboutVendor ) == 0 ) {
    header( 'Location: index.php' );
 }
@@ -57,7 +57,7 @@ while ( $rowContainingDataAboutVendor != NULL ) {
                </header>
 <?php
    $query = 'SELECT id_new, name_of_item, brief_descripition, price, negotiable, image_size, category, checks FROM photo_upload WHERE people_id = "VENDOR_' . $rowContainingDataAboutVendor['vendor_id'] . '"';
-   $resultContainingDataAboutUpload = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingDataAboutUpload = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $resultContainingDataAboutUpload ) == 0 ) {
 ?>
@@ -93,7 +93,7 @@ while ( $rowContainingDataAboutVendor != NULL ) {
 <?php
          if ( $rowContainingDataAboutUpload['checks'] == 'UNAPPROVED' ) {
             $queryToRetrieveReasonForUnapproval = 'SELECT reason FROM reasons_for_admin_actions_on_items WHERE type_of_item = "PHOTO UPLOAD" AND id_of_item = ' . $rowContainingDataAboutUpload['id_new'];
-            $resultContainingReasonForUnapproval = mysqli_query( $db, $queryToRetrieveReasonForUnapproval ) or die( $markupIndicatingDatabaseQueryFailure );
+            $resultContainingReasonForUnapproval = mysqli_query( $globalHandleToDatabase, $queryToRetrieveReasonForUnapproval ) or die( $globalDatabaseErrorMarkup );
             $rowContainingReasonForUnapproval = mysqli_fetch_assoc( $resultContainingReasonForUnapproval );
             displayMarkupForReasonForAdminActionModal( 'Unapproval', $rowContainingReasonForUnapproval['reason'], 'reasonForAdminAction' . $rowContainingDataAboutUpload['id_new'] );
          }

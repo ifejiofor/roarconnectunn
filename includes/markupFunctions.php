@@ -15,7 +15,7 @@ define( 'ADMIN_LOGIN', 6 );
 
 function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuStatus = DO_NOT_DISPLAY_NAVIGATION_MENU, $urlOfCurrentPage = NULL, $customizedStyleForBodyElement = NULL )
 {
-   global $db;
+   global $globalHandleToDatabase;
 
    if ($urlOfCurrentPage == NULL) {
       $urlOfCurrentPage = basename($_SERVER['PHP_SELF']);
@@ -61,19 +61,19 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
 <?php
       if ( currentUserIsLoggedIn() ) {
 	      $query = 'SELECT blog_category_name FROM blog_categories WHERE user_id_of_main_blogger = ' . $_SESSION['user_id'];
-	      $resultContainingBlogPostCategories = mysqli_query( $db, $query) or die( $markupIndicatingDatabaseQueryFailure );
+	      $resultContainingBlogPostCategories = mysqli_query( $globalHandleToDatabase, $query) or die( $globalDatabaseErrorMarkup );
 	      $userIsAMainBlogger = mysqli_num_rows( $resultContainingBlogPostCategories ) > 0;
 	  
          $query = 'SELECT vendor_id, vendor_name FROM vendors WHERE user_id_of_vendor_manager = ' . $_SESSION['user_id'];
-         $resultContainingVendorData = mysqli_query( $db, $query) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query) or die( $globalDatabaseErrorMarkup );
          $userIsAVendorManager = mysqli_num_rows( $resultContainingVendorData ) > 0;
 
          $query = 'SELECT notification_id FROM notifications WHERE user_id_of_recipient = ' . $_SESSION['user_id'] . ' AND notification_status = "UNREAD"';
-         $resultContainingAllUnreadNotifications = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingAllUnreadNotifications = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $numberOfUnreadNotifications = mysqli_num_rows( $resultContainingAllUnreadNotifications );
          
          $query = 'SELECT message_id FROM messages WHERE user_id_of_recipient = ' . $_SESSION['user_id'] . ' AND message_status = "UNREAD"';
-         $resultContainingAllUnreadMessages = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingAllUnreadMessages = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $numberOfUnreadMessages = mysqli_num_rows( $resultContainingAllUnreadMessages );
 ?>
                      <li id="dropdown">
@@ -163,9 +163,24 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
          </div> <!-- closing tag of div.col-sm-9 -->
 
          <aside class="col-sm-3">
-            <div class="container-fluid" style="padding-top: 100px;">
-               Adverts, related blog posts, featured foods, featured vendors, featured lecture notes shows here.
-               <br/>Criteria for related blog posts include:<br/>Related posts viewed before<br/>Number of views<br/>Latest posts
+            <div class="container-fluid" id="sideBar">
+               <section class="well" id="sideBarSection">
+<?php
+   $urlOfCurrentPage = basename($_SERVER['PHP_SELF']);
+
+   if ($urlOfCurrentPage == 'blog_home.php') {
+      displaySomeInterestingBlogPostsAlongSideBar();
+   }
+   else if ($urlOfCurrentPage == 'blog.php') {
+      displaySomeLatestBlogPostsAlongSideBar();
+
+   }
+?>
+               </section>
+
+               <section class="well" id="sideBarSection">
+                  Other adverts, related blog posts, featured foods, featured vendors, featured lecture notes shows here.
+               </section>
             </div>
          </aside>
       </div> <!-- closing tag of div.container-fluid -->
@@ -285,6 +300,55 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
 </html>
 <?php
 }
+
+
+// TODO: This code should be modified such that only the blog posts that would actually display on the side bar will be retrieved for efficiency purpose
+function displaySomeInterestingBlogPostsAlongSideBar()
+{
+   global $globalBlogPostsDisplayedInCurrentPage;
+?>
+               <h2 id="sectionHeading">You May Also Like</h2>
+<?php
+   $interestingBlogPosts = getArrayOfDataAboutInterestingBlogPosts(10);
+
+   foreach ($interestingBlogPosts as $blogPost) {
+      if (blogPostIsNotInArray($blogPost, $globalBlogPostsDisplayedInCurrentPage)) {
+         displayBlogPostAlongSideBar($blogPost);
+      }
+   }
+}
+
+
+function displayBlogPostAlongSideBar($rowContainingBlogPost)
+{
+?>
+                  <a href="blog.php?i=<?php echo $rowContainingBlogPost['blog_post_id'] ?>" id="blogAlongSideBar">
+                     <img src="images/blogImages/<?php echo $rowContainingBlogPost['blog_post_image_filename'] ?>" width="50" height="50" id="blogAlongSideBarImage" />
+                     <div>
+                        <h3 id="blogAlongSideBarCaption"><?php echo $rowContainingBlogPost['blog_post_caption'] ?></h3>
+                        <p id="blogAlongSideBarSubdetails"><?php echo substr($rowContainingBlogPost['blog_post_month_of_posting'], 0, 3) . ' ' . $rowContainingBlogPost['blog_post_day_of_posting'] . ', ' . $rowContainingBlogPost['blog_post_year_of_posting'] ?></p>
+                     </div>
+                  </a>
+<?php
+}
+
+
+// TODO: This code should be modified such that only the blog posts that would actually display on the side bar will be retrieved for efficiency purpose
+function displaySomeLatestBlogPostsAlongSideBar()
+{
+   global $globalBlogPostsDisplayedInCurrentPage;
+?>
+               <h2 id="sectionHeading">Latest Gists</h2>
+<?php
+   $interestingBlogPosts = getArrayOfDataAboutLatestBlogPosts(5);
+
+   foreach ($interestingBlogPosts as $blogPost) {
+      if (blogPostIsNotInArray($blogPost, $globalBlogPostsDisplayedInCurrentPage)) {
+         displayBlogPostAlongSideBar($blogPost);
+      }
+   }
+}
+
 
 function getMarkupForButtonThatWillTellUserToLogInBeforeContinuing( $textToBeContainedInButton, $miscellaneousAttributesOfButton = '' )
 {

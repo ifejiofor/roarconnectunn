@@ -39,7 +39,7 @@ if (!currentUserIsLoggedIn()){
 				                require 'includes/performBasicInitializations.php';
 							   
 								$email_chick="SELECT `email` FROM `users` WHERE `email`='$email'";
-								if($email_query=mysqli_query($db, $email_chick)){
+								if($email_query=mysqli_query($globalHandleToDatabase, $email_chick)){
 									$email_chick_run=mysqli_num_rows($email_query);
 									if($email_chick_run==1){
 										echo '<p id="errorMessage">The email you selected is already being used by another user.</p>';
@@ -64,10 +64,10 @@ if (!currentUserIsLoggedIn()){
 			                                            $_SESSION['captcha']=rand(10000, 99999);
                                                     }else {
 												        $enter="INSERT INTO `users`(`firstname`, `email`, `phone_number`, `password`, `attribute`) VALUES ('$first', '$email', '$phone', '$pass', '$att')";
-										                if($enter_run=mysqli_query($db, $enter)){
-                                                  $userIdOfJustRegisteredUser = mysqli_insert_id( $db );
+										                if($enter_run=mysqli_query($globalHandleToDatabase, $enter)){
+                                                  $userIdOfJustRegisteredUser = mysqli_insert_id( $globalHandleToDatabase );
                                                    $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "Welcome Message", "Welcome to RoarConnect, keep currentUserIsLoggedIng in to enjoy the best of quality services and information.", NULL, ' . $userIdOfJustRegisteredUser . ', NOW() )';
-                                                  mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+                                                  mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
                                                    include  'sendmail.php'; // The code in this file sends an email to the just registered user
 										                    header('location:registrationSuccessful.php');
 										                }else{

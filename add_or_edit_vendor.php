@@ -25,7 +25,7 @@ if ( $_POST ) {
 }
 else if ( $_GET['requiredAction'] == 'editVendor' ) {
    $query = 'SELECT * FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
 
    $defaultNameOfVendor = $row['vendor_name'];
@@ -61,7 +61,7 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
    }
    else if ( $_GET['requiredAction'] == 'addVendor' ) {
       $query = 'SELECT vendor_name FROM vendors WHERE vendor_name = "' . $_POST['nameOfVendor'] . '"';
-      $result = mysqli_query( $db, $query );
+      $result = mysqli_query( $globalHandleToDatabase, $query );
       if ( mysqli_num_rows( $result ) == 1 ) {
          $errorMessageForNameOfVendor = '<p class="col-sm-offset-2 col-sm-10" id="errorMessage">A vendor already exists with the same name. Please, enter another name.</p>';
          $thereIsErrorInFormData = true;
@@ -100,8 +100,8 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
       if ( $_GET['requiredAction'] == 'addVendor' ) {
          $query = 'INSERT INTO vendors ( vendor_name, vendor_address, vendor_email, vendor_phone_number_1, vendor_phone_number_2, vendor_category, user_id_of_vendor_manager )
             VALUES ( "' . addslashes( trim( $_POST['nameOfVendor'] ) ) . '", "' . addslashes( trim( $_POST['addressOfVendor'] ) ) . '", "' . $_POST['emailOfVendor'] . '", "' . $_POST['firstPhoneNumberOfVendor'] . '", "' . $_POST['secondPhoneNumberOfVendor'] . '", "' . $_POST['categoryOfVendor'] . '", ' . $_POST['idOfVendorManager'] . ' )';
-         mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-         $idOfLatestVendor = mysqli_insert_id( $db );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+         $idOfLatestVendor = mysqli_insert_id( $globalHandleToDatabase );
 
          $temporaryFilePathOfVendorFlier = $_FILES['vendorFlier']['tmp_name'];
          $permanentFilePathOfVendorFlier = 'images/vendorFliers/' . $_POST['nameOfVendor'] . '.jpg';
@@ -109,7 +109,7 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
       }
       else {
          $query = 'SELECT vendor_name FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-         $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $row = mysqli_fetch_assoc( $result );
          if ( strtolower( $row['vendor_name'] ) != strtolower( $_POST['nameOfVendor'] ) ) {
             $fileNameOfOldFlier = 'images/vendorFliers/' . $row['vendor_name'] . '.jpg';
@@ -129,7 +129,7 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
 
          $query = 'UPDATE vendors SET vendor_name = "' . addslashes( trim( $_POST['nameOfVendor'] ) ) . '", vendor_address = "' . addslashes( trim( $_POST['addressOfVendor'] ) ) . '", vendor_email = "' . $_POST['emailOfVendor'] . '", vendor_phone_number_1 = "' . $_POST['firstPhoneNumberOfVendor'] . '", vendor_phone_number_2 = "' . $_POST['secondPhoneNumberOfVendor'] . '", vendor_category = "' . $_POST['categoryOfVendor'] . '", user_id_of_vendor_manager = ' . $_POST['idOfVendorManager'] . '
             WHERE vendor_id = ' . $_GET['idOfVendor'];
-         mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       }
 
       $formShouldBeDisplayed = false;
@@ -199,7 +199,7 @@ if ( $formShouldBeDisplayed ) {
                      <option value="-1">---</option>
 <?php
    $query = 'SELECT id, email FROM users ORDER BY email';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    while ( $row != NULL ) {
 ?>
@@ -250,7 +250,7 @@ if ( $formShouldBeDisplayed ) {
 }
 else {
    $query = 'SELECT email FROM users WHERE id = ' . $_POST['idOfVendorManager'];
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingUserData = mysqli_fetch_assoc( $result );
 ?>
          <div id="containerHoldingSuccessMessage">

@@ -21,7 +21,7 @@ displayMarkupsCommonToTopOfPages( 'Your Blog Updates', DISPLAY_NAVIGATION_MENU, 
 <?php
 $currentOffset = isset( $_GET['offset'] ) ? $_GET['offset'] : 0;
 $query = 'SELECT blog_post_id, blog_post_image_filename, blog_post_caption, blog_category_id, blog_post_approval_status, MONTHNAME( blog_post_time_of_posting ) AS month_of_posting, DAYOFMONTH( blog_post_time_of_posting ) AS day_of_posting, YEAR( blog_post_time_of_posting ) AS year_of_posting FROM blog_posts WHERE user_id_of_poster = ' . $_SESSION['user_id'] . ' ORDER BY blog_post_time_of_posting DESC, blog_post_approval_status LIMIT ' . $currentOffset . ', ' . MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY;
-$resultContainingBlogPosts = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingBlogPosts = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 if ( mysqli_num_rows( $resultContainingBlogPosts ) == 0 ) {
 ?>
@@ -56,7 +56,7 @@ else {
 <?php
          if ( strtoupper( $rowContainingBlogPost['blog_post_approval_status'] ) == 'UNAPPROVED' ) {
             $query = 'SELECT reason FROM reasons_for_admin_actions_on_items WHERE type_of_item = "BLOG POST" AND id_of_item = ' . $rowContainingBlogPost['blog_post_id'];
-            $resultContainingReasonForUnapproval = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+            $resultContainingReasonForUnapproval = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
             $rowContainingReasonForUnapproval = mysqli_fetch_assoc( $resultContainingReasonForUnapproval );
             displayMarkupForReasonForAdminActionModal( 'Unapproval', $rowContainingReasonForUnapproval['reason'], 'reasonForAdminAction' . $rowContainingBlogPost['blog_post_id'] );
          }
@@ -67,7 +67,7 @@ else {
       
       
    $query = 'SELECT blog_post_id FROM blog_posts WHERE user_id_of_poster = ' . $_SESSION['user_id'] . ' LIMIT ' . ( $currentOffset + MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY ) . ', 1';
-   $resultContainingNextPost = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingNextPost = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingNextPost = mysqli_fetch_assoc( $resultContainingNextPost );
 
    if ( $rowContainingNextPost != NULL ) {

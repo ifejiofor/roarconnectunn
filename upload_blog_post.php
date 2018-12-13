@@ -1,8 +1,8 @@
 <?php
 define( 'MAXIMUM_ALLOWABLE_IMAGE_SIZE', 512000 ); // 512000 Bytes is equal to 500 MB
 
-$query = 'SELECT blog_category_id FROM blog_categories WHERE blog_category_name = "' . mysqli_real_escape_string( $db, $_GET['category'] ) . '"';
-$resultContainingBlogCategory = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$query = 'SELECT blog_category_id FROM blog_categories WHERE blog_category_name = "' . mysqli_real_escape_string( $globalHandleToDatabase, $_GET['category'] ) . '"';
+$resultContainingBlogCategory = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 $rowContainingBlogCategory = mysqli_fetch_assoc( $resultContainingBlogCategory );
 
 // If an update has been posted, insert it into the database
@@ -24,16 +24,16 @@ if ( isset( $_POST['postButton'] ) ) {
 		$_POST['caption'] = trim( htmlentities( $_POST['caption'] ) );
 		$_POST['mainText'] = separateAllLinesOfTextWithParagraphTags( trim( $_POST['mainText'] ) );
 		
-		$query = 'INSERT INTO blog_posts ( blog_category_id, blog_post_caption, blog_post_text, user_id_of_poster, blog_post_time_of_posting, blog_post_approval_status ) VALUES ( ' . $rowContainingBlogCategory['blog_category_id'] . ', "' . mysqli_real_escape_string( $db, $_POST['caption'] ) . '", "' . mysqli_real_escape_string( $db, $_POST['mainText'] ) . '", ' . $_SESSION['user_id'] . ', NOW(), "' . ( isMainBloggerForThisCategory( $_SESSION['user_id'], $rowContainingBlogCategory['blog_category_id'] ) ? 'APPROVED' : 'NEWLY UPLOADED' ) . '" )';
-		mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-		$idOfJustInsertedBlogPost = mysqli_insert_id( $db );
+		$query = 'INSERT INTO blog_posts ( blog_category_id, blog_post_caption, blog_post_text, user_id_of_poster, blog_post_time_of_posting, blog_post_approval_status ) VALUES ( ' . $rowContainingBlogCategory['blog_category_id'] . ', "' . mysqli_real_escape_string( $globalHandleToDatabase, $_POST['caption'] ) . '", "' . mysqli_real_escape_string( $globalHandleToDatabase, $_POST['mainText'] ) . '", ' . $_SESSION['user_id'] . ', NOW(), "' . ( isMainBloggerForThisCategory( $_SESSION['user_id'], $rowContainingBlogCategory['blog_category_id'] ) ? 'APPROVED' : 'NEWLY UPLOADED' ) . '" )';
+		mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+		$idOfJustInsertedBlogPost = mysqli_insert_id( $globalHandleToDatabase );
 
 		if ( is_uploaded_file( $_FILES['image']['tmp_name'] ) ) {
 			$uploadingOfImageIsSuccessful = move_uploaded_file( $_FILES['image']['tmp_name'], 'images/ImagesFor' . $_GET['category'] . 'Updates/' . $idOfJustInsertedBlogPost . '.jpg' );
 			
 			if ( $uploadingOfImageIsSuccessful ) {
 				$query = 'UPDATE blog_posts SET blog_post_image_filename = "' . $idOfJustInsertedBlogPost . '.jpg" WHERE blog_post_id = ' . $idOfJustInsertedBlogPost;
-		        mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+		        mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 				
 				if ( isMainBloggerForThisCategory( $_SESSION['user_id'], $rowContainingBlogCategory['blog_category_id'] ) ) {
 					header( 'Location: blog_home.php?category=' . $_GET['category'] );
@@ -44,7 +44,7 @@ if ( isset( $_POST['postButton'] ) ) {
 			}
 			else {
 				$query = 'DELETE FROM blog_posts WHERE blog_post_id = ' . $idOfJustInsertedBlogPost;
-				mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+				mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 				$errorMessage = 'An error occurred while uploading your update. Please try again later.';
 				$userInputContainsError = true;
 			}

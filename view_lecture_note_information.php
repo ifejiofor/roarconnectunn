@@ -14,7 +14,7 @@ else {
 
 <?php
    $query = 'SELECT course_code, course_title FROM courses WHERE department_id = ' . $_GET['departmentId'] . ' AND course_year_of_study = ' . $_GET['yearOfStudy'] . ' ORDER BY course_code';
-   $resultContainingCourseData = mysqli_query( $db, $query );
+   $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query );
    $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 
    while ( $rowContainingCourseData != NULL ) {
@@ -27,11 +27,11 @@ else {
 <?php
       if ( currentUserIsLoggedInAsAdmin() ) {
          $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_id = ' . $_GET['departmentId'];
-         $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 
          $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $rowContainingDepartmentData['faculty_id'];
-         $resultContainingFacultyData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
 
 
@@ -48,7 +48,7 @@ else {
                <div class="col-sm-10">
 <?php
       $query = 'SELECT lecture_note_id, lecture_note_file_name, lecture_note_file_extension, lecture_note_number_of_pages FROM lecture_notes WHERE course_code = "' . $rowContainingCourseData['course_code'] . '" ORDER BY lecture_note_file_name';
-      $resultContainingLectureNoteData = mysqli_query( $db, $query );
+      $resultContainingLectureNoteData = mysqli_query( $globalHandleToDatabase, $query );
       $rowContainingLectureNoteData = mysqli_fetch_assoc( $resultContainingLectureNoteData );
 
       while ( $rowContainingLectureNoteData != NULL ) {

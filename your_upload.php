@@ -34,7 +34,7 @@ if($handle=opendir($directory. '/')){
 	require'includes/performBasicInitializations.php';
 
 	$query="SELECT `id_new`, `people_id`, `Name_of_item`, `Brief_Descripition`, `Price`, `Negotiable`, `Image_size`, `checks` FROM `photo_upload` WHERE `people_id`= '".$_SESSION['user_id']."' AND `Category`='" . $_GET['category'] . "'";
-	$query_run=mysqli_query($db, $query);
+	$query_run=mysqli_query($globalHandleToDatabase, $query);
 		if(mysqli_num_rows($query_run)>=1){
 ?>
                <p>Here is the <?php echo strtolower( $categoryInSingularForm ) ?> you have uploaded on RoarConnect</p>
@@ -74,7 +74,7 @@ if($handle=opendir($directory. '/')){
 }
             if ( $query_result['checks'] == 'UNAPPROVED' ) {
                $queryToRetrieveReasonForUnapproval = 'SELECT reason FROM reasons_for_admin_actions_on_items WHERE type_of_item = "PHOTO UPLOAD" AND id_of_item = ' . $query_result['id_new'];
-               $resultContainingReasonForUnapproval = mysqli_query( $db, $queryToRetrieveReasonForUnapproval ) or die( $markupIndicatingDatabaseQueryFailure );
+               $resultContainingReasonForUnapproval = mysqli_query( $globalHandleToDatabase, $queryToRetrieveReasonForUnapproval ) or die( $globalDatabaseErrorMarkup );
                $rowContainingReasonForUnapproval = mysqli_fetch_assoc( $resultContainingReasonForUnapproval );
                displayMarkupForReasonForAdminActionModal( 'Unapproval', $rowContainingReasonForUnapproval['reason'] );
             }

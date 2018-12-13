@@ -7,13 +7,13 @@ if ( !currentUserIsLoggedIn() ) {
 
 if ( isset( $_POST['visitNotificationURL'] ) ) {
    $query = 'UPDATE notifications SET notification_status = "READ" WHERE notification_id = ' . $_POST['notificationID'];
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    header( 'Location: ' . $_POST['notificationURL'] );
 }
 
 if ( isset( $_POST['clearAllNotifications'] ) ) {
    $query = 'DELETE FROM notifications WHERE user_id_of_recipient = ' . $_SESSION['user_id'];
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    header( 'Location: notifications.php' );
 }
@@ -29,7 +29,7 @@ displayMarkupsCommonToTopOfPages( 'Notifications', DISPLAY_NAVIGATION_MENU, 'not
             
 <?php
 $query = 'SELECT notification_id, notification_text, notification_status, notification_url, reason_for_notification, id_of_item, MONTHNAME( notification_time_of_notifying ) AS month_of_notifying, DAYOFMONTH( notification_time_of_notifying ) AS day_of_notifying, HOUR( notification_time_of_notifying ) AS hour_of_notifying, MINUTE( notification_time_of_notifying ) AS minute_of_notifying FROM notifications WHERE user_id_of_recipient = ' . $_SESSION['user_id'] . ' ORDER BY notification_time_of_notifying DESC';
-$resultContainingNotifications = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingNotifications = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 if ( mysqli_num_rows( $resultContainingNotifications ) == 0 ) {
 ?>
@@ -60,7 +60,7 @@ else {
 <?php
       if ( $rowContainingNotification['reason_for_notification'] == 'DELETION OF PHOTO UPLOAD' || $rowContainingNotification['reason_for_notification'] == 'DELETION OF BLOG POST' ) {
          $queryToRetrieveReasonForDeletion = 'SELECT reason FROM reasons_for_admin_actions_on_items WHERE type_of_item = "' . ( $rowContainingNotification['reason_for_notification'] == 'DELETION OF PHOTO UPLOAD' ? "PHOTO UPLOAD" : "BLOG POST" )  . '" AND id_of_item = ' . $rowContainingNotification['id_of_item'];
-         $resultContainingReasonForDeletion = mysqli_query( $db, $queryToRetrieveReasonForDeletion ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingReasonForDeletion = mysqli_query( $globalHandleToDatabase, $queryToRetrieveReasonForDeletion ) or die( $globalDatabaseErrorMarkup );
          $rowContainingReasonForDeletion = mysqli_fetch_assoc( $resultContainingReasonForDeletion );
          $idOfModal = $rowContainingNotification['reason_for_notification'] == 'DELETION OF PHOTO UPLOAD' ? "reasonForAdminActionOnPhotoUpload" . $rowContainingNotification['id_of_item'] : "reasonForAdminActionOnBlogPost" . $rowContainingNotification['id_of_item'];
 ?>

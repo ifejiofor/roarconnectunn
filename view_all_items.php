@@ -34,7 +34,7 @@ else {
 
 <?php
 	$query = "SELECT `Name_of_item`, `people_id`, `Image_size`, `Brief_Descripition`, `Price`, `Negotiable` FROM `photo_upload` WHERE `checks`='APPROVED' AND `Category`='" . $_GET['category'] . "' AND `people_id` NOT LIKE 'VENDOR_%' ORDER BY `id_new`";
-	$resultContainingDataAboutItemForSale = mysqli_query($db, $query) or die( $markupIndicatingDatabaseQueryFailure );
+	$resultContainingDataAboutItemForSale = mysqli_query($globalHandleToDatabase, $query) or die( $globalDatabaseErrorMarkup );
 
    if( mysqli_num_rows( $resultContainingDataAboutItemForSale ) > 0 ){
 ?>
@@ -52,7 +52,7 @@ else {
 		   $file = "$userr_id@$size";
 
          $query = 'SELECT firstname, phone_number FROM users WHERE id = ' . $rowContainingDataAboutItemForSale['people_id'];
-         $resultContainingDataAboutUser = mysqli_query($db, $query) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDataAboutUser = mysqli_query($globalHandleToDatabase, $query) or die( $globalDatabaseErrorMarkup );
          $rowContainingDataAboutUser = mysqli_fetch_assoc( $resultContainingDataAboutUser );
 ?>
 
@@ -87,7 +87,7 @@ else {
    
    
    $query = 'SELECT vendor_id, vendor_name FROM vendors WHERE vendor_category = "' . $_GET['category'] . '"';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $result ) > 0 ) {
 ?>

@@ -17,14 +17,14 @@ if ( !consistsOfOnlyDigits( $_GET['idOfVendor'] ) ) {
 }
 
 $query = 'SELECT id_new, name_of_item, image_size FROM photo_upload WHERE category = "' . $_GET['category'] . '" AND people_id = "VENDOR_' . $_GET['idOfVendor'] . '" AND checks ="APPROVED"';
-$resultContainingFoodData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingFoodData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 if ( mysqli_num_rows( $resultContainingFoodData ) == 1 ) {
    header( 'Location: make_order_for_food.php?category=' . $_GET['category'] . '&idOfVendor=' . $_GET['idOfVendor'] );
 }
 else {
    $query = 'SELECT vendor_name FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-   $resultContainingVendorData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 
    $customizedStyleForBodyElement = 'background-image: url( \'images/vendorFliers/' . $rowContainingVendorData['vendor_name'] . '.jpg\' ); background-size: cover;';

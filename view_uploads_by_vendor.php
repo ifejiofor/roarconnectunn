@@ -6,7 +6,7 @@ if ( !isset( $_GET['vendor'] ) || !consistsOfOnlyDigits( $_GET['vendor'] ) ) {
 }
 else {
    $query = 'SELECT * FROM vendors WHERE vendor_id = ' . $_GET['vendor'];
-   $resultContainingDataAboutVendor = mysqli_query($db, $query) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingDataAboutVendor = mysqli_query($globalHandleToDatabase, $query) or die( $globalDatabaseErrorMarkup );
    $rowContainingDataAboutVendor = mysqli_fetch_assoc( $resultContainingDataAboutVendor );
 
    if ( $rowContainingDataAboutVendor == NULL ) {
@@ -68,7 +68,7 @@ else {
 <?php
 
 	$query = 'SELECT people_id, name_of_item, image_size, brief_descripition, price, category, negotiable FROM photo_upload WHERE checks = "APPROVED" AND people_id = "VENDOR_' . $_GET['vendor'] . '" ORDER BY id_new';
-	$resultContainingDataAboutItemForSale = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+	$resultContainingDataAboutItemForSale = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if( mysqli_num_rows( $resultContainingDataAboutItemForSale ) > 0 ) {
 	   while( $rowContainingDataAboutItemForSale = mysqli_fetch_assoc($resultContainingDataAboutItemForSale) ) {

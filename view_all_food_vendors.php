@@ -21,7 +21,7 @@ displayMarkupscommonToTopOfPages( 'Food Delivery', DISPLAY_NAVIGATION_MENU, 'vie
             <section class="text-center">
 <?php
 $query = 'SELECT vendor_id, vendor_name FROM vendors WHERE vendor_category = "foods" ORDER BY vendor_name';
-$resultContainingVendorData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 
 while ( $rowContainingVendorData != NULL ) {

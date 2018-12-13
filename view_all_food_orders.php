@@ -7,7 +7,7 @@ if ( !currentUserIsLoggedInAsAdmin() ) {
 
 if ( isset( $_POST['requiredAction'] ) && $_POST['requiredAction'] == 'clearOrdersOfVendor' ) {
 	$query = 'DELETE FROM orders WHERE vendor_id = ' . $_POST['idOfVendor'];
-	mysqli_query( $db, $query );
+	mysqli_query( $globalHandleToDatabase, $query );
 }
 
 displayMarkupsCommonToTopOfPages( 'Food Orders', DISPLAY_NAVIGATION_MENU, 'view_all_food_orders.php' );
@@ -27,12 +27,12 @@ displayMarkupsCommonToTopOfPages( 'Food Orders', DISPLAY_NAVIGATION_MENU, 'view_
 <?php
 
 $query = 'SELECT vendor_id, vendor_name FROM vendors WHERE vendor_category = "foods"';
-$resultContainingVendorData = mysqli_query( $db, $query );
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query );
 $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 
 while ( $rowContainingVendorData != NULL ) {
 	$query = 'SELECT order_id FROM orders WHERE vendor_id = ' . $rowContainingVendorData['vendor_id'];
-	$resultContainingOrders = mysqli_query( $db, $query );
+	$resultContainingOrders = mysqli_query( $globalHandleToDatabase, $query );
 ?>
                   <tr>
                      <td><?php echo $rowContainingVendorData['vendor_name'] ?></td>
@@ -68,7 +68,7 @@ while ( $rowContainingVendorData != NULL ) {
                <tbody>
 <?php
 $query = 'SELECT vendor_id FROM vendors WHERE vendor_name = "PIZZA PALACE"';
-$resultContainingVendorData = mysqli_query( $db, $query );
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query );
 $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 $vendorIdOfPizzaPalace = $rowContainingVendorData['vendor_id'];
 
@@ -76,7 +76,7 @@ $categoriesOfFoodSoldByPizzaPalace = array( 'pizza', 'shawarma', 'pancake' );
 
 foreach ( $categoriesOfFoodSoldByPizzaPalace as $key => $categoryOfFood ) {
 	$query = 'SELECT name_of_item FROM photo_upload WHERE category = "' . $categoryOfFood . '"';
-	$resultContainingFoodData = mysqli_query( $db, $query );
+	$resultContainingFoodData = mysqli_query( $globalHandleToDatabase, $query );
 	$rowContainingFoodData = mysqli_fetch_assoc( $resultContainingFoodData );
 	
 	$query = 'SELECT order_id FROM orders WHERE vendor_id = ' . $vendorIdOfPizzaPalace . ' AND ( 0';
@@ -86,7 +86,7 @@ foreach ( $categoriesOfFoodSoldByPizzaPalace as $key => $categoryOfFood ) {
 	}
 	
 	$query .= ' )';
-	$resultContainingOrders = mysqli_query( $db, $query );
+	$resultContainingOrders = mysqli_query( $globalHandleToDatabase, $query );
 ?>
                   <tr>
                      <td><?php echo ucwords( $categoryOfFood ) ?></td>

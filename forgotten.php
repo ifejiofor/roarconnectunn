@@ -20,7 +20,7 @@ else {
 		if(!empty($email)){
 			$chick="SELECT `email` FROM `users` WHERE `email`= '$email'";
 			
-			if($chick_check=mysqli_query($db, $chick)){
+			if($chick_check=mysqli_query($globalHandleToDatabase, $chick)){
 				$query_check=mysqli_num_rows($chick_check);
 				
 				if($query_check==1){

@@ -799,6 +799,45 @@ textarea#bigSizedTextArea {
    margin: 20px 0;
 }
 
+#sideBar {
+   margin-top: 100px;
+}
+
+#sideBarSection #sectionHeading {
+   font-size: 1.2em;
+   font-weight: bolder;
+   margin: 0 0 30px 0;
+   color: #444;
+}
+
+#blogAlongSideBar {
+   display: block;
+   color: black;
+   margin: 5px 0;
+   padding: 10px 3px;
+   border-top: 1px solid #aaa;
+}
+
+#blogAlongSideBarImage {
+   float: left;
+   margin: 0 3px 5px 0;
+}
+
+#blogAlongSideBarCaption {
+   font-size: 1em;
+   font-weight: bolder;
+   margin-top: 0;
+}
+
+#blogAlongSideBarSubdetails {
+   margin: 0;
+}
+
+#blogAlongSideBar:hover {
+   background-color: #ccc;
+   color: #000066;
+}
+
 #mainFooter {
    color: white;
    background-color: #23527c;
@@ -1165,6 +1204,10 @@ input#money {
       float: none;
       display: block;
       margin: 5% auto;
+   }
+
+   #sideBar {
+      margin-top: 50px;
    }
 
    #mainFooter {

@@ -11,7 +11,7 @@ if(!currentUserIsLoggedIn()){
 
 <?php
 $view="SELECT `firstname`, `request`, `description`, `phone`, `email` FROM `user_requests` ORDER BY `id`";
-if($view_run=mysqli_query($db, $view)){
+if($view_run=mysqli_query($globalHandleToDatabase, $view)){
 		if(mysqli_num_rows($view_run)>=1){
 ?>
             <table class="table table-hover">
@@ -34,7 +34,7 @@ if($view_run=mysqli_query($db, $view)){
              $email = $look['email'];
              
              $query = 'SELECT id FROM users WHERE email = "' . $email . '"';
-             $resultContainingDataAboutUser = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+             $resultContainingDataAboutUser = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
              $rowContainingDataAboutUser = mysqli_fetch_assoc( $resultContainingDataAboutUser );
              $idOfUserWhoMadeTheRequest = $rowContainingDataAboutUser['id'];
 ?>

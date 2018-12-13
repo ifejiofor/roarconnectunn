@@ -6,7 +6,7 @@ if ( !isset( $_GET['idOfVendor'] ) || !consistsOfOnlyDigits( $_GET['idOfVendor']
 }
 
 $query = 'SELECT category, image_size FROM photo_upload WHERE people_id = "VENDOR_' . $_GET['idOfVendor'] . '" AND checks = "APPROVED" AND category != "dessert" AND category != "drink"';
-$resultContainingFoodData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$resultContainingFoodData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
 if ( mysqli_num_rows( $resultContainingFoodData ) == 0 ) {
    header( 'Location: view_all_food_vendors.php' );
@@ -40,7 +40,7 @@ if ( count( $filenamesOfSnapshotsToBeDisplayed ) == 1 ) {
 }
 else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
    $query = 'SELECT vendor_name FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'];
-   $resultContainingVendorData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 
    if ( strtolower( $rowContainingVendorData['vendor_name'] ) == 'pizza palace' ) {
@@ -62,7 +62,7 @@ else if ( count( $filenamesOfSnapshotsToBeDisplayed ) > 1 ) {
 <?php
    foreach ( $filenamesOfSnapshotsToBeDisplayed as $category => $urlOfSnapshot ) {
       $query = 'SELECT name_of_item FROM photo_upload WHERE people_id = "VENDOR_' . $_GET['idOfVendor'] . '" AND checks = "APPROVED" AND category = "' . strtolower( $category ) . '"';
-      $resultContainingFoodData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $resultContainingFoodData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
       if ( mysqli_num_rows( $resultContainingFoodData ) == 1 ) {
          $rowContainingFoodData = mysqli_fetch_assoc( $resultContainingFoodData );

@@ -87,11 +87,11 @@ if ( $_GET && currentUserIsLoggedInAsAdmin() ) {
       }
 
       $query = 'SELECT course_title, department_id FROM courses WHERE course_code = "' . $courseCode . '"';
-      $resultContainingCourseData = mysqli_query( $db, $query ) or die( 'A' . $markupIndicatingDatabaseQueryFailure );
+      $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'A' . $globalDatabaseErrorMarkup );
       $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
       if ( $rowContainingCourseData != NULL ) {
          $query = 'SELECT department_name FROM departments WHERE department_id = ' . $rowContainingCourseData['department_id'];
-         $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( 'K' . $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'K' . $globalDatabaseErrorMarkup );
          $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
       }
 
@@ -115,7 +115,7 @@ if ( $_GET && currentUserIsLoggedInAsAdmin() ) {
 
    if ( $formShouldNotBeDisplayed && $thereIsNoErrorInFormData ) {
       $query = 'SELECT faculty_id, department_duration_of_programme FROM departments WHERE department_name = "' . $department . '"';
-      $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( 'B' . $markupIndicatingDatabaseQueryFailure );
+      $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'B' . $globalDatabaseErrorMarkup );
       $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
       $facultyIdAssociatedWithDepartmentInputtedByUser =
          ( $rowContainingDepartmentData != NULL ) ? $rowContainingDepartmentData['faculty_id'] : NULL;
@@ -123,7 +123,7 @@ if ( $_GET && currentUserIsLoggedInAsAdmin() ) {
          ( $rowContainingDepartmentData != NULL ) ? $rowContainingDepartmentData['department_duration_of_programme'] : NULL;
 
       $query = 'SELECT faculty_id FROM faculties WHERE faculty_name = "' . $faculty . '"';
-      $resultContainingFacultyData = mysqli_query( $db, $query ) or die( 'C' . $markupIndicatingDatabaseQueryFailure );
+      $resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'C' . $globalDatabaseErrorMarkup );
       $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
       $facultyIdOfFacultyInputtedByUser =
          ( $rowContainingFacultyData != NULL ) ? $rowContainingFacultyData['faculty_id'] : NULL;
@@ -244,18 +244,18 @@ function displayAddOrEditCourseForm()
 
 function indicateThatCourseTitleInputtedByUserConflictsWithCourseCodeInputtedByUser()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure, $courseCode, $courseTitle;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup, $courseCode, $courseTitle;
 
    $query = 'SELECT course_code, course_title, department_id FROM courses WHERE course_code = "' . $courseCode . '"';
-   $resultContainingCourseData = mysqli_query( $db, $query ) or die( 'X' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'X' . $globalDatabaseErrorMarkup );
    $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 
    $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_id = ' . $rowContainingCourseData['department_id'];
-   $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( 'y' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'y' . $globalDatabaseErrorMarkup );
    $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 
    $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $rowContainingDepartmentData['faculty_id'];
-   $resultContainingFacultyData = mysqli_query( $db, $query ) or die( 'z' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'z' . $globalDatabaseErrorMarkup );
    $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
 ?>
             <div id="containerHoldingErrorMessage">
@@ -271,17 +271,17 @@ function indicateThatCourseTitleInputtedByUserConflictsWithCourseCodeInputtedByU
 
 function indicateThatDepartmentInputtedByUserConflictsWithCourseCodeInputtedByUser()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure, $courseCode, $department;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup, $courseCode, $department;
    $query = 'SELECT course_code, course_title, department_id FROM courses WHERE course_code = "' . $courseCode . '"';
-   $resultContainingCourseData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 
    $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_id = ' . $rowContainingCourseData['department_id'];
-   $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 
    $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $rowContainingDepartmentData['faculty_id'];
-   $resultContainingFacultyData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
 ?>
             <div id="containerHoldingErrorMessage">
@@ -297,10 +297,10 @@ function indicateThatDepartmentInputtedByUserConflictsWithCourseCodeInputtedByUs
 
 function indicateThatUserIsAttemptingToAddAnAlreadyExistingCourse()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure, $courseCode;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup, $courseCode;
 
    $query = 'SELECT course_title FROM courses WHERE course_code = "' . $courseCode . '"';
-   $resultContainingCourseData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 ?>
             <div id="containerHoldingErrorMessage">
@@ -316,19 +316,19 @@ function indicateThatUserIsAttemptingToAddAnAlreadyExistingCourse()
 
 function indicateThatFacultyInputtedByUserConflictsWithDepartmentInputtedByUser()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure, $requiredAction,
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup, $requiredAction,
       $courseCode, $courseTitle, $department, $durationOfProgramme, $faculty;
 
    $query = 'SELECT course_code, course_title, department_id FROM courses WHERE course_code = "' . $courseCode . '"';
-   $resultContainingCourseData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 
    $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_name = "' . $department . '"';
-   $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 
    $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $rowContainingDepartmentData['faculty_id'];
-   $resultContainingFacultyData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
 ?>
             <div id="containerHoldingErrorMessage">
@@ -345,19 +345,19 @@ function indicateThatFacultyInputtedByUserConflictsWithDepartmentInputtedByUser(
 
 function indicateThatDurationOfProgrammeInputtedByUserConflictsWithDepartmentInputtedByUser()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure, $requiredAction,
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup, $requiredAction,
       $courseCode, $courseTitle, $department, $durationOfProgramme, $faculty;
 
    $query = 'SELECT course_code, course_title, department_id FROM courses WHERE course_code = "' . $courseCode . '"';
-   $resultContainingCourseData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 
    $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_name = "' . $department . '"';
-   $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 
    $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $rowContainingDepartmentData['faculty_id'];
-   $resultContainingFacultyData = mysqli_query( $db, $query ) or die( 'L' . $markupIndicatingDatabaseQueryFailure );
+   $resultContainingFacultyData = mysqli_query( $globalHandleToDatabase, $query ) or die( 'L' . $globalDatabaseErrorMarkup );
    $rowContainingFacultyData = mysqli_fetch_assoc( $resultContainingFacultyData );
 ?>
             <div id="containerHoldingErrorMessage">
@@ -434,24 +434,24 @@ function getYearOfStudy( $courseCode )
 
 function updateDatabaseWithCourseDetailsInputtedByUser()
 {
-   global $db, $courseCode, $courseTitle, $faculty, $department, $durationOfProgramme;
+   global $globalHandleToDatabase, $courseCode, $courseTitle, $faculty, $department, $durationOfProgramme;
    $idOfFormerDepartment = 0;
    $idOfFormerFaculty = 0;
 
    $query = 'SELECT faculty_id FROM faculties WHERE faculty_name = "' . $faculty . '"';
-   $result = mysqli_query( $db, $query ) or die( 'E' . $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'E' . $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    if ( $row != false ) {
       $idOfFaculty = $row['faculty_id'];
    }
    else {
       $query = 'INSERT INTO faculties ( faculty_name ) VALUES ( "' . ucwords( $faculty ) . '" )';
-      mysqli_query( $db, $query ) or die( 'F' . $markupIndicatingDatabaseQueryFailure );
-      $idOfFaculty = mysqli_insert_id( $db );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'F' . $globalDatabaseErrorMarkup );
+      $idOfFaculty = mysqli_insert_id( $globalHandleToDatabase );
    }
 
    $query = 'SELECT department_id FROM departments WHERE department_name = "' . $department . '"';
-   $result = mysqli_query( $db, $query ) or die( 'G' . $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'G' . $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    if ( $row != NULL ) {
       $idOfDepartment = $row['department_id'];
@@ -459,41 +459,41 @@ function updateDatabaseWithCourseDetailsInputtedByUser()
    else {
       $query = 'INSERT INTO departments ( department_name, department_duration_of_programme, faculty_id )
          VALUES ( "' . ucwords( $department ) . '", ' . $durationOfProgramme . ', ' . $idOfFaculty . ' )';
-      mysqli_query( $db, $query ) or die( 'H' . $markupIndicatingDatabaseQueryFailure );
-      $idOfDepartment = mysqli_insert_id( $db );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'H' . $globalDatabaseErrorMarkup );
+      $idOfDepartment = mysqli_insert_id( $globalHandleToDatabase );
    }
 
    $query = 'SELECT department_id FROM courses WHERE course_code = "' . $courseCode . '"';
-   $result = mysqli_query( $db, $query ) or die( 'Z'.  $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'Z'.  $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    $idOfFormerDepartment = $row['department_id'];
 
    $query = 'UPDATE courses
       SET course_title = "' . ucwords( $courseTitle ) . '", department_id = ' . $idOfDepartment . '
       WHERE course_code = "' . $courseCode . '"';
-   mysqli_query( $db, $query ) or die( 'J' . $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( 'J' . $globalDatabaseErrorMarkup );
 
    $query = 'SELECT course_code FROM courses WHERE department_id = ' . $idOfFormerDepartment;
-   $result = mysqli_query( $db, $query ) or die( 'C'. $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'C'. $globalDatabaseErrorMarkup );
    $numberOfCoursesOfferedByFormerDepartment = mysqli_num_rows( $result );
 
    if ( $numberOfCoursesOfferedByFormerDepartment == 0 ) {
       $query = 'SELECT faculty_id FROM departments WHERE department_id = ' . $idOfFormerDepartment;
-      $result = mysqli_query( $db, $query ) or die( 'D'. $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'D'. $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
       $idOfFormerFaculty = $row['faculty_id'];
 
       $query = 'DELETE FROM departments WHERE department_id = ' . $idOfFormerDepartment;
-      mysqli_query( $db, $query ) or die( 'E'.$markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'E'.$globalDatabaseErrorMarkup );
    }
 
    $query = 'SELECT department_id FROM departments WHERE faculty_id = ' . $idOfFormerFaculty;
-   $result = mysqli_query( $db, $query ) or die( 'F'. $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'F'. $globalDatabaseErrorMarkup );
    $numberOfDepartmentsInFormerFaculty = mysqli_num_rows( $result );
 
    if ( $numberOfDepartmentsInFormerFaculty == 0 ) {
       $query = 'DELETE FROM faculties WHERE faculty_id = ' . $idOfFormerFaculty;
-      $result = mysqli_query( $db, $query ) or die( 'G'. $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'G'. $globalDatabaseErrorMarkup );
    }
 
 }
@@ -501,22 +501,22 @@ function updateDatabaseWithCourseDetailsInputtedByUser()
 
 function insertCourseDetailsInputtedByUserIntoDatabase()
 {
-   global $db, $courseCode, $courseTitle, $faculty, $department, $durationOfProgramme;
+   global $globalHandleToDatabase, $courseCode, $courseTitle, $faculty, $department, $durationOfProgramme;
 
    $query = 'SELECT faculty_id FROM faculties WHERE faculty_name = "' . $faculty . '"';
-   $result = mysqli_query( $db, $query ) or die( 'E' . $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'E' . $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    if ( $row != false ) {
       $idOfFaculty = $row['faculty_id'];
    }
    else {
       $query = 'INSERT INTO faculties ( faculty_name ) VALUES ( "' . ucwords( $faculty ) . '" )';
-      mysqli_query( $db, $query ) or die( 'F' . $markupIndicatingDatabaseQueryFailure );
-      $idOfFaculty = mysqli_insert_id( $db );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'F' . $globalDatabaseErrorMarkup );
+      $idOfFaculty = mysqli_insert_id( $globalHandleToDatabase );
    }
 
    $query = 'SELECT department_id FROM departments WHERE department_name = "' . $department . '"';
-   $result = mysqli_query( $db, $query ) or die( 'G' . $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'G' . $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    if ( $row != NULL ) {
       $idOfDepartment = $row['department_id'];
@@ -524,22 +524,22 @@ function insertCourseDetailsInputtedByUserIntoDatabase()
    else {
       $query = 'INSERT INTO departments ( department_name, department_duration_of_programme, faculty_id )
          VALUES ( "' . ucwords( $department ) . '", ' . $durationOfProgramme . ', ' . $idOfFaculty . ' )';
-      mysqli_query( $db, $query ) or die( 'H' . $markupIndicatingDatabaseQueryFailure );
-      $idOfDepartment = mysqli_insert_id( $db );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'H' . $globalDatabaseErrorMarkup );
+      $idOfDepartment = mysqli_insert_id( $globalHandleToDatabase );
    }
 
    $query = 'INSERT INTO courses ( course_code, course_title, course_year_of_study, department_id )
       VALUES ( "' . strtoupper( $courseCode ) . '", "' . ucwords( $courseTitle ) . '", ' . getYearOfStudy( $courseCode ) . ', ' . $idOfDepartment . ' )';
-   mysqli_query( $db, $query ) or die( 'I' . $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( 'I' . $globalDatabaseErrorMarkup );
 }
 
 
 function getNameOfFaculty( $idOfFaculty )
 {
-   global $db;
+   global $globalHandleToDatabase;
 
    $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $idOfFaculty;
-   $result = mysqli_query( $db, $query ) or die( 'J' . $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'J' . $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
 
    if ( $row != NULL ) {

@@ -74,8 +74,8 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
       move_uploaded_file( $sourceFilePath, $targetFilePath ) or die( '<p id="errorMessage">An unexpected error prevented the upload from completing successfully.</p>' );
       $query = 'INSERT INTO lecture_notes ( lecture_note_file_name, lecture_note_file_extension, lecture_note_number_of_pages, course_code )
          VALUES ( "' . removeFileExtension( $targetFileBaseName ) . '", "' . $fileExtension . '", ' . $numberOfPages . ', "' . $codeOfSelectedCourse . '" )';
-      mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-      $idOfLectureNoteThatWasJustUploaded = mysqli_insert_id( $db );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+      $idOfLectureNoteThatWasJustUploaded = mysqli_insert_id( $globalHandleToDatabase );
 
       $query = 'SELECT tag_id, tag_name FROM tags WHERE 0';
 
@@ -89,7 +89,7 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
          $query .= ' OR tag_name = "' . $namesOfDefaultTags[$index] . '"';
       }
 
-      $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
       while ( $row != NULL ) {
          $nameOfTag = $row['tag_name'];
@@ -122,21 +122,21 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
       foreach ( $relevancesOfTagsToBeInsertedIntoDatabase as $nameOfTag => $relevance ) {
          if ( $nameOfTag != '' ) {
             $query = 'INSERT INTO tags ( tag_name, tag_relevance ) VALUES ( "' . $nameOfTag . '", ' . $relevance . ' )';
-            mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
-            $idsOfTagsThatWereJustInsertedIntoDatabase[$nameOfTag] = mysqli_insert_id( $db );
+            mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+            $idsOfTagsThatWereJustInsertedIntoDatabase[$nameOfTag] = mysqli_insert_id( $globalHandleToDatabase );
          }
       }
 
       foreach ( $idsOfTagsAlreadyInDatabase as $nameOfTag => $idOfTag ) {
          $query = 'INSERT INTO relationship_between_tags_and_lecture_notes ( tag_id, lecture_note_id )
             VALUES ( ' . $idOfTag . ', ' . $idOfLectureNoteThatWasJustUploaded . ')';
-         mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       }
 
       foreach ( $idsOfTagsThatWereJustInsertedIntoDatabase as $nameOfTag => $idOfTag ) {
          $query = 'INSERT INTO relationship_between_tags_and_lecture_notes ( tag_id, lecture_note_id )
             VALUES ( ' . $idOfTag . ', ' . $idOfLectureNoteThatWasJustUploaded . ')';
-         mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       }
 
       $lectureNoteHasNotYetBeenUploaded = false;
@@ -181,7 +181,7 @@ if ( $lectureNoteHasNotYetBeenUploaded ) {
                         <option value="-1">---</option>
 <?php
 $query = 'SELECT course_code FROM courses ORDER BY course_code';
-$result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+$result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 $row = mysqli_fetch_assoc( $result );
 
 while ( $row != NULL ) {
@@ -247,7 +247,7 @@ function removeFileExtension( $fileNameWithExtension )
 
 function getArrayContainingNamesOfDefaultTags()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
    $indexForNamesOfDefaultTags = 0;
 
    $lectureNoteFileName = basename( $_FILES['fileToUpload']['name'] );
@@ -262,7 +262,7 @@ function getArrayContainingNamesOfDefaultTags()
    $namesOfDefaultTags[$indexForNamesOfDefaultTags++] = trim( $lectureNoteFileExtension );
 
    $query = 'SELECT course_code, course_title, course_year_of_study, department_id FROM courses WHERE course_code = "' . $_POST['codeOfSelectedCourse'] . '"';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
 
    $temporaryArray = explode( ' ', $row['course_code'] );
@@ -302,7 +302,7 @@ function getArrayContainingNamesOfDefaultTags()
 
    $yearOfStudy = $row['course_year_of_study'];
    $query = 'SELECT department_name, department_duration_of_programme, faculty_id FROM departments WHERE department_id = ' . $row['department_id'];
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
 
    $temporaryArray = explode( ' ', $row['department_name'] );
@@ -315,7 +315,7 @@ function getArrayContainingNamesOfDefaultTags()
    }
 
    $query = 'SELECT faculty_name FROM faculties WHERE faculty_id = ' . $row['faculty_id'];
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
 
    $temporaryArray = explode( ' ', $row['faculty_name'] );

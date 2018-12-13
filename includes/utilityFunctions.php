@@ -4,6 +4,8 @@
 */
 
 require_once 'performBasicInitializations.php';
+define('SCALING_FACTOR_OF_BLOG_POST_RELEVANCE', 120);
+define('ALL_ROWS', NULL);
 
 
 function currentUserIsLoggedIn()
@@ -20,9 +22,9 @@ function currentUserIsLoggedInAsAdmin()
 
 function getFirstNameOfCurrentUser()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
 	$query = "SELECT `firstname` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
-   $query_run = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   $query_run = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
    $query_result = mysqli_fetch_array($query_run);
    return $query_result == NULL ? '' : $query_result['firstname'];
 }
@@ -30,9 +32,9 @@ function getFirstNameOfCurrentUser()
 
 function getFirstNameOfUser($userId)
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
    $query = 'SELECT firstname FROM users WHERE id = "' . $userId . '"';
-   $result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    return $row == NULL ? '' : $row['firstname'];
 }
@@ -40,11 +42,11 @@ function getFirstNameOfUser($userId)
 
 function getatt()
 {
-   global $db;
+   global $globalHandleToDatabase;
 
 	$query="SELECT `attribute` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
 
-	if($query_run = mysqli_query($db, $query)) {
+	if($query_run = mysqli_query($globalHandleToDatabase, $query)) {
 		$query_result=mysqli_fetch_array($query_run);
 		return ucwords($query_result['attribute']);
 	}
@@ -150,10 +152,10 @@ function consistsOfOnlyAlphabetsAndDigitsAndSpaces( $string )
 
 function isMainBloggerForThisCategory( $idOfUser, $idOfBlogCategory )
 {
-	global $db;
+	global $globalHandleToDatabase;
 	
 	$query = 'SELECT * FROM blog_categories WHERE user_id_of_main_blogger = ' . $idOfUser . ' AND blog_category_id = ' . $idOfBlogCategory;
-	$result = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+	$result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 	$row = mysqli_fetch_assoc( $result );
 	
 	return $row != NULL;
@@ -244,18 +246,18 @@ function getTextFromFirstParagraph($htmlText, $maximumNumberOfCharactersToGet = 
 
 function getDataAboutApprovedBlogPost($blogPostId)
 {
-   global $db;
+   global $globalHandleToDatabase;
    $query = 'SELECT *, MONTHNAME( blog_post_time_of_posting ) AS month_of_posting, DAYOFMONTH( blog_post_time_of_posting ) AS day_of_posting, YEAR( blog_post_time_of_posting ) AS year_of_posting FROM blog_posts WHERE blog_post_id = "' . $blogPostId . '" AND blog_post_approval_status = "APPROVED"';
-   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
    return mysqli_fetch_assoc($result);
 }
 
 
 function blogPostHasNeverBeenViewedByCurrentUser($blogPostId)
 {
-   global $db;
+   global $globalHandleToDatabase;
    $query = 'SELECT * FROM views_to_blog_posts WHERE user_id_of_viewer = "' . $_SESSION['user_id'] . '" AND blog_post_id = "' . $blogPostId . '"';
-   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
    return mysqli_num_rows($result) == 0;
 }
 
@@ -278,54 +280,46 @@ function blogPostIsNotInArray($blogPost, $arrayOfBlogPosts)
 }
 
 
-function getArrayOfDataAboutBlogPostsThatCurrentUserCouldBeInterestedIn($minimumNumberOfRows = 10)
+function getArrayOfDataAboutLatestBlogPosts($numberOfRows = 10)
 {
-   $idOfLastBlogPost = 0;
-   $dataAboutBlogPosts = array();
-   $result = getResultContainingBlogPostsThatCurrentUserCouldBeInterestedIn($minimumNumberOfRows);
-
-   for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
-      if ($idOfLastBlogPost != $row['blog_post_id']) {
-         $row['blog_post_relevance'] += 120 * getNumberOfBlogCategoryViewsByCurrentUser($row['blog_category_id']);
-         $dataAboutBlogPosts[] = $row;
-         $idOfLastBlogPost = $row['blog_post_id'];
-      }
-   }
-
-   $dataAboutBlogPosts = sortBlogPostsAccordingToDecreasingRelevance($dataAboutBlogPosts);
-   return $dataAboutBlogPosts;
+   $result = getResultContainingLatestBlogPosts($numberOfRows);
+   return getArrayOfBlogPostDataFetchedFromResult($result);
 }
 
 
-function getResultContainingBlogPostsThatCurrentUserCouldBeInterestedIn($minimumNumberOfRows)
+function getResultContainingLatestBlogPosts($numberOfRows)
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
+   $currentOffset = isset( $_GET['offset'] ) && consistsOfOnlyDigits( $_GET['offset'] ) ? $_GET['offset'] : 0;
+   $query = 'SELECT *, MONTHNAME(blog_post_time_of_posting) AS blog_post_month_of_posting, DAYOFMONTH(blog_post_time_of_posting) AS blog_post_day_of_posting, YEAR(blog_post_time_of_posting) AS blog_post_year_of_posting FROM blog_posts WHERE blog_post_approval_status = "APPROVED" ORDER BY blog_post_relevance DESC LIMIT ' . $currentOffset . ', ' .  $numberOfRows;
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+   return $result;
+}
 
+
+function getArrayOfDataAboutInterestingBlogPosts($numberOfRows = 10)
+{
+   $result = getResultContainingInterestingBlogPosts($numberOfRows);
+   return getArrayOfBlogPostDataFetchedFromResult($result, $numberOfRows);
+}
+
+
+function getResultContainingInterestingBlogPosts($minimumNumberOfRows)
+{
    $idsOfRecentlyViewedBlogPosts = getArrayOfIdsOfBlogPostsThatWereRecentlyViewedByCurrentUser();
    $tagIdsOfRecentlyViewedBlogPosts = getArrayOfTagIdsOfBlogPosts($idsOfRecentlyViewedBlogPosts);
-
-   $query = 'SELECT blog_posts.blog_post_id, blog_posts.blog_post_caption, blog_posts.blog_post_image_filename, blog_posts.blog_category_id, blog_posts.blog_post_relevance 
-      FROM blog_posts INNER JOIN relationship_between_tags_and_blog_posts ON blog_posts.blog_post_id = relationship_between_tags_and_blog_posts.blog_post_id
-      WHERE FALSE';
-
-   for ($i = 0; $i < count($tagIdsOfRecentlyViewedBlogPosts); $i++) {
-      $query .= ' OR relationship_between_tags_and_blog_posts.blog_tag_id = ' . $tagIdsOfRecentlyViewedBlogPosts[$i];
-   }
-
-   $query .= ' ORDER BY blog_posts.blog_post_relevance DESC, blog_post_id LIMIT ' . ($minimumNumberOfRows * count($tagIdsOfRecentlyViewedBlogPosts));
-   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
-   return $result;
+   return getResultContainingDataAboutBlogPostsUsingTags($tagIdsOfRecentlyViewedBlogPosts, $minimumNumberOfRows);
 }
 
 
 function getArrayOfIdsOfBlogPostsThatWereRecentlyViewedByCurrentUser()
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
 
    $idsOfBlogPosts = array();
    $query = 'SELECT blog_post_id FROM views_to_blog_posts WHERE user_id_of_viewer = ' . $_SESSION['user_id'] . ' ORDER BY time_of_viewing DESC LIMIT 10';
 
-   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
 
    for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
       $idsOfBlogPosts[] = $row['blog_post_id'];
@@ -337,7 +331,7 @@ function getArrayOfIdsOfBlogPostsThatWereRecentlyViewedByCurrentUser()
 
 function getArrayOfTagIdsOfBlogPosts($arrayOfBlogPostIds)
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
    $tagIds = array();
    $query = 'SELECT blog_tag_id FROM relationship_between_tags_and_blog_posts WHERE FALSE';
 
@@ -346,7 +340,7 @@ function getArrayOfTagIdsOfBlogPosts($arrayOfBlogPostIds)
    }
 
    $query .= ' ORDER BY blog_tag_id';
-   $result = mysqli_query($db, $query) or die($markupIndicatingDatabaseQueryFailure);
+   $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
 
    for ($index = 0, $row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
       if ($index == 0 || $tagIds[$index - 1] != $row['blog_tag_id']) {
@@ -359,11 +353,53 @@ function getArrayOfTagIdsOfBlogPosts($arrayOfBlogPostIds)
 }
 
 
-function getNumberOfBlogCategoryViewsByCurrentUser($blogCategoryId)
+function getResultContainingDataAboutBlogPostsUsingTags($arrayOfTagIds, $minimumNumberOfDistinctRows)
 {
-   global $db, $markupIndicatingDatabaseQueryFailure;
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
+
+   $query = 'SELECT blog_posts.*, MONTHNAME(blog_posts.blog_post_time_of_posting) AS blog_post_month_of_posting, DAYOFMONTH(blog_posts.blog_post_time_of_posting) AS blog_post_day_of_posting, YEAR(blog_posts.blog_post_time_of_posting) AS blog_post_year_of_posting
+      FROM relationship_between_tags_and_blog_posts INNER JOIN blog_posts ON relationship_between_tags_and_blog_posts.blog_post_id = blog_posts.blog_post_id
+      WHERE blog_posts.blog_post_approval_status = "APPROVED" AND (FALSE';
+
+   foreach ($arrayOfTagIds as $tagId) {
+      $query .= ' OR relationship_between_tags_and_blog_posts.blog_tag_id = ' . $tagId;
+   }
+
+   $query .= ') ORDER BY blog_posts.blog_post_relevance DESC LIMIT ' . (count($arrayOfTagIds) * $minimumNumberOfDistinctRows);
+   $result = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
+   return $result;
+}
+
+
+function getArrayOfBlogPostDataFetchedFromResult($result, $numberOfRowsToFetch = ALL_ROWS)
+{
+   $idOfLastBlogPost = 0;
+   $arrayOfData = array();
+   $count = 0;
+
+   for ($row = mysqli_fetch_assoc($result); $row != NULL; $row = mysqli_fetch_assoc($result)) {
+      if ($idOfLastBlogPost != $row['blog_post_id']) {
+         $row['blog_post_relevance'] += SCALING_FACTOR_OF_BLOG_POST_RELEVANCE * getNumberOfViewsOfBlogCategoryByCurrentUser($row['blog_category_id']);
+         $arrayOfData[] = $row;
+         $idOfLastBlogPost = $row['blog_post_id'];
+         $count++;
+
+         if ($numberOfRowsToFetch !== ALL_ROWS && $count == $numberOfRowsToFetch) {
+            break;
+         }
+      }
+   }
+
+   $arrayOfData = sortBlogPostsAccordingToDecreasingRelevance($arrayOfData);
+   return $arrayOfData;
+}
+
+
+function getNumberOfViewsOfBlogCategoryByCurrentUser($blogCategoryId)
+{
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
    $query = 'SELECT number_of_blog_posts_viewed FROM views_to_blog_categories WHERE blog_category_id = ' . $blogCategoryId . ' AND user_id_of_viewer = ' . $_SESSION['user_id'];
-   $result = mysqli_query($db, $query);
+   $result = mysqli_query($globalHandleToDatabase, $query);
    $row = mysqli_fetch_assoc($result);
    return $row == NULL ? 0 : $row['number_of_blog_posts_viewed'];
 }
@@ -387,7 +423,7 @@ function sortBlogPostsAccordingToDecreasingRelevance($arrayOfDataAboutBlogPosts)
 
 function displayLatestStuffs()
 {
-   global $db;
+   global $globalHandleToDatabase;
 
    /*
       Retrieve and display a few latest blog post updates
@@ -409,7 +445,7 @@ function displayLatestStuffs()
       $queryContainingBlogCategoriesThatShouldNotBeDisplayed = 'SELECT blog_category_id FROM blog_categories WHERE blog_category_name = "Aspirant Gists" OR blog_category_name = "Fresher Gists" OR blog_category_name = "Old Student Gists"';
    }
    
-   $resultContainingBlogCategoriesThatShouldNotBeDisplayed = mysqli_query( $db, $queryContainingBlogCategoriesThatShouldNotBeDisplayed ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingBlogCategoriesThatShouldNotBeDisplayed = mysqli_query( $globalHandleToDatabase, $queryContainingBlogCategoriesThatShouldNotBeDisplayed ) or die( $globalDatabaseErrorMarkup );
    $rowContainingBlogCategoriesThatShouldNotBeDisplayed = mysqli_fetch_assoc( $resultContainingBlogCategoriesThatShouldNotBeDisplayed );
 
    $query = 'SELECT blog_post_id, blog_post_caption, blog_post_image_filename, blog_category_id FROM blog_posts WHERE blog_post_approval_status = "APPROVED"';
@@ -421,7 +457,7 @@ function displayLatestStuffs()
    
    $query .= ' ORDER BY blog_post_time_of_posting DESC LIMIT 4';
    
-   $resultContainingLatestBlogPosts = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingLatestBlogPosts = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $resultContainingLatestBlogPosts ) > 0 ) {
 ?>
@@ -437,7 +473,7 @@ function displayLatestStuffs()
       
       while ( $rowContainingLatestBlogPost != NULL ) {
          $query = 'SELECT blog_category_name FROM blog_categories WHERE blog_category_id = ' . $rowContainingLatestBlogPost['blog_category_id'];
-         $resultContainingDataAboutBlogCategory = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDataAboutBlogCategory = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingDataAboutBlogCategory = mysqli_fetch_assoc( $resultContainingDataAboutBlogCategory );
 ?>
                   <a href="blog.php?category=<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>&i=<?php echo $rowContainingLatestBlogPost['blog_post_id'] ?>" id="blogHeadlineContainer">
@@ -466,12 +502,12 @@ function displayLatestStuffs()
       Retrieve and display a few lecture notes
    */
    $query = 'SELECT lecture_note_id FROM lecture_notes ORDER BY lecture_note_id DESC LIMIT 1';
-   $resultContainingLectureNoteWithHighestId = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingLectureNoteWithHighestId = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingLectureNoteWithHighestId = mysqli_fetch_assoc( $resultContainingLectureNoteWithHighestId );
    $highestLectureNoteId = $rowContainingLectureNoteWithHighestId['lecture_note_id'];
    
    $query = 'SELECT lecture_note_file_name, course_code FROM lecture_notes WHERE lecture_note_id = ' . rand( 1, $highestLectureNoteId ) . ' OR lecture_note_id = ' . rand( 1, $highestLectureNoteId ) . ' OR lecture_note_id = ' . rand( 1, $highestLectureNoteId ) . ' OR lecture_note_id = ' . rand( 1, $highestLectureNoteId );
-   $resultContainingLectureNotes = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingLectureNotes = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    
    if ( mysqli_num_rows( $resultContainingLectureNotes ) > 0 ) {
 ?>
@@ -487,11 +523,11 @@ function displayLatestStuffs()
       
       while ( $rowContainingLectureNote != NULL ) {
          $query = 'SELECT course_year_of_study, department_id FROM courses WHERE course_code = "' . $rowContainingLectureNote['course_code'] . '"';
-         $resultContainingDataAboutAssociatedCourse = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDataAboutAssociatedCourse = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingDataAboutAssociatedCourse = mysqli_fetch_assoc( $resultContainingDataAboutAssociatedCourse );
          
          $query = 'SELECT * FROM departments WHERE department_id = ' . $rowContainingDataAboutAssociatedCourse['department_id'];
-         $resultContainingDataAboutAssociatedDepartment = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDataAboutAssociatedDepartment = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingDataAboutAssociatedDepartment = mysqli_fetch_assoc( $resultContainingDataAboutAssociatedDepartment );
 ?>
                   <a href="view_lecture_note_information.php?departmentId=<?php echo $rowContainingDataAboutAssociatedDepartment['department_id'] ?>&departmentName=<?php echo $rowContainingDataAboutAssociatedDepartment['department_name'] ?>&durationOfProgramme=<?php echo $rowContainingDataAboutAssociatedDepartment['department_duration_of_programme'] ?>&facultyId=<?php echo $rowContainingDataAboutAssociatedDepartment['faculty_id'] ?>&yearOfStudy=<?php echo $rowContainingDataAboutAssociatedCourse['course_year_of_study'] ?>" id="looksLikeASmallPaperCard">
@@ -518,7 +554,7 @@ function displayLatestStuffs()
       Retrieve and display a few latest photo uploads
    */
    $query = 'SELECT * FROM photo_upload WHERE checks = "APPROVED" AND people_id NOT LIKE "VENDOR_%" ORDER BY id_new DESC LIMIT 4';
-   $resultContainingLatestPhotoUploads = mysqli_query( $db, $query );
+   $resultContainingLatestPhotoUploads = mysqli_query( $globalHandleToDatabase, $query );
    
    if ( mysqli_num_rows( $resultContainingLatestPhotoUploads ) > 0 ) {
 ?>

@@ -10,7 +10,7 @@ if(!currentUserIsLoggedIn()){
 	 $tmp_name=$_FILES['file']['tmp_name'];
 	 
 	 $request = "SELECT id FROM scholarships";
-	if($request_new=mysqli_query($db, $request)){
+	if($request_new=mysqli_query($globalHandleToDatabase, $request)){
 		$check=mysqli_fetch_assoc($request_new);
 	}
 	else {
@@ -27,7 +27,7 @@ if(!currentUserIsLoggedIn()){
 	 
 	 if (!isset($_POST['nextButton']) && !isset($_POST['previousButton']) ) {
 	   $request = "SELECT id FROM scholarships ORDER BY id DESC";
-		if($request_new=mysqli_query($db, $request)){
+		if($request_new=mysqli_query($globalHandleToDatabase, $request)){
 			$check=mysqli_fetch_array($request_new);
 			$idOfPostToBeDisplayed = $check['id'];
 		}
@@ -60,7 +60,7 @@ if(!currentUserIsLoggedIn()){
 	}
 	
 	$request = 'SELECT `image_name`, `caption`, `text` FROM scholarships WHERE id = ' . $idOfPostToBeDisplayed;
-	if($request_new=mysqli_query($db, $request)){
+	if($request_new=mysqli_query($globalHandleToDatabase, $request)){
 		$check=mysqli_fetch_array($request_new);
 ?>
 <div>
@@ -76,7 +76,7 @@ if(!currentUserIsLoggedIn()){
 }
 
 	$request="SELECT `username`, `password` FROM `users` WHERE `id`='".$_SESSION['user_id']."'";
-		if($request_new=mysqli_query($db, $request)){
+		if($request_new=mysqli_query($globalHandleToDatabase, $request)){
 			$request_query=mysqli_fetch_array($request_new);
 		     $user=$request_query['username'];
 			 $pass=$request_query['password'];
@@ -90,7 +90,7 @@ if(!currentUserIsLoggedIn()){
 					if(!empty($name)){
 					if($size<=102400)	{
 					$upload="INSERT INTO `scholarships`(`image_name`, `caption`, `text`) VALUES ('$name','$caption','$text')";
-		if($upload_run=mysqli_query($db, $upload)){
+		if($upload_run=mysqli_query($globalHandleToDatabase, $upload)){
 			$location='scholarship/';
 			if((move_uploaded_file($tmp_name, $location.$name))){
 			header('Location: scholarship.php');
@@ -107,7 +107,7 @@ if(!currentUserIsLoggedIn()){
 			}
 				}else{
 			$upload="INSERT INTO `scholarships`(`caption`, `text`) VALUES ('$caption','$text')";
-		if($upload_run=mysqli_query($db, $upload)){
+		if($upload_run=mysqli_query($globalHandleToDatabase, $upload)){
 			header('Location: scholarship.php');
 			
 				}

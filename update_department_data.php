@@ -53,27 +53,27 @@ if ( $formShouldBeDisplayed || $thereIsErrorInFormData ) {
 else if ( currentUserIsLoggedInAsAdmin() ) {
    if ( isset( $_GET['durationOfProgramme'] ) ) {
       $query = 'UPDATE departments SET department_duration_of_programme = ' . $durationOfProgramme . ' WHERE department_name = "' . $nameOfDepartment . '"';
-      mysqli_query( $db, $query ) or die( 'A' . $markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'A' . $globalDatabaseErrorMarkup );
 
       indicateThatDepartmentDataHasBeenUpdatedSuccessfully();
    }
    else if ( isset( $_GET['nameOfFaculty'] ) ) {
       $query = 'SELECT faculty_id FROM departments WHERE department_name = "' . $nameOfDepartment . '"';
-      $result = mysqli_query( $db, $query ) or die( 'B' . $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'B' . $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
       $idOfFacultyAssociatedWithDepartment = $row['faculty_id'];
 
       $query = 'SELECT department_name FROM departments WHERE faculty_id = ' . $idOfFacultyAssociatedWithDepartment;
-      $result = mysqli_query( $db, $query ) or die( 'C' . $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'C' . $globalDatabaseErrorMarkup );
       $facultyAssociatedWithDepartmentIsNotAlsoAssociatedWithAnotherDepartment = mysqli_num_rows( $result ) == 1;
 
       if ( $facultyAssociatedWithDepartmentIsNotAlsoAssociatedWithAnotherDepartment ) {
          $query = 'DELETE FROM faculties WHERE faculty_id = ' . $idOfFacultyAssociatedWithDepartment;
-         mysqli_query( $db, $query ) or die( 'D' . $markupIndicatingDatabaseQueryFailure );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( 'D' . $globalDatabaseErrorMarkup );
       }
 
       $query = 'SELECT faculty_id FROM faculties WHERE faculty_name = "' . $nameOfFaculty . '"';
-      $result = mysqli_query( $db, $query ) or die( 'E' . $markupIndicatingDatabaseQueryFailure );
+      $result = mysqli_query( $globalHandleToDatabase, $query ) or die( 'E' . $globalDatabaseErrorMarkup );
       $row = mysqli_fetch_assoc( $result );
 
       if ( $row != NULL ) {
@@ -81,12 +81,12 @@ else if ( currentUserIsLoggedInAsAdmin() ) {
       }
       else {
          $query = 'INSERT INTO faculties ( faculty_name ) VALUES ( "' . ucwords( $nameOfFaculty ) . '" )';
-         mysqli_query( $db, $query ) or die( 'F' . $markupIndicatingDatabaseQueryFailure );
-         $idOfFaculty = mysqli_insert_id( $db );
+         mysqli_query( $globalHandleToDatabase, $query ) or die( 'F' . $globalDatabaseErrorMarkup );
+         $idOfFaculty = mysqli_insert_id( $globalHandleToDatabase );
       }
 
       $query = 'UPDATE departments SET faculty_id = ' . $idOfFaculty . ' WHERE department_name = "' . $nameOfDepartment . '"';
-      mysqli_query( $db, $query ) or die( 'G' . $markupIndicatingDatabaseQueryFailure );
+      mysqli_query( $globalHandleToDatabase, $query ) or die( 'G' . $globalDatabaseErrorMarkup );
 
       indicateThatDepartmentDataHasBeenUpdatedSuccessfully();
    }

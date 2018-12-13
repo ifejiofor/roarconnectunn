@@ -24,7 +24,7 @@ if ( !$_GET ) {
             
 <?php
    $query = 'SELECT message_id, user_id_of_sender, message_title, message_status, HOUR( message_time_of_sending ) AS hour_of_sending, MINUTE( message_time_of_sending ) AS minute_of_sending, MONTHNAME( message_time_of_sending ) AS month_of_sending, DAYOFMONTH( message_time_of_sending ) AS day_of_sending FROM messages WHERE user_id_of_recipient = ' . $_SESSION['user_id'] . ' ORDER BY message_time_of_sending DESC';
-   $resultContainingMessages = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingMessages = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
    if ( mysqli_num_rows( $resultContainingMessages ) == 0 ) {
 ?>
@@ -40,7 +40,7 @@ if ( !$_GET ) {
       while( $rowContainingMessage != NULL ) {
          if ( $rowContainingMessage['user_id_of_sender'] != NULL ) {
             $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingMessage['user_id_of_sender'];
-            $resultContainingDataAboutSender = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+            $resultContainingDataAboutSender = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
             $rowContainingDataAboutSender = mysqli_fetch_assoc( $resultContainingDataAboutSender );
             $firstNameOfSender = $rowContainingDataAboutSender['firstname'];
          }
@@ -72,12 +72,12 @@ else if ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'readMe
             
 <?php
    $query = 'SELECT message_id, message_title, user_id_of_sender, message_body FROM messages WHERE message_id = ' . $_GET['idOfMessage'];
-   $resultContainingMessage = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingMessage = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingMessage = mysqli_fetch_assoc( $resultContainingMessage );
    
    if ( $rowContainingMessage['user_id_of_sender'] != NULL ) {
       $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingMessage['user_id_of_sender'];
-      $resultContainingDataAboutSender = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $resultContainingDataAboutSender = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $rowContainingDataAboutSender = mysqli_fetch_assoc( $resultContainingDataAboutSender );
       $firstNameOfSender = $rowContainingDataAboutSender['firstname'];
    }
@@ -95,16 +95,16 @@ else if ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'readMe
             </div>
 <?php
    $query = 'UPDATE messages SET message_status = "READ" WHERE message_id = ' . $_GET['idOfMessage'];
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 }
 else if ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'deleteMessage' ) {
    $query = 'DELETE FROM messages WHERE message_id = ' . $_GET['idOfMessage'];
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    header( 'Location: inbox.php' );
 }
 else if ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'replyMessage' ) {
    $query = 'SELECT message_title, user_id_of_sender FROM messages WHERE message_id = ' . $_GET['idOfMessage'];
-   $resultContainingMessageToReplyTo = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $resultContainingMessageToReplyTo = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingMessageToReplyTo = mysqli_fetch_assoc( $resultContainingMessageToReplyTo );
    
    $urlOfSourcePage = 'inbox.php';

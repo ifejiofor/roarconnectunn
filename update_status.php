@@ -15,13 +15,13 @@ else {
 		$attr=trim(htmlentities($_POST['att']));
 		if(!empty($attr)){
 	$query="SELECT `attribute` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
-	if($query_run=mysqli_query($db, $query)){
+	if($query_run=mysqli_query($globalHandleToDatabase, $query)){
 		$query_result=mysqli_fetch_array($query_run);
 		$query_result['attribute'];
 		  $attribute=strtoupper($query_result['attribute']);
 		 if($attribute=='FRESHER' || $attribute=='ASPIRANT' || $attribute=='OLD STUDENT'){
 			$update="UPDATE `users` SET `attribute`='$attr' WHERE `id`='".$_SESSION['user_id']."'";
-			if($update_run=(mysqli_query($db, $update))){
+			if($update_run=(mysqli_query($globalHandleToDatabase, $update))){
 				header('Location: index.php');
 			}else{
 				echo '<p id="errorMessage">Unable to update status due to database error. Please, try again later.</p>';

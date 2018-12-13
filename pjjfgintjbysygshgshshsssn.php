@@ -37,7 +37,7 @@ else{
          if($newPasswordContainsAtLeastOneNumber){
 					require_once 'includes/performBasicInitializations.php';
 	$query="UPDATE `users` SET `password`='$npass' WHERE `email`= '".$email."'";
-	if($query_run=mysqli_query($db, $query)){
+	if($query_run=mysqli_query($globalHandleToDatabase, $query)){
 		setcookie('passwardResetSuccessful', 'true', time()+3600);
       header( 'Location: pjjfgintjbysygshgshshsssn.php' );
 	}else{

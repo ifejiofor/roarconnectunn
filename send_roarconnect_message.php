@@ -20,11 +20,11 @@ if ( !$_POST ) {
    
    if ( isset( $_GET['recipientIsAVendorManager'] ) && $_GET['recipientIsAVendorManager'] == 'true' ) {
       $query = 'SELECT vendor_name, vendor_email FROM vendors WHERE vendor_id = ' . $_GET['idOfVendor'] . ' AND user_id_of_vendor_manager = ' . $_GET['defaultIdOfMessageRecipient'];
-      $resultContainingDataAboutRecipientVendor = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $resultContainingDataAboutRecipientVendor = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $rowContainingDataAboutRecipientVendor = mysqli_fetch_assoc( $resultContainingDataAboutRecipientVendor );
       
       $query = 'SELECT firstname, email FROM users WHERE id = ' . $_GET['defaultIdOfMessageRecipient'];
-      $resultContainingDataAboutMessageRecipient = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $resultContainingDataAboutMessageRecipient = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $rowContainingDataAboutMessageRecipient = mysqli_fetch_assoc( $resultContainingDataAboutMessageRecipient );
       
       $nameOfMessageRecipient = $rowContainingDataAboutMessageRecipient['firstname'] . ' (Manager of ' . $rowContainingDataAboutRecipientVendor['vendor_name'] . ')';
@@ -32,7 +32,7 @@ if ( !$_POST ) {
    }
    else {
       $query = 'SELECT firstname, email FROM users WHERE id = ' . $_GET['defaultIdOfMessageRecipient'];
-      $resultContainingDataAboutMessageRecipient = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+      $resultContainingDataAboutMessageRecipient = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
       $rowContainingDataAboutMessageRecipient = mysqli_fetch_assoc( $resultContainingDataAboutMessageRecipient );
       
       $nameOfMessageRecipient = $rowContainingDataAboutMessageRecipient['firstname'];
@@ -74,8 +74,8 @@ else {
    $messageTitle = htmlentities( trim( $_POST['messageTitle'] ) );
    $messageBody = separateAllLinesOfTextWithParagraphTags( htmlentities( trim( $_POST['messageBody'] ) ) );
    
-   $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "' . mysqli_real_escape_string( $db, $messageTitle ) . '", "' . mysqli_real_escape_string( $db, $messageBody ) . '", ' . $_SESSION['user_id'] . ', ' . $_POST['userIdOfMessageRecipient'] . ', NOW() )';
-   mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+   $query = 'INSERT INTO messages ( message_title, message_body, user_id_of_sender, user_id_of_recipient, message_time_of_sending ) VALUES ( "' . mysqli_real_escape_string( $globalHandleToDatabase, $messageTitle ) . '", "' . mysqli_real_escape_string( $globalHandleToDatabase, $messageBody ) . '", ' . $_SESSION['user_id'] . ', ' . $_POST['userIdOfMessageRecipient'] . ', NOW() )';
+   mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    
    $email = $_POST['emailAddressOfMessageRecipient'];
    include 'sendmailinboxmessage.php';

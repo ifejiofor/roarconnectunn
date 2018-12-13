@@ -20,11 +20,11 @@ else {
 
    for ( $index = 0; $index < sizeof( $tokensFromSearchQuery ); $index++ ) {
       $query = 'SELECT tag_id, tag_relevance FROM tags WHERE tag_name = "' . $tokensFromSearchQuery[$index] . '"';
-      $resultContainingTagData = mysqli_query( $db, $query );
+      $resultContainingTagData = mysqli_query( $globalHandleToDatabase, $query );
       $rowContainingTagData = mysqli_fetch_assoc( $resultContainingTagData );
 
       $query = 'SELECT lecture_note_id FROM relationship_between_tags_and_lecture_notes WHERE tag_id = "' . $rowContainingTagData['tag_id'] . '"';
-      $resultContainingRelationshipData = mysqli_query( $db, $query ) or die($markupIndicatingDatabaseQueryFailure);
+      $resultContainingRelationshipData = mysqli_query( $globalHandleToDatabase, $query ) or die($globalDatabaseErrorMarkup);
       $rowContainingRelationshipData = mysqli_fetch_assoc( $resultContainingRelationshipData );
 
       while ( $rowContainingRelationshipData != NULL ) {
@@ -62,15 +62,15 @@ else {
       foreach ( $lectureNoteRelevances as $lectureNoteId => $relevance ) {
          $query = 'SELECT lecture_note_id, lecture_note_file_name, lecture_note_file_extension, lecture_note_number_of_pages, course_code FROM lecture_notes
             WHERE lecture_note_id = ' . $lectureNoteId;
-         $resultContainingLectureNoteData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingLectureNoteData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingLectureNoteData = mysqli_fetch_assoc( $resultContainingLectureNoteData );
 
          $query = 'SELECT course_code, course_title, department_id FROM courses WHERE course_code = "' . $rowContainingLectureNoteData['course_code'] . '"';
-         $resultContainingCourseData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingCourseData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingCourseData = mysqli_fetch_assoc( $resultContainingCourseData );
 
          $query = 'SELECT department_name FROM departments WHERE department_id = ' . $rowContainingCourseData['department_id'];
-         $resultContainingDepartmentData = mysqli_query( $db, $query ) or die( $markupIndicatingDatabaseQueryFailure );
+         $resultContainingDepartmentData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 ?>
 
