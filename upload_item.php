@@ -99,7 +99,7 @@ else {
 	            }
 
                if ( $uploadQueryExecutedSuccessfully ) {
-   			      $location = 'images/uploaded' . ucwords( $category ) . 'Snapshots/';
+   			      $location = 'assets/images/uploaded' . ucwords( $category ) . 'Snapshots/';
 			         $user_new = "$user_id@$item.$extend";
 			         if( ( move_uploaded_file( $tmp_name, $location . $user_new ) ) ) {
 			            $userNeedsToViewForm = false;

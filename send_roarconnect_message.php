@@ -1,8 +1,8 @@
 <?php
+// TODO: This code need to still be modified such that only users who are logged in can send message as this will enable that their recipients know it is a real person that sent the message and also make it possible for the reply functionality to work
 require_once 'includes/generalHeaderFile.php';
 
 displayMarkupsCommonToTopOfPages( 'Send Message', DISPLAY_NAVIGATION_MENU, 'send_roarconnect_message.php' );
-
 
 if ( !$_POST ) {
    if ( !isset( $_GET['defaultIdOfMessageRecipient'] ) || !consistsOfOnlyDigits( $_GET['defaultIdOfMessageRecipient'] )  ) {
@@ -39,7 +39,7 @@ if ( !$_POST ) {
       $emailAddressOfMessageRecipient = $rowContainingDataAboutMessageRecipient['email'];
    }
 ?>
-            <header id="minorHeaderType2">
+            <header id="minorHeader">
                <h2>Send Message</h2>
             </header>
 
@@ -48,7 +48,7 @@ if ( !$_POST ) {
                
                <div class="form-group">
                   <label class="control-label col-sm-2">Title</label>
-                  <div class="col-sm-10"><input type="text" name="messageTitle" value="<?php echo isset( $_GET['defaultMessageTitle'] ) ? $_GET['defaultMessageTitle'] : '' ?>" class="form-control" readonly /></div>
+                  <div class="col-sm-10"><input type="text" name="messageTitle" value="<?php echo isset( $_GET['defaultMessageTitle'] ) ? $_GET['defaultMessageTitle'] : '' ?>" class="form-control" /></div>
                </div>
                
                <div class="form-group">
@@ -56,16 +56,16 @@ if ( !$_POST ) {
                   <input type="hidden" name="emailAddressOfMessageRecipient" value="<?php echo $emailAddressOfMessageRecipient ?>"/>
                   
                   <label class="control-label col-sm-2">To</label>
-                  <div class="col-sm-10"><input type="text" name="firstNameOfMessageRecipient" value="<?php echo $nameOfMessageRecipient ?>" class="form-control" readonly /></div>
+                  <div class="col-sm-10"><input type="text" name="firstNameOfMessageRecipient" value="<?php echo $nameOfMessageRecipient ?>" class="form-control" disabled /></div>
                </div>
                
                <div>
                   <label class="control-label">Message Body:</label>
-                  <div><textarea name="messageBody" class="form-control" id="bigSizedTextArea"><?php echo $_GET['defaultMessageBody'] ?></textarea></div>
+                  <div><textarea name="messageBody" class="form-control" id="bigSizedTextArea"><?php echo isset($_GET['defaultMessageBody']) ? $_GET['defaultMessageBody'] : '' ?></textarea></div>
                </div>
                
                <div class="form-group">
-                  <div class="col-sm-8"><button type="submit" name="sendMessageButton" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-send"></span> Send</button></div>
+                  <div class="col-sm-8"><button type="submit" name="sendMessageButton" class="btn btn-success">Send</button></div>
                </div>
             </form>
 <?php
@@ -78,7 +78,7 @@ else {
    mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    
    $email = $_POST['emailAddressOfMessageRecipient'];
-   include 'sendmailinboxmessage.php';
+   //include 'includes/sendmailinboxmessage.php'; // Send an email that indicates that a RoarConnect message has been sent
 ?>
             <div id="containerHoldingSuccessMessage">
                <h1>Message Sent Successfully</h1>

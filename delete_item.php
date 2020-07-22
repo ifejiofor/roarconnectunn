@@ -72,7 +72,7 @@ else {
 
 $result = mysqli_query( $globalHandleToDatabase, $query );
 $row = mysqli_fetch_assoc( $result );
-$filePathOfItemSnapshot = 'images/uploaded' . ucwords( $_GET['category'] ) . 'Snapshots/' . $idOfItemUploader . '@' . $row['image_size'];
+$filePathOfItemSnapshot = 'assets/images/uploaded' . ucwords( $_GET['category'] ) . 'Snapshots/' . $idOfItemUploader . '@' . $row['image_size'];
 
 if ( ( isset( $_GET['requiredAction'] ) && $_GET['requiredAction'] == 'performAdminDeletion' ) || isset( $_GET['deleteItemForVendor'] ) ) {
    $query = 'DELETE FROM photo_upload WHERE id_new = ' . $_GET['idOfItem'];

@@ -41,7 +41,7 @@ else {
 <?php
       if ( $rowContainingBlogPost['blog_post_image_filename'] != NULL ) {
 ?>
-                     <img src="images/blogImages/<?php echo $rowContainingBlogPost['blog_post_image_filename'] ?>" id="<?php echo $counter % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" />
+                     <img src="assets/images/blogImages//<?php echo $rowContainingBlogPost['blog_post_image_filename'] ?>" id="<?php echo $counter % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" />
 <?php
       }
 ?>

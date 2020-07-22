@@ -47,7 +47,7 @@ if ( $_GET['actionPerformed'] != 'adminDeletionPerformedSuccessfully' ) {
    $resultContainingUserData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingUserData = mysqli_fetch_assoc( $resultContainingUserData );
 
-   $directory = 'images/ImagesFor' . ucwords( $rowContainingBlogCategoryData['blog_category_name'] ) . 'Updates';
+   $directory = 'assets/images/ImagesFor' . ucwords( $rowContainingBlogCategoryData['blog_category_name'] ) . 'Updates';
 }
 
 if ( isset( $_GET['requiredAction'] ) ) {
@@ -61,7 +61,7 @@ if ( isset( $_GET['requiredAction'] ) ) {
 <?php
 	      if ( $rowContainingBlogPostData['blog_post_image_filename'] != NULL ) {
 ?>
-               <img src="images/ImagesFor<?php echo $rowContainingBlogCategoryData['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPostData['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPostData['blog_post_caption'] ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
+               <img src="assets/images/ImagesFor<?php echo $rowContainingBlogCategoryData['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPostData['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPostData['blog_post_caption'] ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
 <?php
 	      }
 ?>
@@ -102,7 +102,7 @@ if ( isset( $_GET['requiredAction'] ) ) {
       }
       else {
          displayMarkupsCommonToTopOfPages( $requiredActionInConciseForm . ' Item', DISPLAY_NAVIGATION_MENU, 'perform_administrative_action_on_item.php' );
-         $directory = 'images/uploaded' . ucwords( $rowContainingBlogPostData['category'] ) . 'Snapshots';
+         $directory = 'assets/images/uploaded' . ucwords( $rowContainingBlogPostData['category'] ) . 'Snapshots';
 ?>
 
             <div class="panel panel-primary jumbotron" id="noPaddingOnSmallScreens">
@@ -112,7 +112,7 @@ if ( isset( $_GET['requiredAction'] ) ) {
 <?php
 	      if ( $rowContainingBlogPostData['blog_post_image_filename'] != NULL ) {
 ?>
-                  <img src="images/ImagesFor<?php echo $rowContainingBlogCategoryData['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPostData['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPostData['blog_post_caption'] ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
+                  <img src="assets/images/ImagesFor<?php echo $rowContainingBlogCategoryData['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPostData['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPostData['blog_post_caption'] ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
 <?php
 	      }
 ?>
@@ -169,7 +169,7 @@ else if ( isset( $_GET['actionPerformed'] ) ) {
 
 	   if ( $rowContainingBlogPostData['blog_post_image_filename'] != NULL ) {
 ?>
-               <img src="images/ImagesFor<?php echo $rowContainingBlogCategoryData['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPostData['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPostData['blog_post_caption'] ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
+               <img src="assets/images/ImagesFor<?php echo $rowContainingBlogCategoryData['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPostData['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPostData['blog_post_caption'] ?>" width="auto" height="100px" id="floatedToTheLeftAndHasMarginOnLargeScreens" />
 <?php
 	   }
 ?>

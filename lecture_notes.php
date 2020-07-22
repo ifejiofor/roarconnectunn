@@ -5,8 +5,8 @@ displayMarkupsCommonToTopOfPages( 'Lecture Note Portal', DISPLAY_NAVIGATION_MENU
 displayMarkupForSearchBar('search_for_lecture_notes.php', 'Search lecture notes');
 ?>
             <header id="minorHeader">
-               <h2>RoarConnect's Lecture Note Portal</h2>
-               <p id="minorTextInMinorHeader">Your much needed lecture note is just one click away.</p>
+               <h2>Welcome to RoarConnect's Lecture Note Portal</h2>
+               <p id="minorTextInMinorHeader">Your much needed lecture note is just one click away</p>
 <?php
 if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
@@ -43,8 +43,8 @@ foreach ( $arrayOfFacultyIds as $facultyName => $facultyId ) { // loop through t
 ?>
 
             <section id="<?php echo $facultyId ?>">
-               <div id="smallContainerWithBorderAndAllowsOverflow">
-                  <h3 id="overflowingHeader">Faculty of <?php echo $facultyName ?></h3>
+               <div id="narrowGenericSection">
+                  <h3 id="overflowedHeading">Faculty of <?php echo $facultyName ?></h3>
                   <ul id="listArrangedInTwoColumnsOnLargeScreens">
 <?php
    $query = 'SELECT * FROM departments WHERE faculty_id = ' . $facultyId . ' ORDER BY department_name';
@@ -53,7 +53,7 @@ foreach ( $arrayOfFacultyIds as $facultyName => $facultyId ) { // loop through t
 
    while ( $rowContainingDepartmentData != NULL ) {
 ?>
-                     <li><a href="choose_year_of_study_of_lecture_note.php?departmentName=<?php echo $rowContainingDepartmentData['department_name'] ?>&departmentId=<?php echo $rowContainingDepartmentData['department_id'] ?>&durationOfProgramme=<?php echo $rowContainingDepartmentData['department_duration_of_programme'] ?>&facultyId=<?php echo $facultyId ?>"><?php echo $rowContainingDepartmentData['department_name'] ?> Lecture Notes</a></li>
+                     <li><a href="view_lecture_note_information.php?departmentName=<?php echo $rowContainingDepartmentData['department_name'] ?>&departmentId=<?php echo $rowContainingDepartmentData['department_id'] ?>&durationOfProgramme=<?php echo $rowContainingDepartmentData['department_duration_of_programme'] ?>&facultyId=<?php echo $facultyId ?>"><?php echo $rowContainingDepartmentData['department_name'] ?> Lecture Notes</a></li>
 <?php
       $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
    }

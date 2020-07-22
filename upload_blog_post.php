@@ -29,7 +29,7 @@ if ( isset( $_POST['postButton'] ) ) {
 		$idOfJustInsertedBlogPost = mysqli_insert_id( $globalHandleToDatabase );
 
 		if ( is_uploaded_file( $_FILES['image']['tmp_name'] ) ) {
-			$uploadingOfImageIsSuccessful = move_uploaded_file( $_FILES['image']['tmp_name'], 'images/ImagesFor' . $_GET['category'] . 'Updates/' . $idOfJustInsertedBlogPost . '.jpg' );
+			$uploadingOfImageIsSuccessful = move_uploaded_file( $_FILES['image']['tmp_name'], 'assets/images/ImagesFor' . $_GET['category'] . 'Updates/' . $idOfJustInsertedBlogPost . '.jpg' );
 			
 			if ( $uploadingOfImageIsSuccessful ) {
 				$query = 'UPDATE blog_posts SET blog_post_image_filename = "' . $idOfJustInsertedBlogPost . '.jpg" WHERE blog_post_id = ' . $idOfJustInsertedBlogPost;
@@ -72,7 +72,7 @@ if ( currentUserIsLoggedIn() ) {
 			   <div class="<?php echo $userInputContainsError ? 'show' : 'hide' ?>" id="containerHoldingPostNewBlogUpdateForm">
                   <?php echo $userInputContainsError ? '<p id="errorMessage">' . $errorMessage . '</p>' : '' ?>
 				  
-			      <form method="POST" action="blog_home.php?category=<?php echo $_GET['category'] ?>" enctype="multipart/form-data" class="form-horizontal text-left" id="smallContainerWithBorderAndAllowsOverflow">
+			      <form method="POST" action="blog_home.php?category=<?php echo $_GET['category'] ?>" enctype="multipart/form-data" class="form-horizontal text-left" id="narrowGenericSection">
 			         <div class="form-group">
 				        <label for="caption" class="control-label col-sm-4">Caption of Update:</label>
 					    <div class="col-sm-8">

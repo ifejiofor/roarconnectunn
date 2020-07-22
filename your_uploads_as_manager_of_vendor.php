@@ -50,7 +50,7 @@ while ( $rowContainingDataAboutVendor != NULL ) {
    }
 ?>
 
-            <section id="wideContainerWithBorder">
+            <section id="wideGenericSection">
                <header id="minorHeaderType2">
                   <h3>You are the manager of <?php echo $rowContainingDataAboutVendor['vendor_name'] ?></h3>
                   <p><a href="upload_item.php?uploadItemForVendor&idOfVendor=<?php echo $rowContainingDataAboutVendor['vendor_id'] ?>" class="btn btn-default btn-sm">Click Here</a> to upload <?php echo $descriptionOfItemSold ?> at <?php echo $rowContainingDataAboutVendor['vendor_name'] ?></p>
@@ -71,7 +71,7 @@ while ( $rowContainingDataAboutVendor != NULL ) {
 <?php
       $rowContainingDataAboutUpload = mysqli_fetch_assoc( $resultContainingDataAboutUpload );
       while ( $rowContainingDataAboutUpload != NULL ) {
-         $filePathOfSnapshot = 'images/uploaded' . ucwords( $rowContainingDataAboutUpload['category'] ) . 'Snapshots/VENDOR_' . $rowContainingDataAboutVendor['vendor_id'] . '@' . $rowContainingDataAboutUpload['image_size'];
+         $filePathOfSnapshot = 'assets/images/uploaded' . ucwords( $rowContainingDataAboutUpload['category'] ) . 'Snapshots/VENDOR_' . $rowContainingDataAboutVendor['vendor_id'] . '@' . $rowContainingDataAboutUpload['image_size'];
 ?>
 
                <div id="looksLikeASmallPaperCard">

@@ -1,117 +1,48 @@
 <?php
-	require_once 'includes/generalHeaderFile.php';
+require_once 'includes/generalHeaderFile.php';
 
-if (isset($_GET['category'])) {
-   if ( $_GET['category'] == 'Painting' ) {
-      $nameOfService = 'Painting';
-      $nameOfServiceProvider = 'Painter';
-   }
-   else if ( $_GET['category'] == 'Catering' ) {
-      $nameOfService = 'Catering';
-      $nameOfServiceProvider = 'Caterer';
-   }
-   else if ( $_GET['category'] == 'ElectricalWorks' ) {
-      $nameOfService = 'Electrical';
-      $nameOfServiceProvider = 'Electrician';
-   }else if ( $_GET['category'] == 'Arts' ) {
-      $nameOfService = 'Art';
-      $nameOfServiceProvider = 'Artist';
-   }else if ( $_GET['category'] == 'HaircutService' ) {
-      $nameOfService = 'HaircutService';
-      $nameOfServiceProvider = 'Barber';
-   }else if ( $_GET['category'] == 'GraphicsDesigning' ) {
-      $nameOfService = 'Graphics Designing and Video Editing';
-      $nameOfServiceProvider = 'Graphic Designer and Video Editor';
-   }else if ( $_GET['category'] == 'BeautyService' ) {
-      $nameOfService = 'Beauty Service';
-      $nameOfServiceProvider = 'Beautician';
-   }else if ( $_GET['category'] == 'DataServices' ) {
-      $nameOfService = 'Data';
-      $nameOfServiceProvider = 'Data Provider';
-   }
-}
-else {
-   $nameOfService = '';
-   $nameOfServiceProvider = '';
-}
-
-   displayMarkupsCommonToTopOfPages( 'Contact a ' . $nameOfServiceProvider, DISPLAY_NAVIGATION_MENU, 'view_all_utility_services.php' );
+displayMarkupsCommonToTopOfPages( 'Utility Services', DISPLAY_NAVIGATION_MENU, 'view_all_utility_services.php' );
 ?>
             <header id="minorHeader">
-               <h2>Welcome to RoarConnect <?php echo $nameOfService ?> Services Marketplace</h2>
-               <p id="minorTextInMinorHeader">Here, you can contact a competent <?php echo strtolower( $nameOfServiceProvider ) ?> to do your <?php echo strtolower( $nameOfService ) ?> works.</p>
+               <h2>Welcome to RoarConnect's Utility Services Marketplace</h2>
+               <p>Below are our recommended utility service providers. If you want to do business with any of them, simply contact them now.</p>
+<?php
+   if ( currentUserIsLoggedInAsAdmin() ) {
+?>
+                  <p><a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-primary">Add New Vendor</a></p>
+<?php
+   }
+?>
             </header>
 
 <?php
-   $query = 'SELECT vendor_id, vendor_name FROM vendors';
-   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+$query = 'SELECT vendor_id, vendor_name, vendor_category FROM vendors WHERE vendor_category != "foods" ORDER BY vendor_category, vendor_name';
+$resultContainingVendorData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
 
-   if ( mysqli_num_rows( $result ) > 0 ) {
+for ( $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData ); $rowContainingVendorData != NULL; $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData ) ) {
 ?>
-            <section>
-               <header id="minorHeaderType2">
-                  <h3><?php echo mysqli_num_rows( $result ) == 1 ? 'Storefront' : 'Storefronts' ?> of RoarConnect Special <?php echo $nameOfServiceProvider . ( mysqli_num_rows( $result ) == 1 ? '' : 's' ) ?></h3>
+            <section id="looksLikeABigPaperCard">
+               <a href="view_uploads_by_vendor.php?i=<?php echo $rowContainingVendorData['vendor_id'] ?>">
+                  <header id="headerOfPaperCard">
+                     <h2><?php echo $rowContainingVendorData['vendor_name'] ?></h2>
+                  </header>
+                  <img src="assets/images/vendorFliers/<?php echo $rowContainingVendorData['vendor_name'] . '.jpg' ?>" alt="<?php echo $rowContainingVendorData['vendor_name'] ?>'s Flier" width="100%" height="auto" />
+                  <div class="text-center" id="tinyMargin"><span class="btn btn-default">View Details</span></div>
+               </a>
 <?php
-      if ( currentUserIsLoggedInAsAdmin() ) {
+   if ( currentUserIsLoggedInAsAdmin() ) {
 ?>
-                  <p><a href="add_or_edit_vendor.php?requiredAction=addVendor" class="btn btn-warning">Add a New <?php echo $nameOfServiceProvider ?></a></p>
-<?php
-      }
-?>
-               </header>
-<?php
-      $row = mysqli_fetch_assoc( $result );
-      while ( $row != NULL ) {
-?>
-
-               <div id="smallContainerWithBorderAndAllowsOverflow">
-                  <h2 id="overflowingHeader"><?php echo $row['vendor_name'] ?></h2>
-                  <img src="images/vendorFliers/<?php echo $row['vendor_name'] . '.jpg' ?>" alt="<?php echo $row['vendor_name'] ?>'s Flier" width="100%" height="auto" />
-
-                  <div class="text-center">
-<?php
-         if ( currentUserIsLoggedIn() ) {
-?>
-                     <a href="view_uploads_by_vendor.php?vendor=<?php echo $row['vendor_id'] ?>" class="btn btn-default btn-lg" id="boldSmallSizedText">Click Here</a>
-<?php
-         }
-         else {
-?>
-                     <div id="displayAsInlineBlock">
-<?php
-            $markupToDisplayWithinButton = 'Click Here';
-            $miscellaneousAttributesOfButton = 'class="btn btn-default btn-lg" id="boldSmallSizedText"';
-            getMarkupForButtonThatWillTellUserToLogInBeforeContinuing( $markupToDisplayWithinButton, $miscellaneousAttributesOfButton );
-?>
-                     </div>
-<?php
-         }
-?>
-
-                     to preview some <?php echo strtolower( $nameOfService ) ?> jobs done by <?php echo $row['vendor_name'] ?>.
-                  </div>
-<?php
-      if ( currentUserIsLoggedInAsAdmin() ) {
-?>
-                  <p class="text-center">Also, you may either</p>
-                  <p class="text-center"><a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $row['vendor_id'] ?>" class="btn btn-warning">Click Here</a> to edit details about <?php echo $row['vendor_name'] ?>.</p>
-                  <p class="text-center">Or you may <a href="delete_vendor.php?idOfVendor=<?php echo $row['vendor_id'] ?>" class="btn btn-warning">Click Here</a> to delete <?php echo $row['vendor_name'] ?> from RoarConnect's database</p>
-<?php
-      }
-?>
+               <div class="text-center" id="tinyMargin">
+                  <a href="add_or_edit_vendor.php?requiredAction=editVendor&idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-primary">Edit Vendor</a>
+                  <a href="delete_vendor.php?idOfVendor=<?php echo $rowContainingVendorData['vendor_id'] ?>" class="btn btn-primary">Delete Vendor</a>
                </div>
 <?php
-         $row = mysqli_fetch_assoc( $result );
-      }
+   }
 ?>
             </section>
 
 <?php
-   }
-   
-   if ( !currentUserIsLoggedIn() ) {
-      getMarkupForModalThatTellsUserToLogInBeforeContinuing();
-   }
+}
 
-	displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );
+displayMarkupsCommonToBottomOfPages( DISPLAY_FOOTER );
 ?>

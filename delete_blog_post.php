@@ -31,7 +31,7 @@
    $resultContainingBlogCategoryData = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $rowContainingBlogCategoryData = mysqli_fetch_assoc( $resultContainingBlogCategoryData );
    
-   $filePathOfBlogPostImage = 'images/ImagesFor' . $rowContainingBlogCategoryData['blog_category_name'] . 'Updates/' . $rowContainingBlogPostData['blog_post_image_filename'];
+   $filePathOfBlogPostImage = 'assets/images/ImagesFor' . $rowContainingBlogCategoryData['blog_category_name'] . 'Updates/' . $rowContainingBlogPostData['blog_post_image_filename'];
    unlink( $filePathOfBlogPostImage );
    
    $query = 'DELETE FROM reasons_for_admin_actions_on_items WHERE type_of_item = "BLOG POST" AND id_of_item = ' . $_GET['idOfBlogPost'];

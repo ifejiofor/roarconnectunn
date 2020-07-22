@@ -32,7 +32,7 @@ if ( !currentUserIsLoggedInAsAdmin() ) {
                <p>Here, you can manage all <?php echo $descriptionOfType ?>.</p>
             </header>
 
-            <section id="wideContainerWithBorder">
+            <section id="wideGenericSection">
                <header id="minorHeaderType2">
                   <h3><?php echo $_GET['type'] ?> Items of Various RoarConnect Users</h3>
                </header>
@@ -48,7 +48,7 @@ if ( mysqli_num_rows( $resultContainingItemData ) == 0 ) {
 else {
    $rowContainingItemData = mysqli_fetch_assoc( $resultContainingItemData );
    while ( $rowContainingItemData != NULL ) {
-      $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
+      $directory = 'assets/images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
       $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingItemData['people_id'];
       $resultContainingUserData = mysqli_query( $globalHandleToDatabase, $query );
       $rowContainingUserData = mysqli_fetch_assoc( $resultContainingUserData );
@@ -107,7 +107,7 @@ $rowContainingVendorData = mysqli_fetch_assoc( $resultContainingVendorData );
 while ( $rowContainingVendorData != NULL ) {
 ?>
 
-            <section id="wideContainerWithBorder">
+            <section id="wideGenericSection">
                <header id="minorHeaderType2">
                   <h3><?php echo $_GET['type'] . ' Items of ' . $rowContainingVendorData['vendor_name'] ?></h3>
                </header>
@@ -122,7 +122,7 @@ while ( $rowContainingVendorData != NULL ) {
    else {
       $rowContainingItemData = mysqli_fetch_assoc( $resultContainingItemData );
       while ( $rowContainingItemData != NULL ) {
-         $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
+         $directory = 'assets/images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
          $query = 'SELECT firstname FROM users WHERE id = ' . $rowContainingItemData['people_id'];
          $resultContainingUserData = mysqli_query( $globalHandleToDatabase, $query );
          $rowContainingUserData = mysqli_fetch_assoc( $resultContainingUserData );

@@ -104,7 +104,7 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
          $idOfLatestVendor = mysqli_insert_id( $globalHandleToDatabase );
 
          $temporaryFilePathOfVendorFlier = $_FILES['vendorFlier']['tmp_name'];
-         $permanentFilePathOfVendorFlier = 'images/vendorFliers/' . $_POST['nameOfVendor'] . '.jpg';
+         $permanentFilePathOfVendorFlier = 'assets/images/vendorFliers/' . $_POST['nameOfVendor'] . '.jpg';
          move_uploaded_file( $temporaryFilePathOfVendorFlier, $permanentFilePathOfVendorFlier ) or die( '<p id="errorMessage">Unable to upload vendor flier.</p>' );
       }
       else {
@@ -112,8 +112,8 @@ if ( $_POST && currentUserIsLoggedInAsAdmin() ) {
          $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
          $row = mysqli_fetch_assoc( $result );
          if ( strtolower( $row['vendor_name'] ) != strtolower( $_POST['nameOfVendor'] ) ) {
-            $fileNameOfOldFlier = 'images/vendorFliers/' . $row['vendor_name'] . '.jpg';
-            $fileNameOfNewFlier = 'images/vendorFliers/' . $_POST['nameOfVendor'] . '.jpg';
+            $fileNameOfOldFlier = 'assets/images/vendorFliers/' . $row['vendor_name'] . '.jpg';
+            $fileNameOfNewFlier = 'assets/images/vendorFliers/' . $_POST['nameOfVendor'] . '.jpg';
 
             $handleToOldFlier = fopen( $fileNameOfOldFlier, 'r' ) or die( '<p id="errorMessage">An unexpected error occurred.</p>' );
             $handleToNewFlier = fopen( $fileNameOfNewFlier, 'w' ) or die( '<p id="errorMessage">An unexpected error occurred.</p>' );

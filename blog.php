@@ -1,6 +1,6 @@
 <?php
 /*
-   In this file, $_GET['i'] holds the id of the current blog post
+   NB: In this file, $_GET['i'] holds the id of the current blog post
    TODO: The code in this file will need to be extensively refactored to maximise its efficiency
 */
 require_once 'includes/generalHeaderFile.php';
@@ -42,7 +42,7 @@ displayMarkupForSearchBar('search_for_blog_post.php', 'Search news and gists');
 <?php
 if ($rowContainingCurrentBlogPost['blog_post_image_filename'] != NULL) {
 ?>
-                  <img src="images/blogImages/<?php echo $rowContainingCurrentBlogPost['blog_post_image_filename'] ?>" id="blogBodyImage" />
+                  <img src="assets/images/blogImages//<?php echo $rowContainingCurrentBlogPost['blog_post_image_filename'] ?>" id="blogBodyImage" />
 <?php
 }
 ?>
@@ -413,7 +413,7 @@ function displayBlogPostAsSummary($rowContainingRelatedBlogPost)
 <?php
    if ($rowContainingRelatedBlogPost['blog_post_image_filename'] != NULL) {
 ?>
-                     <img src="images/blogImages/<?php echo $rowContainingRelatedBlogPost['blog_post_image_filename'] ?>" width="auto" height="50px" id="relatedBlogImage" />
+                     <img src="assets/images/blogImages//<?php echo $rowContainingRelatedBlogPost['blog_post_image_filename'] ?>" width="auto" height="50px" id="relatedBlogImage" />
 <?php
    }
 ?>

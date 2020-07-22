@@ -79,13 +79,13 @@
       $row = mysqli_fetch_assoc($result);
 
       while ( $row != NULL ) {
-         $directoryStoringSnapshotOfUpload = 'images/uploaded' . ucwords($row['category']) . 'Snapshots';
+         $directoryStoringSnapshotOfUpload = 'assets/images/uploaded' . ucwords($row['category']) . 'Snapshots';
          $fileNameOfSnapshotOfUpload = 'VENDOR_' . $_GET['idOfVendor'] . '@' . $row['image_size'];
          unlink($directoryStoringSnapshotOfUpload . '/' . $fileNameOfSnapshotOfUpload);
          $row = mysqli_fetch_assoc($result);
       }
 
-      unlink ( 'images/vendorFliers/' . $nameOfVendor . '.jpg' );
+      unlink ( 'assets/images/vendorFliers/' . $nameOfVendor . '.jpg' );
 
       $query = 'DELETE FROM photo_upload WHERE people_id = "VENDOR_' . $_GET['idOfVendor'] . '"';
       mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);

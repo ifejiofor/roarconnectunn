@@ -9,25 +9,25 @@ displayMarkupForSearchBar('search_for_blog_post.php', 'Search news and gists');
                <h2>RoarConnect brings you the most exciting news and gists within and outside UNN</h2>
             </header>
 
-            <section>
+            <section class="row">
 <?php
 $latestBlogPosts = getArrayOfDataAboutLatestBlogPosts(MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY + 1);
 
 for ($index = 0; $index < MAXIMUM_NUMBER_OF_HEADLINES_TO_DISPLAY && $index < count($latestBlogPosts); $index++) {
    $blogPost = $latestBlogPosts[$index];
 ?>
-               <div class="col-md-6 col-lg-4">
+               <div class="col-sm-6">
                   <a href="blog.php?i=<?php echo $blogPost['blog_post_id'] ?>" id="blogHeadlineContainer">
 <?php
 	if ( $blogPost['blog_post_image_filename'] != NULL ) {
 ?>
-                     <img src="images/blogImages/<?php echo $blogPost['blog_post_image_filename'] ?>" id="<?php echo $index % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" />
+                     <img src="assets/images/blogImages//<?php echo $blogPost['blog_post_image_filename'] ?>" id="<?php echo $index % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" />
 <?php
 	}
 ?>
                      <h3 id="blogHeadlineCaption"><?php echo $blogPost['blog_post_caption'] ?></h3>
-                     <p id="blogHeadlineSubdetails"><span class="glyphicon glyphicon-calendar"></span> <?php echo $blogPost['blog_post_day_of_posting'] . ' ' . $blogPost['blog_post_month_of_posting'] . ', ' . $blogPost['blog_post_year_of_posting'] ?></p>
-                     <p id="blogHeadlineDetails"><?php echo getTextFromFirstParagraph($blogPost['blog_post_text']) ?>... <span id="readMore">Read More</span></p>
+                     <p id="blogHeadlineSubdetails"><span class="glyphicon glyphicon-calendar"></span> <?php echo $blogPost['blog_post_month_of_posting'] . ' ' . $blogPost['blog_post_day_of_posting'] . ', ' . $blogPost['blog_post_year_of_posting'] ?></p>
+                     <p id="blogHeadlineDetails"><?php echo getTextFromFirstParagraph($blogPost['blog_post_text']) ?>... <span id="readMore">Read&nbsp;More</span></p>
                   </a>
                </div>
 <?php

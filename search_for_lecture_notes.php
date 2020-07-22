@@ -74,7 +74,7 @@ else {
          $rowContainingDepartmentData = mysqli_fetch_assoc( $resultContainingDepartmentData );
 ?>
 
-            <div id="containerWithBorderAndWithoutRoundedCorners">
+            <div id="searchResult">
 <?php
          if ( currentUserIsLoggedIn() ) {
 ?>

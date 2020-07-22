@@ -41,7 +41,7 @@ $rowContainingItemData = mysqli_fetch_assoc( $resultContainingItemData );
 if ( isset( $_GET['requiredAction'] ) ) {
    if ( !isset( $_GET['confirmation'] ) ) {  // neither "Yes" nor "No" buttons have been clicked
       displayMarkupsCommonToTopOfPages( $requiredActionInConciseForm . ' Item', DISPLAY_NAVIGATION_MENU, 'perform_administrative_action_on_item.php' );
-      $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
+      $directory = 'assets/images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
 ?>
 
             <div id="containerHoldingErrorMessage">
@@ -84,7 +84,7 @@ if ( isset( $_GET['requiredAction'] ) ) {
       }
       else {
          displayMarkupsCommonToTopOfPages( $requiredActionInConciseForm . ' Item', DISPLAY_NAVIGATION_MENU, 'perform_administrative_action_on_item.php' );
-         $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
+         $directory = 'assets/images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
 ?>
 
             <div class="panel panel-primary jumbotron" id="noPaddingOnSmallScreens">
@@ -125,7 +125,7 @@ if ( isset( $_GET['requiredAction'] ) ) {
 }
 else if ( isset( $_GET['actionPerformed'] ) ) {
    displayMarkupsCommonToTopOfPages( $requiredActionInConciseForm . ' Item', DISPLAY_NAVIGATION_MENU, 'perform_administrative_action_on_item.php' );
-   $directory = 'images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
+   $directory = 'assets/images/uploaded' . ucwords( $rowContainingItemData['category'] ) . 'Snapshots';
 ?>
             <div id="containerHoldingSuccessMessage">
                <h2>Successfully <?php echo $requiredActionInConciseForm ?>d Item</h2>

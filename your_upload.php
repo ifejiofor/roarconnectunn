@@ -29,7 +29,7 @@ else {
             <header id="minorHeaderType2">
                <h3>Your <?php echo ucwords( $categoryInSingularForm ) ?> Upload</h3>
 <?php
-	$directory = 'images/uploaded'. ucwords( $_GET['category'] ) . 'Snapshots';
+	$directory = 'assets/images/uploaded'. ucwords( $_GET['category'] ) . 'Snapshots';
 if($handle=opendir($directory. '/')){
 	require'includes/performBasicInitializations.php';
 

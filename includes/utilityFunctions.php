@@ -22,11 +22,7 @@ function currentUserIsLoggedInAsAdmin()
 
 function getFirstNameOfCurrentUser()
 {
-   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
-	$query = "SELECT `firstname` FROM `users` WHERE `id`= '".$_SESSION['user_id']."'";
-   $query_run = mysqli_query($globalHandleToDatabase, $query) or die($globalDatabaseErrorMarkup);
-   $query_result = mysqli_fetch_array($query_run);
-   return $query_result == NULL ? '' : $query_result['firstname'];
+   return getFirstNameOfUser($_SESSION['user_id']);
 }
 
 
@@ -37,6 +33,22 @@ function getFirstNameOfUser($userId)
    $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
    $row = mysqli_fetch_assoc( $result );
    return $row == NULL ? '' : $row['firstname'];
+}
+
+
+function getNameOfCurrentVendor()
+{
+   return getNameOfVendor($_GET['i']);
+}
+
+
+function getNameOfVendor($vendorId)
+{
+   global $globalHandleToDatabase, $globalDatabaseErrorMarkup;
+   $query = 'SELECT vendor_name FROM vendors WHERE vendor_id = "' . $vendorId . '"';
+   $result = mysqli_query( $globalHandleToDatabase, $query ) or die( $globalDatabaseErrorMarkup );
+   $row = mysqli_fetch_assoc( $result );
+   return $row == NULL ? '' : $row['vendor_name'];
 }
 
 
@@ -74,6 +86,16 @@ function isAlpha( $char )
 {
    $char = strtolower( $char );
 
+   return $char == 'a' || $char == 'b' || $char == 'c' || $char == 'd' || $char == 'e' || $char == 'f'
+      || $char == 'g' || $char == 'h' || $char == 'i' || $char == 'j' || $char == 'k' || $char == 'l'
+      || $char == 'm' || $char == 'n' || $char == 'o' || $char == 'p' || $char == 'q' || $char == 'r'
+      || $char == 's' || $char == 't' || $char == 'u' || $char == 'v' || $char == 'w' || $char == 'x'
+      || $char == 'y' || $char == 'z';
+}
+
+
+function isLowercaseLetter($char)
+{
    return $char == 'a' || $char == 'b' || $char == 'c' || $char == 'd' || $char == 'e' || $char == 'f'
       || $char == 'g' || $char == 'h' || $char == 'i' || $char == 'j' || $char == 'k' || $char == 'l'
       || $char == 'm' || $char == 'n' || $char == 'o' || $char == 'p' || $char == 'q' || $char == 'r'
@@ -160,6 +182,46 @@ function isMainBloggerForThisCategory( $idOfUser, $idOfBlogCategory )
 	
 	return $row != NULL;
 }
+
+
+function formatNameAsPossessive($name)
+{
+   $lastCharacter = $name[strlen($name) - 1];
+
+   if ($lastCharacter == 's' || $lastCharacter == 'S') {
+      $formattedName = $name . '\'';
+   }
+   else {
+      $formattedName = $name . (isLowercaseLetter($lastCharacter) ? '\'s' : '\'S');
+   }
+
+   return $formattedName;
+}
+
+
+function formatNumberAsCommaSeparated($number)
+{
+   if ($number < 1000) {
+      return $number;
+   }
+
+   settype($number, 'string');
+   $formattedNumber = '';
+   $count = 0;
+
+   for ($i = strlen($number) - 1; $i >= 0; $i--) {
+      if ($count == 3) {
+         $formattedNumber .= ',';
+         $count = 0;
+      }
+
+      $formattedNumber .= $number[$i];
+      $count++;
+   }
+
+   return strrev($formattedNumber);
+}
+
 
 
 function formatTimeAsAmOrPm( $hour, $minute ) {
@@ -437,7 +499,7 @@ function displayLatestStuffs()
       else if ( $attributeOfUser == 'FRESHER' ) {
          $queryContainingBlogCategoriesThatShouldNotBeDisplayed = 'SELECT blog_category_id FROM blog_categories WHERE blog_category_name = "Aspirant Gists" OR blog_category_name = "Old Student Gists"';
       }
-      else if ( $attributeOfUser == 'OLD STUDENT' ) {
+      else {
          $queryContainingBlogCategoriesThatShouldNotBeDisplayed = 'SELECT blog_category_id FROM blog_categories WHERE blog_category_name = "Aspirant Gists" OR blog_category_name = "Fresher Gists"';
       }
    }
@@ -480,7 +542,7 @@ function displayLatestStuffs()
 <?php
 	if ( $rowContainingLatestBlogPost['blog_post_image_filename'] != NULL ) {
 ?>
-                     <img src="images/ImagesFor<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>Updates/<?php echo $rowContainingLatestBlogPost['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingLatestBlogPost['blog_post_caption'] ?>" id="<?php echo $counter % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" />
+                     <img src="assets/images/blogImages/<?php echo $rowContainingLatestBlogPost['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingLatestBlogPost['blog_post_caption'] ?>" id="<?php echo $counter % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" width="130px" height="130px" />
 <?php
 	}
 ?>
@@ -547,43 +609,6 @@ function displayLatestStuffs()
 ?>
                </section>
                               
-<?php
-   }
-
-   /*
-      Retrieve and display a few latest photo uploads
-   */
-   $query = 'SELECT * FROM photo_upload WHERE checks = "APPROVED" AND people_id NOT LIKE "VENDOR_%" ORDER BY id_new DESC LIMIT 4';
-   $resultContainingLatestPhotoUploads = mysqli_query( $globalHandleToDatabase, $query );
-   
-   if ( mysqli_num_rows( $resultContainingLatestPhotoUploads ) > 0 ) {
-?>
-               <section>
-                  <div id="ashColouredContainerWithoutPadding">
-                     <header id="minorHeaderType2">
-                        <h1>Latest Items for Sale</h1>
-                     </header>
-                  </div>
-<?php
-      $rowContainingLatestPhotoUpload = mysqli_fetch_assoc( $resultContainingLatestPhotoUploads );
-      while ( $rowContainingLatestPhotoUpload != NULL ) {
-?>
-               <a href="view_all_items.php?category=<?php echo ucwords( $rowContainingLatestPhotoUpload['category'] ) ?>" id="looksLikeASmallPaperCard">
-                  <div id="headerOfPaperCard">
-                     <img src ="images/uploaded<?php echo ucwords( $rowContainingLatestPhotoUpload['category'] ) ?>Snapshots/<?php echo $rowContainingLatestPhotoUpload['people_id'] . '@' . $rowContainingLatestPhotoUpload['image_size'] ?>" alt="Snapshot of <?php echo $rowContainingLatestPhotoUpload['name_of_item'] ?>" />
-                     <h4><?php echo $rowContainingLatestPhotoUpload['name_of_item'] ?></h4>
-                  </div>
-                  <div id="bodyOfPaperCard">
-                     <p><span id="boldSmallSizedText">Description:</span> <?php echo $rowContainingLatestPhotoUpload['brief_descripition'] ?></p>
-                     <p><span id="boldSmallSizedText">Price:</span> <?php echo $rowContainingLatestPhotoUpload['price'] . ' (' . ( $rowContainingLatestPhotoUpload['negotiable'] == 'YES' ? 'negotiable' : 'non-negotiable' ) . ')' ?></p>
-                  </div>
-               </a>
-<?php
-         $rowContainingLatestPhotoUpload = mysqli_fetch_assoc( $resultContainingLatestPhotoUploads );
-      }
-?>
-               </section>
-               
 <?php
    }
 }

@@ -29,16 +29,16 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
       <meta name="description" content="" />
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
-      <link rel="favicon icon" href="images/icons/RoarConnectFavicon.jpg"/>
+      <link rel="favicon icon" href="assets/images/icons/RoarConnectFavicon.jpg"/>
       <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css"/>
       <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css"/>
-      <link rel="stylesheet" href="assets/customized_css/main.css"/>
-      <script src="assets/customized_js/main.js"></script>
+      <link rel="stylesheet" href="assets/customized/css/main.css"/>
+      <script src="assets/customized/js/main.js"></script>
    </head>
 
    <body <?php echo ( $customizedStyleForBodyElement == NULL ? '' : 'style="' . $customizedStyleForBodyElement . '"' ); ?>>
       <header class="container-fluid" id="mainHeader">
-         <a href="index.php"><img src="images/RoarConnectLogoSmall.jpg" alt="RoarConnect" id="mainLogoInMainHeader" /></a>
+         <a href="index.php"><img src="assets/images/RoarConnectLogoSmall.jpg" alt="RoarConnect" id="mainLogoInMainHeader" /></a>
 <?php
    if ( $navigationMenuStatus == DISPLAY_NAVIGATION_MENU ) {
 ?>
@@ -55,8 +55,8 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
                <div class="collapse navbar-collapse" id="navigationContents">
                   <ul class="navbar-nav">
                      <li><a href="blog_home.php" <?php echo $urlOfCurrentPage == 'blog_home.php' || $urlOfCurrentPage == 'blog.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-bullhorn"></span> News and Gists</a></li>
-                     <li><a href="view_all_food_vendors.php" <?php echo $urlOfCurrentPage == 'view_all_food_vendors.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-cutlery"></span> Food Delivery</a></li>
                      <li><a href="lecture_notes.php" <?php echo $urlOfCurrentPage == 'lecture_notes.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-download-alt"></span> Lecture Notes</a></li>
+                     <li><a href="view_all_food_vendors.php" <?php echo $urlOfCurrentPage == 'view_all_food_vendors.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-cutlery"></span> Food Delivery</a></li>
                      <li><a href="view_all_utility_services.php" <?php echo $urlOfCurrentPage == 'view_all_utility_services.php' ? 'id="current"' : '' ?>><span class="glyphicon glyphicon-gift"></span> Utility Services</a></li>
 <?php
       if ( currentUserIsLoggedIn() ) {
@@ -93,12 +93,6 @@ function displayMarkupsCommonToTopOfPages( $titleOfCurrentPage, $navigationMenuS
          if ( $userIsAVendorManager ) {
 ?>
                            <li><a href="your_uploads_as_manager_of_vendor.php"><span class="glyphicon glyphicon-upload"></span> My Uploads</a></li>
-<?php
-         }
-
-         if ( currentUserIsLoggedInAsAdmin() ) {
-?>
-                           <li><a href="all_roarconnect_uploads.php"><span class="glyphicon glyphicon-tasks"></span> Manage Uploads</a></li>
 <?php
          }
 ?>
@@ -196,7 +190,7 @@ function displayMarkupsCommonToBottomOfPages( $footerStatus = DO_NOT_DISPLAY_FOO
 
          <section class="col-sm-7">
             <div class="text-center">
-               <a href="index.php"><img src="images/RoarConnectLogoSmall.jpg" id="footerImage"/></a>
+               <a href="index.php"><img src="assets/images/RoarConnectLogoSmall.jpg" id="footerImage"/></a>
                <p>... Connecting users to services</p>
             </div>
 
@@ -307,7 +301,7 @@ function displaySomeInterestingBlogPostsAlongSideBar()
 {
    global $globalBlogPostsDisplayedInCurrentPage;
 ?>
-               <h2 id="sectionHeading">You May Also Like</h2>
+               <h2 id="heading">You May Also Like</h2>
 <?php
    $interestingBlogPosts = getArrayOfDataAboutInterestingBlogPosts(10);
 
@@ -323,7 +317,7 @@ function displayBlogPostAlongSideBar($rowContainingBlogPost)
 {
 ?>
                   <a href="blog.php?i=<?php echo $rowContainingBlogPost['blog_post_id'] ?>" id="blogAlongSideBar">
-                     <img src="images/blogImages/<?php echo $rowContainingBlogPost['blog_post_image_filename'] ?>" width="50" height="50" id="blogAlongSideBarImage" />
+                     <img src="assets/images/blogImages//<?php echo $rowContainingBlogPost['blog_post_image_filename'] ?>" width="50" height="50" id="blogAlongSideBarImage" />
                      <div>
                         <h3 id="blogAlongSideBarCaption"><?php echo $rowContainingBlogPost['blog_post_caption'] ?></h3>
                         <p id="blogAlongSideBarSubdetails"><?php echo substr($rowContainingBlogPost['blog_post_month_of_posting'], 0, 3) . ' ' . $rowContainingBlogPost['blog_post_day_of_posting'] . ', ' . $rowContainingBlogPost['blog_post_year_of_posting'] ?></p>
@@ -338,7 +332,7 @@ function displaySomeLatestBlogPostsAlongSideBar()
 {
    global $globalBlogPostsDisplayedInCurrentPage;
 ?>
-               <h2 id="sectionHeading">Latest Gists</h2>
+               <h2 id="heading">Latest Gists</h2>
 <?php
    $interestingBlogPosts = getArrayOfDataAboutLatestBlogPosts(5);
 

@@ -94,7 +94,7 @@ foreach ( $idOfCategoriesWhichLoggedInUserIsMainBloggerOf as $key => $categoryId
 <?php
 	      if ( $rowContainingBlogPosts['blog_post_image_filename'] != NULL ) {
 ?>
-                     <a href="blog.php?category=<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>&idOfRequiredPost=<?php echo $rowContainingBlogPosts['blog_post_id'] ?>"><img src="images/ImagesFor<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPosts['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPosts['blog_post_caption'] ?>" id="<?php echo $counter % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" /></a>
+                     <a href="blog.php?category=<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>&idOfRequiredPost=<?php echo $rowContainingBlogPosts['blog_post_id'] ?>"><img src="assets/images/ImagesFor<?php echo $rowContainingDataAboutBlogCategory['blog_category_name'] ?>Updates/<?php echo $rowContainingBlogPosts['blog_post_image_filename'] ?>" alt="Image of <?php echo $rowContainingBlogPosts['blog_post_caption'] ?>" id="<?php echo $counter % 2 == 0 ? 'blogHeadlineImageEven' : 'blogHeadlineImageOdd' ?>" /></a>
 <?php
 	      }
 ?>
